@@ -16,7 +16,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // Vercel raw body parsing for Stripe signatures
-export const config = {
+const config = {
   api: {
     bodyParser: false,
   },
@@ -83,3 +83,5 @@ module.exports = async (req, res) => {
 
   res.json({ received: true });
 };
+
+module.exports.config = config;
