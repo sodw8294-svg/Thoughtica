@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Zero-trust by default: Deny all reads and writes unless explicitly allowed below.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users Collection: 
+    // - Only the specific authenticated user can READ their own document.
+    // - NO ONE can WRITE from the frontend (only the secure Vercel backend using the Admin SDK can write).
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+  }
+}
