@@ -355,7 +355,7 @@
           <button onclick="document.getElementById('landing-page-overlay').classList.add('hidden'); unlockAudio(); setTimeout(() => { if (!S.introSeen) { startVoicedIntro(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); } }, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
             Enter Sanctuary
           </button>
-          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Free Forever. No Ads. Absolute Privacy.</p>
+          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Secure, Private, and Transformative.</p>
         </div>
       </div>
       
@@ -395,6 +395,51 @@
       </div>
     </div>
   </div>
+  <!-- PREMIUM STOREFRONT MODAL -->
+  <div id="modal-premium" class="fixed inset-0 z-[10000] bg-[#020306]/90 backdrop-blur-3xl hidden flex flex-col items-center justify-center p-4">
+    <div class="premium-glass-card w-full max-w-4xl p-8 rounded-[2.5rem] relative text-left shadow-[0_0_80px_rgba(168,85,247,0.3)]">
+      <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-8 h-8"></i></button>
+      
+      <div class="text-center space-y-4 mb-8">
+        <h2 class="text-4xl sm:text-5xl font-extrabold premium-text-gradient font-heading">Support Sanctuary</h2>
+        <p class="text-slate-300 font-medium">Thoughtica is indie-built. Your support unlocks premium features and keeps the sanctuary alive.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- TIER 1: Cup of Coffee -->
+        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover-tilt flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.3)]">☕</div>
+            <h3 class="text-2xl font-bold font-heading text-white">Cup of Coffee</h3>
+            <div class="text-3xl font-extrabold text-amber-400">$4.99 <span class="text-sm text-slate-400 font-medium">one-time</span></div>
+            <ul class="text-sm text-slate-300 space-y-2 pt-4">
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Unlock 5 Premium UI Themes</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Cloud Sync / Local Backup</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Supporter Discord Badge</span></li>
+            </ul>
+          </div>
+          <button onclick="startCheckout('coffee')" class="w-full mt-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white font-bold cursor-pointer hover:scale-[1.02] shadow-lg">Buy me a Coffee</button>
+        </div>
+
+        <!-- TIER 2: Monthly Subscription -->
+        <div class="p-6 bg-white/5 border border-purple-500/50 rounded-3xl hover-tilt flex flex-col justify-between relative shadow-[0_0_50px_rgba(168,85,247,0.2)]">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Most Popular</div>
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.3)]">🔮</div>
+            <h3 class="text-2xl font-bold font-heading text-white">Sovereign Membership</h3>
+            <div class="text-3xl font-extrabold text-purple-400">$9.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+            <ul class="text-sm text-slate-300 space-y-2 pt-4">
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Everything in Coffee Tier</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Unlimited Voiced Narration</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Advanced Analytics & AI Insights</span></li>
+            </ul>
+          </div>
+          <button onclick="startCheckout('monthly')" class="w-full mt-8 py-4 premium-button text-white font-bold rounded-2xl cursor-pointer hover:scale-[1.02] shadow-xl">Become a Sovereign</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     window.audioUnlocked = false;
     function unlockAudio() {
@@ -2782,6 +2827,30 @@
         { title: 'Waypoint 2: Strength & Endurance Peak', desc: 'Achieve athletic milestone benchmarks.' }
       ]
     };
+
+    async function startCheckout(tier) {
+      if (!S.uid) {
+        alert('Please create a free account first to save your premium status!');
+        // Normally this would open an Auth Modal. For now, simulate UID.
+        S.uid = 'temp_' + Date.now();
+      }
+      try {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier, uid: S.uid })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('Checkout failed to initialize. Please try again later.');
+        }
+      } catch (err) {
+        console.error('Checkout error:', err);
+        alert('Unable to connect to payment processor.');
+      }
+    }
 
     function save() { try { localStorage.setItem('kora_state', JSON.stringify(S)); } catch (e) {} }
 
