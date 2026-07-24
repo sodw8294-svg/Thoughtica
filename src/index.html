@@ -420,6 +420,7 @@
         <div class="flex justify-center gap-6 text-xs text-slate-400 font-bold">
           <button onclick="document.getElementById('modal-privacy').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
           <button onclick="document.getElementById('modal-tos').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
+          <button onclick="document.getElementById('modal-contact').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-purple-400 hover:text-purple-300"><i data-lucide="mail" class="w-3.5 h-3.5"></i> Contact Us</button>
         </div>
         <p class="text-[10px] text-slate-600 mt-4">&copy; 2026 Thoughtica Life RPG Studio. All Rights Reserved.</p>
       </div>
@@ -449,6 +450,37 @@
         <p><strong>2. Health Disclaimer:</strong> Thoughtica Life RPG is a gamified tool, not a replacement for professional medical or mental health advice.</p>
         <p><strong>3. Modification:</strong> We reserve the right to update or modify the service. Your continued use implies acceptance.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- CONTACT US MODAL -->
+  <div id="modal-contact" class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+    <div class="premium-glass-card w-full max-w-lg p-8 rounded-3xl relative text-left space-y-6 shadow-[0_0_80px_rgba(168,85,247,0.3)]">
+      <button onclick="document.getElementById('modal-contact').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-6 h-6"></i></button>
+      
+      <div class="space-y-2">
+        <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/30 mb-3"><i data-lucide="mail" class="w-6 h-6"></i></div>
+        <h2 class="text-3xl font-extrabold premium-text-gradient font-heading">Contact Thoughtica</h2>
+        <p class="text-xs text-slate-300 font-medium leading-relaxed">Have questions, feedback, or need help? Send a message directly to <span class="text-purple-300 font-semibold underline">hello@thoughtica.net</span>.</p>
+      </div>
+
+      <form id="contact-form" onsubmit="submitContactForm(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs text-slate-300 font-semibold mb-1">Your Name</label>
+          <input type="text" id="contact-name" required placeholder="Seeker Name" class="w-full px-4 py-3 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 font-semibold mb-1">Your Email</label>
+          <input type="email" id="contact-email" required placeholder="your.email@example.com" class="w-full px-4 py-3 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 font-semibold mb-1">Message</label>
+          <textarea id="contact-message" required rows="4" placeholder="Share your thoughts, feedback, or inquiries..." class="w-full px-4 py-3 text-sm"></textarea>
+        </div>
+        <button type="submit" class="w-full py-4 premium-button text-white font-extrabold rounded-2xl cursor-pointer hover:scale-[1.02] transition-transform shadow-lg flex items-center justify-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i> Send Message
+        </button>
+      </form>
     </div>
   </div>
   <!-- AUTH MODAL -->
@@ -697,6 +729,36 @@
         console.warn('Payment check error:', e);
       }
     }
+    // CONTACT FORM SUBMISSION HANDLER
+    async function submitContactForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('contact-name').value;
+      const email = document.getElementById('contact-email').value;
+      const message = document.getElementById('contact-message').value;
+
+      showToast('Sending Message...', 'Connecting to hello@thoughtica.net', 'mail');
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast('Message Sent! 📬', 'Thank you for reaching out to hello@thoughtica.net', 'sparkles');
+          document.getElementById('contact-form').reset();
+          document.getElementById('modal-contact').classList.add('hidden');
+        } else {
+          window.location.href = `mailto:hello@thoughtica.net?subject=${encodeURIComponent('Thoughtica Inquiry from ' + name)}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + ' (' + email + ')')}`;
+          document.getElementById('modal-contact').classList.add('hidden');
+        }
+      } catch (err) {
+        window.location.href = `mailto:hello@thoughtica.net?subject=${encodeURIComponent('Thoughtica Inquiry from ' + name)}&body=${encodeURIComponent(message + '\n\nFrom: ' + name + ' (' + email + ')')}`;
+        document.getElementById('modal-contact').classList.add('hidden');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', checkPaymentReturn);
     checkPaymentReturn();
     window.audioUnlocked = false;
