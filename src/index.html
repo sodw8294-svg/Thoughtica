@@ -4661,7 +4661,7 @@
       }
     }
 
-    // DYNAMIC NEURAL CONVERSATIONAL SYNTHESIZER (DEEP OFFLINE & ONLINE COPILOT-LEVEL ENGINE)
+    // DYNAMIC NEURAL CONVERSATIONAL SYNTHESIZER (NATURAL COPILOT / GEMINI STYLE)
     function generateCompanionResponse(userText) {
       const text = userText.trim();
       const lower = text.toLowerCase();
@@ -4683,73 +4683,73 @@
       // 1. Coding & Technical Queries
       if (lower.match(/(code|program|javascript|python|css|html|api|build|bug|error|git|react|vue|node|app)\b/)) {
         return pickNonRepeating([
-          `Building software and mastering code is all about modular execution, ${uName}. Break the problem down into isolated functions, test small units, and verify state inputs. What specific feature or logic are you trying to implement right now?`,
-          `Engineering solid systems requires clean architecture and focused problem-solving. At Level ${level}, staying methodical will save hours of debugging. Tell me what you're building or what error you're facing and I'll help you work through it.`
+          `Building software and mastering code comes down to clear modular execution, ${uName}. Isolating logic into small testable units and verifying data inputs will resolve almost any bug cleanly.`,
+          `Engineering solid systems requires clean architecture and methodical debugging. Keeping your logic decoupled and state predictable is always the fastest path to production.`
         ]);
       }
 
       // 2. Mindfulness, Stress & Calm Queries
       if (lower.match(/(stress|anxious|anxiety|worry|overwhelmed|tired|burnout|calm|breathe|peace|rest)\b/)) {
         return pickNonRepeating([
-          `Take a slow, deep breath with me right now, ${uName}. Inhale for 4 counts, hold for 4, and exhale for 6. Your value isn't measured by frantic productivity. What is one thing you can pause or let go of today to give yourself space?`,
-          `Feeling overwhelmed is often a signal that your attention is scattered across too many horizons. Let's ground back into the present moment. Focus only on the single next 5-minute step toward "${goal}". How does your energy feel right now?`
+          `Take a slow, deep breath, ${uName}. Inhale for 4 seconds, hold for 4, and exhale for 6. Your value isn't measured by frantic output—giving yourself permission to rest is essential for long-term clarity.`,
+          `Feeling overwhelmed is usually a signal that your attention is stretched across too many horizons at once. Grounding back into the present moment and focusing on a single small step will restore your momentum.`
         ]);
       }
 
       // 3. Productivity, Focus & Habits
       if (lower.match(/(habit|focus|productive|procrastinat|goal|routine|discipline|motivation|work)\b/)) {
         return pickNonRepeating([
-          `Consistency always beats intensity, ${uName}. High agency isn't about giant leaps; it's about anchoring friction-free daily guideposts. What is one tiny 2-minute habit you can do right now to lock in momentum?`,
-          `To build deep focus, protect your attention from digital noise. Work in 25-minute uninterrupted blocks and keep your physical environment clean. What is the single highest-priority task on your mind today?`
+          `Consistency always beats intensity, ${uName}. Sustainable progress comes from anchoring friction-free daily habits rather than relying on temporary bursts of willpower.`,
+          `To build deep focus, protect your attention from digital noise. Working in uninterrupted blocks and keeping your environment clean creates ideal conditions for deep work.`
         ]);
       }
 
-      // 4. Question Parser: "what is X", "how to X", "why is X"
+      // 4. Direct Explanations ("what is X", "how to X", "why is X")
       if (lower.startsWith('what is') || lower.startsWith('what are') || lower.startsWith('whats')) {
         const topic = text.replace(/^what\s+(is|are|s)\s+/i, '').replace(/\?$/, '').trim();
         return pickNonRepeating([
-          `When we examine ${topic}, it represents a core concept that connects directly to how you structure your daily focus. Understanding ${topic} deeply allows you to make clearer, more sovereign decisions toward "${goal}".`,
-          `That's a great question about ${topic}. Exploring this sharpens your Wisdom (WIS) attribute. What specific perspective or insight are you hoping to gain from ${topic}?`
+          `Examining ${topic} is a great way to expand your mental models. At its core, ${topic} gives you a framework for making clearer, more sovereign decisions in your daily path.`,
+          `Exploring ${topic} builds valuable perspective. Deep understanding comes from looking at foundational principles and seeing how they apply to your practical goals.`
         ]);
       }
 
       if (lower.startsWith('how to') || lower.startsWith('how can i') || lower.startsWith('how do i')) {
         const topic = text.replace(/^how\s+(to|can i|do i)\s+/i, '').replace(/\?$/, '').trim();
         return pickNonRepeating([
-          `To master how to ${topic}, start by establishing the smallest viable prototype of action. Eliminate friction, define clear input criteria, and execute once every single day. What is the first small step you can take today?`,
-          `Achieving mastery in how to ${topic} comes down to daily repetition and feedback loops. At Level ${level}, every iteration strengthens your capability. Shall we turn this into a guidepost for today?`
+          `To master how to ${topic}, start by establishing the smallest viable prototype of action. Eliminate unnecessary friction, define clear inputs, and build consistency through daily repetition.`,
+          `Achieving mastery in how to ${topic} comes down to fast feedback loops and steady execution. Every iteration refines your capability and strengthens your momentum.`
         ]);
       }
 
       if (lower.startsWith('why')) {
         return pickNonRepeating([
-          `Asking "why" is the foundation of self-sovereignty, ${uName}. When you understand the underlying motivation behind your choices, your direction becomes crystal clear. What does your intuition tell you about this?`,
-          `Exploring the deeper "why" helps align your daily actions with your core purpose. How does this reflection help you navigate closer to "${goal}"?`
+          `Understanding the underlying "why" behind your actions is the key to true self-sovereignty. When your core motivations are clear, decisions become intuitive and effortless.`,
+          `Exploring the deeper "why" helps align your daily actions with your overarching purpose, ensuring your energy is invested where it matters most.`
         ]);
       }
 
       // 5. Greetings
       if (lower.match(/^(hi|hello|hey|greetings|good morning|good evening|yo|sup|what's up)\b/)) {
         return pickNonRepeating([
-          `Greetings, ${uName}! It's great to connect with you in the sanctuary. What are you working on or thinking about right now?`,
-          `Hello ${uName}! I'm ${cName}, your AI companion. I'm ready to dive into any question, project, or mindset topic you'd like to explore today. What's on your mind?`,
-          `Welcome, ${uName}. I'm here and fully attentive. Tell me what you'd like to work through or discuss today!`
+          `Greetings, ${uName}! It's great to connect with you. I'm ready to discuss any topic, brainstorm ideas, or work through your goals today.`,
+          `Hello ${uName}! I'm ${cName}, your AI companion. Feel free to ask me questions, explore concepts, or chat about whatever is on your mind.`,
+          `Welcome, ${uName}. I'm here and fully attentive. Let me know what you'd like to dive into today!`
         ]);
       }
 
       // 6. Gratitude & Praise
       if (lower.match(/(thank|thanks|appreciate|awesome|cool|great|good job|nice)\b/)) {
         return pickNonRepeating([
-          `You're very welcome, ${uName}! I'm always here to assist and collaborate with you. What shall we tackle next?`,
-          `It's my pleasure! Every reflection and action you take builds lasting momentum. How else can I help you today?`
+          `You're very welcome, ${uName}! I'm always here to collaborate with you whenever you need insights or support.`,
+          `Glad I could help! Every reflection and intentional choice you make builds lasting momentum on your path.`
         ]);
       }
 
-      // 7. General Conversational Converser
+      // 7. Open Conversational Responses
       return pickNonRepeating([
-        `That's a thoughtful perspective, ${uName}. Exploring this gives us a valuable opportunity to refine your approach toward "${goal}". What specific aspect would you like to dive deeper into?`,
-        `I understand completely. As your AI companion, I find that working through these ideas systematically helps clarify your next best action. How would you like to proceed?`,
-        `I'm following your line of thought closely, ${uName}. Tell me more about what you're experiencing or what outcome you'd like to achieve next.`
+        `That's a compelling perspective, ${uName}. Exploring concepts from multiple angles is one of the best ways to sharpen your decision-making and stay aligned with "${goal}".`,
+        `I appreciate you sharing that. Systematically examining your thoughts and ideas helps turn raw reflection into clear, actionable direction.`,
+        `I'm following your line of thought closely, ${uName}. I'm here to explore any topic, idea, or challenge you'd like to work through.`
       ]);
     }
 
