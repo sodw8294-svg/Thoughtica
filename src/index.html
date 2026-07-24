@@ -390,7 +390,7 @@
         
         <!-- Big CTA Button -->
         <div class="pt-8 w-full max-w-sm">
-          <button onclick="document.getElementById('landing-page-overlay').classList.add('hidden'); unlockAudio(); setTimeout(() => { if (!S.introSeen) { startVoicedIntro(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); } }, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
+          <button onclick="const root = document.getElementById('app-sanctuary-root'); if (root) root.classList.remove('hidden'); const ov = document.getElementById('landing-page-overlay'); if (ov) ov.classList.add('hidden'); unlockAudio(); setTimeout(() => { if (!S.introSeen) { startVoicedIntro(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); } }, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
             Enter Sanctuary
           </button>
           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Secure, Private, and Transformative.</p>
@@ -2645,6 +2645,8 @@
     const TOTAL_INTRO_PHASES = 4;
 
     function startVoicedIntro() {
+      const root = document.getElementById('app-sanctuary-root');
+      if (root) root.classList.remove('hidden');
       closeSettings();
       currentIntroPhase = 1;
       
@@ -3952,6 +3954,8 @@
     const TOTAL_TOUR_STEPS = TOUR_STEPS.length;
 
     function startInteractiveTour() {
+      const root = document.getElementById('app-sanctuary-root');
+      if (root) root.classList.remove('hidden');
       closeSettings();
       currentTourStep = 1;
       showTourStep(1);
