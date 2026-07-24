@@ -4943,18 +4943,7 @@ Directives:
       }
     }
 
-    function load() {
-      try {
-        const data = localStorage.getItem('kora_state');
-        if (data) {
-          const parsed = JSON.parse(data);
-          // Merge parsed state into default S to preserve any new defaults
-          S = Object.assign({}, S, parsed);
-        }
-      } catch (e) {
-        console.error('Load error:', e);
-      }
-    }
+
 
 
 
