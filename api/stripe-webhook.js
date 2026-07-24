@@ -55,17 +55,17 @@ module.exports = async (req, res) => {
     if (uid) {
       const userRef = db.collection('users').doc(uid);
       try {
+        // Fallback to determine tier by amount if metadata is missing
+        let assignedTier = session.metadata?.tier || 'unknown';
+        if (assignedTier === 'unknown' && session.amount_total === 299) assignedTier = 'kindred';
+        if (assignedTier === 'unknown' && session.amount_total === 999) assignedTier = 'soulbound';
+        if (assignedTier === 'unknown' && session.amount_total === 1999) assignedTier = 'transcendence';
+
         if (mode === 'subscription') {
           await userRef.set({
             isPremium: true,
-            tier: 'sanctuary_monthly',
+            tier: assignedTier,
             stripeSubscriptionId: session.subscription,
-            premiumSince: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-        } else {
-          await userRef.set({
-            isPremium: true,
-            tier: 'cup_of_coffee_onetime',
             premiumSince: admin.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
         }

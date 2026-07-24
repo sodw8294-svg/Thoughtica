@@ -17,38 +17,58 @@ module.exports = async (req, res) => {
       success_url: `${process.env.PUBLIC_URL || 'https://thoughtica.vercel.app'}/?payment_success=true&tier=${tier}`,
       cancel_url: `${process.env.PUBLIC_URL || 'https://thoughtica.vercel.app'}/?payment_cancelled=true`,
       client_reference_id: uid, // Links the payment to the Firebase Auth User ID
+      metadata: { tier: tier }
     };
 
-    if (tier === 'coffee') {
-      // Tier 1: One-Time Cup of Coffee ($4.99)
-      sessionConfig.line_items = [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Thoughtica - Sanctuary Key (One-Time)',
-              description: 'Unlock premium UI themes, custom goals, and support the developer.',
-              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
-            },
-            unit_amount: 499, // $4.99
-          },
-          quantity: 1,
-        },
-      ];
-      sessionConfig.mode = 'payment';
-    } else if (tier === 'monthly') {
-      // Tier 2: Sanctuary Subscription ($9.99/mo)
+    if (tier === 'kindred') {
+      // Tier 1: Kindred ($2.99/mo)
       sessionConfig.line_items = [
         {
           price_data: {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'Thoughtica - Sovereign Membership',
-              description: 'Full access to voice narration, quantum essence analytics, and cloud backups.',
+              name: 'Thoughtica Life RPG - Kindred',
+              description: 'Increased daily interactions and expanded memory.',
+              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+            },
+            unit_amount: 299, // $2.99
+          },
+          quantity: 1,
+        },
+      ];
+      sessionConfig.mode = 'subscription';
+    } else if (tier === 'soulbound') {
+      // Tier 2: Soulbound ($9.99/mo)
+      sessionConfig.line_items = [
+        {
+          price_data: {
+            currency: 'usd',
+            recurring: { interval: 'month' },
+            product_data: {
+              name: 'Thoughtica Life RPG - Soulbound',
+              description: 'Voice conversations, long-term memory, and companion evolution.',
               images: ['https://thoughtica.vercel.app/logo-book.jpg'],
             },
             unit_amount: 999, // $9.99
+          },
+          quantity: 1,
+        },
+      ];
+      sessionConfig.mode = 'subscription';
+    } else if (tier === 'transcendence') {
+      // Tier 3: Transcendence ($19.99/mo)
+      sessionConfig.line_items = [
+        {
+          price_data: {
+            currency: 'usd',
+            recurring: { interval: 'month' },
+            product_data: {
+              name: 'Thoughtica Life RPG - Transcendence',
+              description: 'Multiple companions, max memory, and exclusive options.',
+              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+            },
+            unit_amount: 1999, // $19.99
           },
           quantity: 1,
         },

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Thoughtica – Sanctuary of Discovery & Mindful RPG</title>
+  <title>Thoughtica Life RPG - Sanctuary of Discovery & Mindful RPG</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/jpeg" href="/logo-book.jpg">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <meta name="theme-color" content="#090A0F">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Thoughtica">
+  <meta name="apple-mobile-web-app-title" content="Thoughtica Life RPG">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -347,7 +347,7 @@
           The RPG of <br/>Real Life
         </h1>
         <p class="text-lg sm:text-xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed opacity-90">
-          Thoughtica is a sovereign sanctuary designed to replace mindless doomscrolling with daily guideposts, mindful RPG stats, and interactive zen auras.
+          Thoughtica Life RPG is a sovereign sanctuary designed to replace mindless doomscrolling with daily guideposts, mindful RPG stats, and interactive zen auras.
         </p>
         
         <!-- Big CTA Button -->
@@ -365,7 +365,7 @@
           <button onclick="document.getElementById('modal-privacy').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
           <button onclick="document.getElementById('modal-tos').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
         </div>
-        <p class="text-[10px] text-slate-600 mt-4">&copy; 2026 Thoughtica Studio. All Rights Reserved.</p>
+        <p class="text-[10px] text-slate-600 mt-4">&copy; 2026 Thoughtica Life RPG Studio. All Rights Reserved.</p>
       </div>
     </div>
   </div>
@@ -376,7 +376,7 @@
       <button onclick="this.closest('#modal-privacy').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
       <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Privacy Policy</h2>
       <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
-        <p><strong>1. Absolute Local Privacy:</strong> Thoughtica is built on local-first principles. Your goals, journal entries, and RPG stats are saved entirely on your device's local storage.</p>
+        <p><strong>1. Absolute Local Privacy:</strong> Thoughtica Life RPG is built on local-first principles. Your goals, journal entries, and RPG stats are saved entirely on your device's local storage.</p>
         <p><strong>2. No Tracking:</strong> We do not use third-party analytics trackers, cookies, or doomscrolling engagement algorithms.</p>
         <p><strong>3. AI Processing:</strong> All interactions with your AI companion are processed instantly and safely. We do not store your chat logs on external databases.</p>
         <p>Your sanctuary is your own.</p>
@@ -389,54 +389,127 @@
       <button onclick="this.closest('#modal-tos').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
       <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Terms of Service</h2>
       <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
-        <p><strong>1. Acceptance:</strong> By entering the Sanctuary, you agree to use Thoughtica for personal mindfulness and self-improvement.</p>
-        <p><strong>2. Health Disclaimer:</strong> Thoughtica is a gamified tool, not a replacement for professional medical or mental health advice.</p>
+        <p><strong>1. Acceptance:</strong> By entering the Sanctuary, you agree to use Thoughtica Life RPG for personal mindfulness and self-improvement.</p>
+        <p><strong>2. Health Disclaimer:</strong> Thoughtica Life RPG is a gamified tool, not a replacement for professional medical or mental health advice.</p>
         <p><strong>3. Modification:</strong> We reserve the right to update or modify the service. Your continued use implies acceptance.</p>
       </div>
     </div>
   </div>
   <!-- PREMIUM STOREFRONT MODAL -->
-  <div id="modal-premium" class="fixed inset-0 z-[10000] bg-[#020306]/90 backdrop-blur-3xl hidden flex flex-col items-center justify-center p-4">
-    <div class="premium-glass-card w-full max-w-4xl p-8 rounded-[2.5rem] relative text-left shadow-[0_0_80px_rgba(168,85,247,0.3)]">
-      <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-8 h-8"></i></button>
+  <div id="modal-premium" class="fixed inset-0 z-[10000] bg-[#020306]/90 backdrop-blur-3xl hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
+    <div class="premium-glass-card w-full max-w-6xl p-6 md:p-8 rounded-[2.5rem] relative text-left shadow-[0_0_80px_rgba(168,85,247,0.3)] my-8">
+      <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer z-10"><i data-lucide="x" class="w-8 h-8"></i></button>
       
-      <div class="text-center space-y-4 mb-8">
-        <h2 class="text-4xl sm:text-5xl font-extrabold premium-text-gradient font-heading">Support Sanctuary</h2>
-        <p class="text-slate-300 font-medium">Thoughtica is indie-built. Your support unlocks premium features and keeps the sanctuary alive.</p>
+      <div class="text-center space-y-4 mb-10 mt-4 md:mt-0">
+        <h2 class="text-3xl sm:text-5xl font-extrabold premium-text-gradient font-heading tracking-tight">Thoughtica Life RPG</h2>
+        <p class="text-slate-300 font-medium text-sm sm:text-base max-w-2xl mx-auto">Your journey. Your evolution. Support the sanctuary to deepen your relationship with your AI companion and unlock advanced RPG systems.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- TIER 1: Cup of Coffee -->
-        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover-tilt flex flex-col justify-between">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        
+        <!-- Tier 0: Awakening (Free) -->
+        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl flex flex-col justify-between opacity-80 scale-95 origin-center">
           <div class="space-y-4">
-            <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.3)]">☕</div>
-            <h3 class="text-2xl font-bold font-heading text-white">Cup of Coffee</h3>
-            <div class="text-3xl font-extrabold text-amber-400">$4.99 <span class="text-sm text-slate-400 font-medium">one-time</span></div>
-            <ul class="text-sm text-slate-300 space-y-2 pt-4">
-              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Unlock 5 Premium UI Themes</span></li>
-              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Cloud Sync / Local Backup</span></li>
-              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-5 h-5"></i> <span>Supporter Discord Badge</span></li>
+            <div class="w-10 h-10 rounded-full bg-slate-500/20 text-slate-400 flex items-center justify-center text-xl border border-slate-500/30">🌱</div>
+            <h3 class="text-xl font-bold font-heading text-white">Awakening</h3>
+            <div class="text-2xl font-extrabold text-slate-300">$0 <span class="text-xs text-slate-400 font-medium">/ month</span></div>
+            <ul class="text-xs text-slate-400 space-y-2 pt-4">
+              <li class="flex gap-2"><i data-lucide="check" class="text-slate-500 w-4 h-4 shrink-0"></i> <span>Basic AI companion access</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-slate-500 w-4 h-4 shrink-0"></i> <span>Limited daily conversations</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-slate-500 w-4 h-4 shrink-0"></i> <span>Basic companion memory</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-slate-500 w-4 h-4 shrink-0"></i> <span>Starter life quests</span></li>
             </ul>
           </div>
-          <button onclick="startCheckout('coffee')" class="w-full mt-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white font-bold cursor-pointer hover:scale-[1.02] shadow-lg">Buy me a Coffee</button>
+          <button disabled class="w-full mt-6 py-3 bg-slate-800/50 rounded-xl text-slate-400 font-bold cursor-not-allowed border border-slate-700/50">Current Tier</button>
         </div>
 
-        <!-- TIER 2: Monthly Subscription -->
-        <div class="p-6 bg-white/5 border border-purple-500/50 rounded-3xl hover-tilt flex flex-col justify-between relative shadow-[0_0_50px_rgba(168,85,247,0.2)]">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Most Popular</div>
+        <!-- Tier 1: Kindred ($2.99) -->
+        <div class="p-6 bg-white/5 border border-amber-500/30 rounded-3xl hover-tilt flex flex-col justify-between relative shadow-[0_0_30px_rgba(245,158,11,0.1)]">
           <div class="space-y-4">
-            <div class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.3)]">🔮</div>
-            <h3 class="text-2xl font-bold font-heading text-white">Sovereign Membership</h3>
+            <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">🤝</div>
+            <h3 class="text-2xl font-bold font-heading text-white">Kindred</h3>
+            <div class="text-3xl font-extrabold text-amber-400">$2.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+            <p class="text-xs text-amber-200/70 font-medium pb-2">A personalized supporter experience.</p>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex gap-2"><i data-lucide="plus" class="text-amber-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Everything in Awakening</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>Increased daily interactions</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>Expanded companion memory</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>More personality customization</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>Cosmetic customization rewards</span></li>
+            </ul>
+          </div>
+          <button onclick="startCheckout('kindred')" class="w-full mt-6 py-3 bg-gradient-to-r from-amber-600 to-amber-500 rounded-xl text-white font-bold cursor-pointer hover:scale-[1.02] shadow-lg">Upgrade to Kindred</button>
+        </div>
+
+        <!-- Tier 2: Soulbound ($9.99) -->
+        <div class="p-6 bg-white/5 border border-purple-500/50 rounded-3xl hover-tilt flex flex-col justify-between relative shadow-[0_0_50px_rgba(168,85,247,0.2)] scale-105 z-10">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-4 py-1 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]">Most Popular</div>
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.4)]">🔮</div>
+            <h3 class="text-2xl font-bold font-heading text-white">Soulbound</h3>
             <div class="text-3xl font-extrabold text-purple-400">$9.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
-            <ul class="text-sm text-slate-300 space-y-2 pt-4">
-              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Everything in Coffee Tier</span></li>
-              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Unlimited Voiced Narration</span></li>
-              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-5 h-5"></i> <span>Advanced Analytics & AI Insights</span></li>
+            <p class="text-xs text-purple-200/70 font-medium pb-2">The ultimate premium companion journey.</p>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex gap-2"><i data-lucide="plus" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Everything in Kindred</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Advanced AI model access</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Long-term companion memory</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Voice conversations</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Companion evolution & real-life RPG</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Higher AI usage limits</span></li>
             </ul>
           </div>
-          <button onclick="startCheckout('monthly')" class="w-full mt-8 py-4 premium-button text-white font-bold rounded-2xl cursor-pointer hover:scale-[1.02] shadow-xl">Become a Sovereign</button>
+          <button onclick="startCheckout('soulbound')" class="w-full mt-6 py-3 premium-button text-white font-bold rounded-xl cursor-pointer hover:scale-[1.02] shadow-[0_0_20px_rgba(168,85,247,0.4)] border-none">Become Soulbound</button>
+        </div>
+
+        <!-- Tier 3: Transcendence ($19.99) -->
+        <div class="p-6 bg-white/5 border border-cyan-500/40 rounded-3xl hover-tilt flex flex-col justify-between relative shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xl border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)]">🌌</div>
+            <h3 class="text-2xl font-bold font-heading text-white">Transcendence</h3>
+            <div class="text-3xl font-extrabold text-cyan-400">$19.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+            <p class="text-xs text-cyan-200/70 font-medium pb-2">For the most dedicated seekers.</p>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex gap-2"><i data-lucide="plus" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Everything in Soulbound</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span>Multiple AI companions</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span>Custom companion experiences</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span>Maximum memory capacity</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span>Highest AI interaction limits</span></li>
+              <li class="flex gap-2"><i data-lucide="check" class="text-cyan-400 w-4 h-4 shrink-0"></i> <span>Exclusive cosmetic options</span></li>
+            </ul>
+          </div>
+          <button onclick="startCheckout('transcendence')" class="w-full mt-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-bold cursor-pointer hover:scale-[1.02] shadow-lg">Transcend</button>
+        </div>
+
+      </div>
+
+      <!-- Optional Purchases (Cosmetics) -->
+      <div class="mt-12 p-8 bg-white/5 border border-white/10 rounded-[2rem]">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-2xl font-bold font-heading text-white flex items-center gap-3">
+              <i data-lucide="shopping-bag" class="text-rose-400 w-6 h-6"></i>
+              Cosmetics Boutique
+            </h3>
+            <p class="text-slate-400 text-sm mt-1">Personalize your sanctuary. No pay-to-win mechanics.</p>
+          </div>
+          <span class="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-slate-300 border border-white/10 uppercase tracking-widest">Coming Soon</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+            <i data-lucide="shirt" class="w-8 h-8 text-slate-400"></i><span class="text-xs font-bold text-slate-300">Outfits</span>
+          </div>
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+            <i data-lucide="palette" class="w-8 h-8 text-slate-400"></i><span class="text-xs font-bold text-slate-300">Themes</span>
+          </div>
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+            <i data-lucide="image" class="w-8 h-8 text-slate-400"></i><span class="text-xs font-bold text-slate-300">Environments</span>
+          </div>
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+            <i data-lucide="book-open" class="w-8 h-8 text-slate-400"></i><span class="text-xs font-bold text-slate-300">Stories</span>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -509,13 +582,13 @@
           </span>
           
           <h1 class="text-4xl sm:text-6xl font-extrabold font-heading tracking-tight drop-shadow-2xl leading-tight premium-text-gradient">
-            Step Into Thoughtica
+            Step Into Thoughtica Life RPG
           </h1>
           
           <div class="h-[1px] w-1/3 mx-auto bg-gradient-to-r from-transparent via-purple-500/50 to-transparent my-6"></div>
           
           <p class="text-sm sm:text-lg text-slate-300 leading-loose font-medium max-w-2xl mx-auto opacity-90 tracking-wide" id="prologue-card-speech">
-            "Welcome to Thoughtica — the RPG companion forged for the betterment of your life all around. While Thoughtica won't automatically alter the physical world for you, it serves as your daily companion: empowering your mind through private sanctuary journaling, unwinding your spirit with pure nature soundscapes, and leveling up your core essence attributes on the Constellation Skill Tree."
+            "Welcome to Thoughtica Life RPG - the RPG companion forged for the betterment of your life all around. While Thoughtica won't automatically alter the physical world for you, it serves as your daily companion: empowering your mind through private sanctuary journaling, unwinding your spirit with pure nature soundscapes, and leveling up your core essence attributes on the Constellation Skill Tree."
           </p>
         </div>
       </div>
@@ -748,7 +821,7 @@
               <div class="text-[11px] text-amber-300 font-bold" id="share-rank">Lvl 1 Sovereign Pathfinder</div>
             </div>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-300 border border-amber-500/30 tracking-wider">THOUGHTICA</span>
+          <span class="px-2.5 py-1 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-300 border border-amber-500/30 tracking-wider">THOUGHTICA LIFE RPG</span>
         </div>
 
         <div class="p-3.5 bg-white/5 border border-white/8 rounded-xl text-xs space-y-1 relative z-10 backdrop-blur-md">
@@ -894,7 +967,7 @@
                 background-clip: text;
                 text-shadow: none;
                 filter: drop-shadow(0 0 10px rgba(139,92,246,0.35));
-              ">THOUGHTICA</h1>
+              ">THOUGHTICA LIFE RPG</h1>
           <p class="text-[9px] font-semibold tracking-[0.22em] uppercase mt-0.5"
              id="header-rank-title"
              style="color: rgba(165,180,252,0.5);">Seeker</p>
