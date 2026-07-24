@@ -73,22 +73,23 @@
        GLOBAL FORM ELEMENT FIX — dark mode ready
        ============================================= */
     input, textarea, select {
-      background-color: rgba(255,255,255,0.05) !important;
-      color: #f1f5f9 !important;
-      border: 1px solid rgba(255,255,255,0.12) !important;
+      background-color: rgba(15, 23, 42, 0.75) !important;
+      color: #f8fafc !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
       border-radius: 12px !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-size: 16px !important; /* Prevents iOS Safari auto-zoom on mobile */
       -webkit-appearance: none;
       appearance: none;
       outline: none !important;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.4) !important;
     }
     input::placeholder, textarea::placeholder {
-      color: rgba(148,163,184,0.55) !important;
+      color: rgba(148, 163, 184, 0.7) !important;
     }
     input:focus, textarea:focus, select:focus {
-      border-color: rgba(129,140,248,0.5) !important;
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+      border-color: rgba(168, 85, 247, 0.7) !important;
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), inset 0 1px 2px rgba(0,0,0,0.4) !important;
     }
     /* Force select option dropdowns dark */
     select option {
@@ -365,7 +366,7 @@
 <body class="min-h-screen min-h-[100dvh] w-full max-w-full overflow-x-hidden text-slate-100 flex flex-col pt-safe pb-safe">
 
   <!-- ULTRA-PREMIUM CONVERSION LANDING PAGE -->
-  <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto hidden">
+  <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto">
     <!-- Dreamy Animated Background -->
     <div class="fixed inset-0 z-0 pointer-events-none">
       <div class="absolute inset-0 bg-gradient-to-br from-[#0a0514] via-[#020306] to-[#0d071d]"></div>
@@ -3152,7 +3153,12 @@
 
         const overlay = document.getElementById('landing-page-overlay');
         if (overlay) {
-          overlay.classList.remove('hidden');
+          if (S.introSeen && S.tourComplete && window.location.search.includes('payment_success')) {
+            overlay.classList.add('hidden');
+            showDashboard();
+          } else {
+            overlay.classList.remove('hidden');
+          }
         } else {
           if (!S.introSeen) {
             setTimeout(startVoicedIntro, 600);
