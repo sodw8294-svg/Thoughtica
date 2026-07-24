@@ -292,11 +292,73 @@
 </head>
 <body class="h-full overflow-hidden text-slate-100 flex flex-col pt-safe pb-safe">
 
-  <!-- AUTOPLAY UNLOCK OVERLAY -->
-  <div id="tap-to-begin-overlay" class="fixed inset-0 z-[9999] bg-[#090A0F] flex items-center justify-center hidden">
-    <button onclick="this.parentElement.classList.add('hidden'); unlockAudio(); setTimeout(startVoicedIntro, 400);" class="premium-button px-8 py-4 rounded-2xl text-white font-extrabold text-lg shadow-[0_0_40px_rgba(168,85,247,0.4)] animate-pulse hover:scale-105 cursor-pointer">
-      Tap to Enter Sanctuary
-    </button>
+  <!-- ULTRA-PREMIUM CONVERSION LANDING PAGE -->
+  <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto hidden">
+    <!-- Dreamy Animated Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div class="absolute inset-0 bg-gradient-to-br from-[#0a0514] via-[#020306] to-[#0d071d]"></div>
+      <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-indigo-900/30 blur-[140px] animate-pulse mix-blend-screen"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-emerald-900/20 blur-[140px] animate-pulse mix-blend-screen" style="animation-delay: 2s"></div>
+    </div>
+    
+    <!-- Hero Content -->
+    <div class="relative z-10 min-h-screen flex flex-col justify-between pt-16 pb-8 px-6 sm:px-12">
+      <!-- Main Pitch -->
+      <div class="flex-1 flex flex-col items-center justify-center text-center space-y-8 max-w-4xl mx-auto mt-12 mb-20 animate-stagger-1">
+        <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-6xl sm:text-7xl shadow-[0_0_80px_rgba(168,85,247,0.6)] border-[4px] border-white/20 mb-4" style="animation: premium-pulse 4s infinite">
+          🔮
+        </div>
+        <h1 class="text-5xl sm:text-7xl font-extrabold premium-text-gradient font-heading tracking-tight leading-tight">
+          The Game of <br/>Becoming Yourself
+        </h1>
+        <p class="text-lg sm:text-xl text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed opacity-90">
+          Thoughtica is a sovereign sanctuary designed to replace mindless doomscrolling with daily guideposts, mindful RPG stats, and interactive zen auras.
+        </p>
+        
+        <!-- Big CTA Button -->
+        <div class="pt-8 w-full max-w-sm">
+          <button onclick="document.getElementById('landing-page-overlay').classList.add('hidden'); unlockAudio(); setTimeout(startVoicedIntro, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
+            Enter Sanctuary
+          </button>
+          <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Free Forever. No Ads. Absolute Privacy.</p>
+        </div>
+      </div>
+      
+      <!-- Footer & Legal -->
+      <div class="w-full text-center border-t border-white/10 pt-6 animate-stagger-3">
+        <div class="flex justify-center gap-6 text-xs text-slate-400 font-bold">
+          <button onclick="document.getElementById('modal-privacy').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
+          <button onclick="document.getElementById('modal-tos').classList.remove('hidden')" class="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
+        </div>
+        <p class="text-[10px] text-slate-600 mt-4">&copy; 2026 Thoughtica Studio. All Rights Reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGAL MODALS -->
+  <div id="modal-privacy" class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+    <div class="premium-glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 rounded-3xl relative text-left space-y-4">
+      <button onclick="this.closest('#modal-privacy').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
+      <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Privacy Policy</h2>
+      <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
+        <p><strong>1. Absolute Local Privacy:</strong> Thoughtica is built on local-first principles. Your goals, journal entries, and RPG stats are saved entirely on your device's local storage.</p>
+        <p><strong>2. No Tracking:</strong> We do not use third-party analytics trackers, cookies, or doomscrolling engagement algorithms.</p>
+        <p><strong>3. AI Processing:</strong> All interactions with your AI companion are processed instantly and safely. We do not store your chat logs on external databases.</p>
+        <p>Your sanctuary is your own.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-tos" class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+    <div class="premium-glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 rounded-3xl relative text-left space-y-4">
+      <button onclick="this.closest('#modal-tos').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
+      <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Terms of Service</h2>
+      <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
+        <p><strong>1. Acceptance:</strong> By entering the Sanctuary, you agree to use Thoughtica for personal mindfulness and self-improvement.</p>
+        <p><strong>2. Health Disclaimer:</strong> Thoughtica is a gamified tool, not a replacement for professional medical or mental health advice.</p>
+        <p><strong>3. Modification:</strong> We reserve the right to update or modify the service. Your continued use implies acceptance.</p>
+      </div>
+    </div>
   </div>
   <script>
     window.audioUnlocked = false;
@@ -325,8 +387,8 @@
 
   <!-- DYNAMIC ATMOSPHERIC AURA GLOWS -->
   <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-    <div id="aura-glow-1" class="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl ambient-glow bg-indigo-600/15"></div>
-    <div id="aura-glow-2" class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full blur-3xl ambient-glow bg-purple-600/15"></div>
+    <div id="aura-glow-1" class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-indigo-600/25 mix-blend-screen"></div>
+    <div id="aura-glow-2" class="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-purple-600/25 mix-blend-screen"></div>
   </div>
 
   <!-- FLOATING XP TOAST CONTAINER -->
@@ -2709,7 +2771,7 @@
         }
 
         if (!S.introSeen) {
-          const overlay = document.getElementById('tap-to-begin-overlay');
+          const overlay = document.getElementById('landing-page-overlay');
           if (overlay) {
             overlay.classList.remove('hidden');
           } else {
