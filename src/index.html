@@ -2335,9 +2335,9 @@
     function saveAmbitionStep() {
       const val = document.getElementById('intro-ambition-input').value.trim() || 'Cultivate mental clarity & inner strength';
       S.goal = val;
-      document.getElementById('custom-quantum-goal').value = val;
-      document.getElementById('custom-goal-val').textContent = val;
-      document.getElementById('dashboard-story-title').textContent = `${val} — Step into Quiet Discovery`;
+      if (document.getElementById('custom-quantum-goal')) document.getElementById('custom-quantum-goal').value = val;
+      if (document.getElementById('custom-goal-val')) document.getElementById('custom-goal-val').textContent = val;
+      if (document.getElementById('dashboard-story-title')) document.getElementById('dashboard-story-title').textContent = `${val} - Step into Quiet Discovery`;
       showXPToast(20, `Journey Goal Locked: ${val}`, 1.0, false);
       save();
 
@@ -2702,9 +2702,9 @@
     function updateSettingsGoal(val) {
       if (!val.trim()) return;
       S.goal = val.trim();
-      document.getElementById('custom-quantum-goal').value = val.trim();
-      document.getElementById('custom-goal-val').textContent = val.trim();
-      document.getElementById('dashboard-story-title').textContent = `${val.trim()} — Step into Quiet Discovery`;
+      if (document.getElementById('custom-quantum-goal')) document.getElementById('custom-quantum-goal').value = val.trim();
+      if (document.getElementById('custom-goal-val')) document.getElementById('custom-goal-val').textContent = val.trim();
+      if (document.getElementById('dashboard-story-title')) document.getElementById('dashboard-story-title').textContent = `${val.trim()} — Step into Quiet Discovery`;
       showXPToast(0, `Life Ambition Updated! 🎯`, 1.0, false);
       save();
     }
@@ -3032,7 +3032,7 @@
         }
         const rain = audioCtx.createBufferSource(); rain.buffer = b; rain.loop = true;
         const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 650;
-        rain.connect(filter); filter.connect(masterGain);
+        rain.connect(filter); rain.connect(masterGain);
         rain.start();
         activeNodesList.push(rain);
 
@@ -3075,7 +3075,7 @@
         }
         const rain = audioCtx.createBufferSource(); rain.buffer = b; rain.loop = true;
         const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 900;
-        rain.connect(filter); filter.connect(masterGain);
+        rain.connect(filter); rain.connect(masterGain);
         rain.start();
         activeNodesList.push(rain);
 
@@ -3939,8 +3939,8 @@
     }
 
     function synthesizeCustomQuantum() {
-      const customGoal = document.getElementById('custom-quantum-goal').value.trim();
-      const customIdentity = document.getElementById('custom-quantum-identity').value.trim();
+      const customGoal = (document.getElementById('custom-quantum-goal') || {value: ''}).value.trim();
+      const customIdentity = (document.getElementById('custom-quantum-identity') || {value: ''}).value.trim();
 
       if (customGoal) {
         S.goal = customGoal;
