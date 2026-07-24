@@ -366,7 +366,7 @@
 <body class="min-h-screen min-h-[100dvh] w-full max-w-full overflow-x-hidden text-slate-100 flex flex-col pt-safe pb-safe">
 
   <!-- ULTRA-PREMIUM CONVERSION LANDING PAGE -->
-  <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto">
+  <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto" style="overscroll-behavior: contain;">
     <!-- Dreamy Animated Background -->
     <div class="fixed inset-0 z-0 pointer-events-none">
       <div class="absolute inset-0 bg-gradient-to-br from-[#0a0514] via-[#020306] to-[#0d071d]"></div>
@@ -733,7 +733,7 @@
   <div id="xp-toast-container" class="fixed top-20 right-6 z-[200] space-y-2 pointer-events-none"></div>
 
   <!-- AAA AWARD-WINNING CINEMATIC PROLOGUE OVERLAY -->
-  <div id="cinematic-prologue-cutscene" class="fixed inset-0 bg-[#020306] z-[600] flex flex-col justify-between p-6 sm:p-12 overflow-hidden hidden transition-all duration-[1500ms] opacity-0">
+  <div id="cinematic-prologue-cutscene" class="fixed inset-0 bg-[#020306] z-[600] flex flex-col justify-between p-6 sm:p-12 overflow-hidden hidden transition-all duration-[1500ms] opacity-0" style="overscroll-behavior: contain;">
     
     <!-- 60 FPS CELESTIAL GLITTER SPHERE CANVAS & PARALLAX BACKGROUND -->
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -1107,7 +1107,8 @@
 
   <!-- MAIN VIEWPORT CONTAINER -->
   <div class="relative z-10 flex flex-col h-full w-full max-w-7xl mx-auto px-4 md:px-6 py-4 overflow-hidden">
-    
+  <!-- MAIN SANCTUARY APP ROOT WRAPPER (HIDDEN UNTIL SANCTUARY IS ENTERED) -->
+  <div id="app-sanctuary-root" class="hidden min-h-screen min-h-[100dvh] w-full flex flex-col flex-1">
     <!-- ATMOSPHERIC HEADER WITH WEBSITE LANDING -->
     <header class="flex justify-between items-center pb-4 border-b border-white/5 mb-3">
       <div class="flex items-center gap-3">
@@ -1956,6 +1957,7 @@
         </button>
       </div>
     </nav>
+  </div>
 
     <!-- SETTINGS MODAL WITH LANGUAGE, COMPANION & GOAL CUSTOMIZATION -->
     <div id="settings-modal" class="fixed inset-0 bg-[#090A0F]/90 backdrop-blur-md flex items-center justify-center z-[300] p-4 hidden">
@@ -3145,6 +3147,30 @@
           if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
         }
         
+    function showDashboard() {
+      const root = document.getElementById('app-sanctuary-root');
+      if (root) root.classList.remove('hidden');
+      const overlay = document.getElementById('landing-page-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      const prologue = document.getElementById('cinematic-prologue-cutscene');
+      if (prologue) prologue.classList.add('hidden');
+      switchScreen('dashboard');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function initApp() {
+      try {
+        load();
+        if (!S.level) S.level = 1;
+        if (!S.xp) S.xp = 0;
+        if (!S.companion) S.companion = { name: 'Kora', type: 'oracle', trait: 'Perceptive' };
+        if (!S.skills) S.skills = { INT: 5, EMP: 5, ACT: 5, ZEN: 5, WIS: 5, VIT: 5 };
+        if (!S.unlockedSkills) S.unlockedSkills = [];
+        if (!S.specialization) S.specialization = 'Sovereign Architect';
+        if (!S.language) S.language = 'en-US';
+        if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
+        if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
+
         const today = new Date().toISOString().slice(0, 10);
         if (S.xpTracker.date !== today) {
           S.xpTracker = { date: today, actions: {} };
@@ -3154,7 +3180,6 @@
         const overlay = document.getElementById('landing-page-overlay');
         if (overlay) {
           if (S.introSeen && S.tourComplete && window.location.search.includes('payment_success')) {
-            overlay.classList.add('hidden');
             showDashboard();
           } else {
             overlay.classList.remove('hidden');
