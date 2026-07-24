@@ -60,6 +60,7 @@ module.exports = async (req, res) => {
         if (assignedTier === 'unknown' && session.amount_total === 299) assignedTier = 'kindred';
         if (assignedTier === 'unknown' && session.amount_total === 999) assignedTier = 'soulbound';
         if (assignedTier === 'unknown' && session.amount_total === 1999) assignedTier = 'transcendence';
+        if (assignedTier === 'unknown' && session.amount_total === 199) assignedTier = 'cosmetic';
 
         if (mode === 'subscription') {
           await userRef.set({
@@ -67,6 +68,11 @@ module.exports = async (req, res) => {
             tier: assignedTier,
             stripeSubscriptionId: session.subscription,
             premiumSince: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        } else if (mode === 'payment') {
+          // It's a cosmetic one-time purchase
+          await userRef.set({
+            unlockedCosmetics: admin.firestore.FieldValue.arrayUnion(session.metadata?.tier || 'unknown_cosmetic')
           }, { merge: true });
         }
       } catch (e) {

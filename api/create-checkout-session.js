@@ -74,6 +74,28 @@ module.exports = async (req, res) => {
         },
       ];
       sessionConfig.mode = 'subscription';
+    } else if (tier === 'theme_midnight' || tier === 'theme_zen' || tier === 'aura_rain') {
+      // Cosmetics ($1.99 one-time)
+      let name = 'Cosmetic Unlock';
+      if (tier === 'theme_midnight') name = 'Theme: Midnight Void';
+      if (tier === 'theme_zen') name = 'Theme: Zen Garden';
+      if (tier === 'aura_rain') name = 'Aura: Mountain Rain';
+
+      sessionConfig.line_items = [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `Thoughtica - ${name}`,
+              description: 'Purely cosmetic upgrade for your sanctuary.',
+              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+            },
+            unit_amount: 199, // $1.99
+          },
+          quantity: 1,
+        },
+      ];
+      sessionConfig.mode = 'payment';
     } else {
       return res.status(400).json({ error: 'Invalid tier specified' });
     }
