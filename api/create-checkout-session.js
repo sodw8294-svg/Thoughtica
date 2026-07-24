@@ -14,8 +14,8 @@ module.exports = async (req, res) => {
   try {
     let sessionConfig = {
       payment_method_types: ['card'],
-      success_url: `${process.env.PUBLIC_URL || 'https://thoughtica.vercel.app'}/?payment_success=true&tier=${tier}`,
-      cancel_url: `${process.env.PUBLIC_URL || 'https://thoughtica.vercel.app'}/?payment_cancelled=true`,
+      success_url: `${process.env.PUBLIC_URL || 'https://thoughtica.io'}/?payment_success=true&tier=${tier}`,
+      cancel_url: `${process.env.PUBLIC_URL || 'https://thoughtica.io'}/?payment_cancelled=true`,
       client_reference_id: uid, // Links the payment to the Firebase Auth User ID
       metadata: { tier: tier }
     };
@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
             product_data: {
               name: 'Thoughtica Life RPG - Kindred',
               description: 'Increased daily interactions and expanded memory.',
-              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+              images: ['https://thoughtica.io/logo-book.jpg'],
             },
             unit_amount: 299, // $2.99
           },
