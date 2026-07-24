@@ -657,6 +657,11 @@
     auth.onAuthStateChanged((user) => {
       if (user) {
         S.uid = user.uid;
+        if (window.pendingCheckoutTier) {
+          const pending = window.pendingCheckoutTier;
+          window.pendingCheckoutTier = null;
+          startCheckout(pending);
+        }
         // Listen for premium status changes
         db.collection('users').doc(user.uid).onSnapshot((doc) => {
           if (doc.exists && doc.data().isPremium) {
@@ -3055,12 +3060,30 @@
     };
 
     async function startCheckout(tier) {
+      // Zero-friction checkout: if user is not authenticated, seamlessly sign in anonymously
+      if (!S.uid && typeof firebase !== 'undefined' && firebase.auth) {
+        try {
+          const userCred = await firebase.auth().signInAnonymously();
+          S.uid = userCred.user.uid;
+          save();
+        } catch (e) {
+          console.warn('Anonymous auth fallback:', e);
+          window.pendingCheckoutTier = tier;
+          const modalPrem = document.getElementById('modal-premium');
+          const modalAuth = document.getElementById('modal-auth');
+          if (modalPrem) modalPrem.classList.add('hidden');
+          if (modalAuth) modalAuth.classList.remove('hidden');
+          return;
+        }
+      }
+
       if (!S.uid) {
-        window.pendingCheckoutTier = tier;
-        document.getElementById('modal-premium').classList.add('hidden');
-        document.getElementById('modal-auth').classList.remove('hidden');
+        showToast('Authentication Required', 'Please sign in to complete checkout.', 'shield-alert');
         return;
       }
+
+      showToast('Connecting to Payment Gateway', 'Redirecting to secure Stripe checkout...', 'credit-card');
+
       try {
         const res = await fetch('/api/create-checkout-session', {
           method: 'POST',
@@ -3071,11 +3094,11 @@
         if (data.url) {
           window.location.href = data.url;
         } else {
-          alert('Checkout failed to initialize. Please try again later.');
+          showToast('Checkout Failed', data.error || 'Failed to initialize payment.', 'alert-triangle');
         }
       } catch (err) {
         console.error('Checkout error:', err);
-        alert('Unable to connect to payment processor.');
+        showToast('Connection Error', 'Unable to reach payment gateway.', 'wifi-off');
       }
     }
 
