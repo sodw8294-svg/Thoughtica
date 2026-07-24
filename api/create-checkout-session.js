@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'Thoughtica Life RPG - Kindred',
+              name: 'thoughtica.io - Kindred',
               description: 'Increased daily interactions and expanded memory.',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
@@ -46,9 +46,9 @@ module.exports = async (req, res) => {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'Thoughtica Life RPG - Soulbound',
+              name: 'thoughtica.io - Soulbound',
               description: 'Voice conversations, long-term memory, and companion evolution.',
-              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+              images: ['https://thoughtica.io/logo-book.jpg'],
             },
             unit_amount: 999, // $9.99
           },
@@ -64,9 +64,9 @@ module.exports = async (req, res) => {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'Thoughtica Life RPG - Transcendence',
+              name: 'thoughtica.io - Transcendence',
               description: 'Multiple companions, max memory, and exclusive options.',
-              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+              images: ['https://thoughtica.io/logo-book.jpg'],
             },
             unit_amount: 1999, // $19.99
           },
@@ -88,7 +88,7 @@ module.exports = async (req, res) => {
             product_data: {
               name: `Thoughtica - ${name}`,
               description: 'Purely cosmetic upgrade for your sanctuary.',
-              images: ['https://thoughtica.vercel.app/logo-book.jpg'],
+              images: ['https://thoughtica.io/logo-book.jpg'],
             },
             unit_amount: 199, // $1.99
           },

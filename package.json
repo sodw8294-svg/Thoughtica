@@ -1,7 +1,7 @@
 {
-  "name": "thoughtica-life-rpg",
+  "name": "thoughtica-io",
   "version": "1.0.0",
-  "description": "Thoughtica - The Game of Becoming Yourself",
+  "description": "thoughtica.io - Sanctuary of Discovery & Mindful RPG",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
