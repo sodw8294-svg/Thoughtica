@@ -672,6 +672,32 @@
         });
       }
     });
+
+    // Payment Return Handler
+    function checkPaymentReturn() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment_success') === 'true') {
+          const tier = (urlParams.get('tier') || 'Premium').toUpperCase();
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+          }
+          if (typeof showToast === 'function') {
+            showToast('Welcome to ' + tier + '!', 'Your sanctuary features have been unlocked.', 'sparkles');
+          }
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (urlParams.get('payment_cancelled') === 'true') {
+          if (typeof showToast === 'function') {
+            showToast('Checkout Cancelled', 'No charges were made.', 'info');
+          }
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (e) {
+        console.warn('Payment check error:', e);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkPaymentReturn);
+    checkPaymentReturn();
     window.audioUnlocked = false;
     function unlockAudio() {
       if (window.audioUnlocked) return;
