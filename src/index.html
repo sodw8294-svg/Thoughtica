@@ -47,6 +47,29 @@
     }
 
     /* =============================================
+       IPHONE DYNAMIC VIEWPORT & SAFE AREA INSETS
+       ============================================= */
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+    html, body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    .pt-safe { padding-top: var(--sat) !important; }
+    .pb-safe { padding-bottom: var(--sab) !important; }
+    .pl-safe { padding-left: var(--sal) !important; }
+    .pr-safe { padding-right: var(--sar) !important; }
+    .mt-safe { margin-top: var(--sat) !important; }
+    .mb-safe { margin-bottom: var(--sab) !important; }
+
+    /* =============================================
        GLOBAL FORM ELEMENT FIX — dark mode ready
        ============================================= */
     input, textarea, select {
@@ -339,7 +362,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="h-full overflow-hidden text-slate-100 flex flex-col pt-safe pb-safe">
+<body class="min-h-screen min-h-[100dvh] w-full max-w-full overflow-x-hidden text-slate-100 flex flex-col pt-safe pb-safe">
 
   <!-- ULTRA-PREMIUM CONVERSION LANDING PAGE -->
   <div id="landing-page-overlay" class="fixed inset-0 z-[9999] bg-[#020306] overflow-y-auto hidden">
