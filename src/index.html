@@ -546,7 +546,7 @@
               <h4 class="text-white font-bold font-heading mb-1 text-lg">Midnight Void</h4>
               <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep OLED blacks and star-like glows for introspective journaling.</p>
               <div class="flex gap-2">
-                <button onclick="alert('Midnight Void Preview: Coming Soon!')" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Preview</button>
+                <button onclick="document.body.style.backgroundColor='#000000'; showToast('Preview Active', 'Midnight Void theme applied for 5s', 'palette'); setTimeout(() => document.body.style.backgroundColor='#090A0F', 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Preview</button>
                 <button onclick="startCheckout('theme_midnight')" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-lg shadow-purple-500/25">$1.99</button>
               </div>
             </div>
@@ -564,7 +564,7 @@
               <h4 class="text-white font-bold font-heading mb-1 text-lg">Zen Garden</h4>
               <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Calming greens and bamboo accents to promote deep focus.</p>
               <div class="flex gap-2">
-                <button onclick="alert('Zen Garden Preview: Coming Soon!')" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Preview</button>
+                <button onclick="document.body.style.backgroundColor='#064e3b'; showToast('Preview Active', 'Zen Garden theme applied for 5s', 'palette'); setTimeout(() => document.body.style.backgroundColor='#090A0F', 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Preview</button>
                 <button onclick="startCheckout('theme_zen')" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-lg shadow-emerald-500/25">$1.99</button>
               </div>
             </div>
@@ -582,7 +582,7 @@
               <h4 class="text-white font-bold font-heading mb-1 text-lg">Mountain Rain</h4>
               <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">A cleansing, restorative background soundscape for unwinding.</p>
               <div class="flex gap-2">
-                <button onclick="alert('Playing Preview: Mountain Rain...')" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Listen</button>
+                <button onclick="showToast('Playing Preview', 'Mountain Rain audio playing...', 'music');" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/5 cursor-pointer">Listen</button>
                 <button onclick="startCheckout('aura_rain')" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-lg shadow-cyan-500/25">$1.99</button>
               </div>
             </div>
