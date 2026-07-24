@@ -4753,7 +4753,7 @@
       ]);
     }
 
-    // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (BYOK)
+    // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (COPILOT / GEMINI READY)
     async function fetchRealTimeLLMResponse(userText) {
       updateQuantumCognitiveMatrix(userText);
       const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
@@ -4761,15 +4761,37 @@
       const goal = S.goal || 'your personal ambition';
       const level = S.level || 1;
 
-      if (!S.aiApiKey || S.aiApiKey.trim() === '') {
-        console.log("No API Key detected. Using offline dynamic neural synthesizer.");
-        return generateCompanionResponse(userText);
-      }
-
       const pastMessages = (S.chatHistory || []).slice(-8).map(m => ({
         role: m.s === 'user' ? 'user' : 'assistant',
         content: m.t
       }));
+
+      // 1. First, attempt backend Serverless LLM Endpoint (/api/chat)
+      try {
+        const serverRes = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: pastMessages,
+            userText,
+            companionName: cName,
+            userName: uName,
+            userGoal: goal,
+            userLevel: level
+          })
+        });
+        const serverData = await serverRes.json();
+        if (serverData && serverData.reply && serverData.reply.trim().length > 2) {
+          console.log("🔮 Backend Server LLM Response Received!");
+          return serverData.reply.trim();
+        }
+      } catch (serverErr) {
+        console.warn("Backend /api/chat unavailable or unconfigured, trying client BYOK key fallback...", serverErr);
+      }
+
+      if (!S.aiApiKey || S.aiApiKey.trim() === '') {
+        return generateCompanionResponse(userText);
+      }
       
       const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant (like Copilot / ChatGPT) in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
 Directives:
