@@ -317,7 +317,7 @@
         
         <!-- Big CTA Button -->
         <div class="pt-8 w-full max-w-sm">
-          <button onclick="document.getElementById('landing-page-overlay').classList.add('hidden'); unlockAudio(); setTimeout(startVoicedIntro, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
+          <button onclick="document.getElementById('landing-page-overlay').classList.add('hidden'); unlockAudio(); setTimeout(() => { if (!S.introSeen) { startVoicedIntro(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); } }, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
             Enter Sanctuary
           </button>
           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Free Forever. No Ads. Absolute Privacy.</p>
@@ -2770,15 +2770,17 @@
           S.ritualCompletedToday = false;
         }
 
-        if (!S.introSeen) {
-          const overlay = document.getElementById('landing-page-overlay');
-          if (overlay) {
-            overlay.classList.remove('hidden');
-          } else {
+        const overlay = document.getElementById('landing-page-overlay');
+        if (overlay) {
+          overlay.classList.remove('hidden');
+        } else {
+          if (!S.introSeen) {
             setTimeout(startVoicedIntro, 600);
+          } else if (!S.tourComplete) {
+            setTimeout(startInteractiveTour, 800);
+          } else {
+            showDashboard();
           }
-        } else if (!S.tourComplete) {
-          setTimeout(startInteractiveTour, 800);
         }
       } catch (e) {}
     }
