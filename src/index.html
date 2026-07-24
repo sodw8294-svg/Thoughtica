@@ -240,6 +240,41 @@
       overflow: hidden;
       border: none;
     }
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: var(--grad-glow);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.4s ease;
+      opacity: 0.7;
+    }
+    .glass-card > * { position: relative; z-index: 1; }
+    .glass-card:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 16px 32px -10px rgba(168, 85, 247, 0.25);
+    }
+    .glass-card:hover::before {
+      opacity: 1;
+    }
     .premium-button::after {
       content: '';
       position: absolute;
