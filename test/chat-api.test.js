@@ -171,7 +171,7 @@ test('preserves anchor and recent messages when trimming long history', async ()
   assert.equal(contents[contents.length - 1], 'continue');
 });
 
-test('userText appears exactly once at the end of the provider payload and not duplicated in history', async () => {
+test('userText appears exactly once at end of provider payload', async () => {
   clearProviderEnv();
   process.env.OPENAI_API_KEY = 'test-openai-key';
 
