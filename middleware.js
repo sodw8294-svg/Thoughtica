@@ -8,7 +8,7 @@ const ratelimit = new Ratelimit({
 });
 
 export default async function middleware(request) {
-  const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
 
   if (!success) {
