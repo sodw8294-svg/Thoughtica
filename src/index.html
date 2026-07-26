@@ -145,6 +145,37 @@
       justify-content: space-around;
     }
     .nav-scroll::-webkit-scrollbar { display: none; }
+
+    /* =============================================
+       MODERN NAV ITEM ACTIVE STATE
+       ============================================= */
+    .nav-item {
+      position: relative;
+      border-radius: 12px;
+      min-width: 44px;
+    }
+    .nav-item.active {
+      background: rgba(99, 102, 241, 0.12);
+    }
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* =============================================
+       FOCUS RING ACCESSIBLE IMPROVEMENTS
+       ============================================= */
+    button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid rgba(168, 85, 247, 0.6) !important;
+      outline-offset: 2px !important;
+    }
     @keyframes pulse-glow {
       0%, 100% { opacity: 0.18; transform: scale(1); }
       50% { opacity: 0.35; transform: scale(1.18); }
@@ -1366,7 +1397,7 @@
             </div>
 
             <button id="btn-complete-ritual" class="w-full py-3 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 border border-indigo-500/20 hover:border-indigo-500/30 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer">
-              Anchor Today's Guidepost (+30 XP)
+              <span data-i18n="btn_anchor_guidepost">Anchor Today's Guidepost (+30 XP)</span>
             </button>
           </div>
 
@@ -1451,7 +1482,7 @@
           <div class="space-y-2">
             <textarea id="journal-input" rows="3" placeholder="Write today's quiet reflection, wins, or gratitude (+25 XP)..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50"></textarea>
             <button onclick="saveDailyJournalEntry()" class="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-lg cursor-pointer">
-              Save Reflection Entry & Claim +25 XP ✨
+              <span data-i18n="btn_save_reflection">Save Reflection Entry & Claim +25 XP ✨</span>
             </button>
           </div>
 
@@ -1616,7 +1647,7 @@
               </div>
             </div>
             <button id="btn-toggle-breathing" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/20 cursor-pointer">
-              Begin Breathing Circle (+50 XP)
+              <span data-i18n="btn_begin_breathing">Begin Breathing Circle (+50 XP)</span>
             </button>
           </div>
 
@@ -1992,53 +2023,67 @@
       <div class="nav-scroll px-2">
         <button onclick="switchScreen('dashboard')" class="nav-item active flex flex-col items-center gap-0.5 text-indigo-400 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="dashboard">
           <i data-lucide="compass" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Sanctuary</span>
+          <span data-i18n="nav_sanctuary" class="text-[7.5px] font-bold">Sanctuary</span>
         </button>
         <button onclick="switchScreen('self')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="self">
           <i data-lucide="user-check" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Inner Self</span>
+          <span data-i18n="nav_self" class="text-[7.5px] font-bold">Inner Self</span>
         </button>
         <button onclick="switchScreen('navigation')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="navigation">
           <i data-lucide="map-pin" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Wayfinder</span>
+          <span data-i18n="nav_wayfinder" class="text-[7.5px] font-bold">Wayfinder</span>
         </button>
         <button onclick="switchScreen('skills')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="skills">
           <i data-lucide="git-branch" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Skills</span>
+          <span data-i18n="nav_skills" class="text-[7.5px] font-bold">Skills</span>
         </button>
         <button onclick="switchScreen('sanctuary')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="sanctuary">
           <i data-lucide="trees" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Nature</span>
+          <span data-i18n="nav_nature" class="text-[7.5px] font-bold">Nature</span>
         </button>
         <button onclick="switchScreen('mentor')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="mentor">
           <i data-lucide="bot" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Companion</span>
+          <span data-i18n="nav_companion" class="text-[7.5px] font-bold">Companion</span>
         </button>
         <button onclick="switchScreen('quests')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="quests">
           <i data-lucide="trophy" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Badges</span>
+          <span data-i18n="nav_badges" class="text-[7.5px] font-bold">Badges</span>
         </button>
         <button onclick="switchScreen('detox')" class="nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1" data-screen="detox">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
-          <span class="text-[7.5px] font-bold">Detox</span>
+          <span data-i18n="nav_detox" class="text-[7.5px] font-bold">Detox</span>
         </button>
       </div>
     </nav>
   </div>
 
     <!-- SETTINGS MODAL WITH LANGUAGE, COMPANION & GOAL CUSTOMIZATION -->
-    <div id="settings-modal" class="fixed inset-0 bg-[#090A0F]/90 backdrop-blur-md flex items-center justify-center z-[300] p-4 hidden">
-      <div class="bg-slate-950/80 border border-white/10 rounded-2xl w-full max-w-md p-6 relative overflow-hidden shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto scrollbar-none">
-        <button id="btn-close-settings" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl cursor-pointer">×</button>
-        <div class="text-center">
-          <h2 class="text-xl font-bold text-white">Sanctuary Options & Customization</h2>
-          <p class="text-xs text-slate-400 mt-1">Change language, companion name, or goals anytime!</p>
+    <div id="settings-modal" class="fixed inset-0 bg-[#090A0F]/95 backdrop-blur-xl flex items-end sm:items-center justify-center z-[300] p-0 sm:p-4 hidden">
+      <div class="bg-gradient-to-b from-slate-900/95 to-[#090A0F]/98 border border-white/[0.08] rounded-t-3xl sm:rounded-2xl w-full max-w-md relative overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)] sm:shadow-2xl max-h-[92dvh] overflow-y-auto scrollbar-none">
+        <!-- Handle bar (mobile) -->
+        <div class="flex justify-center pt-3 pb-1 sm:hidden" aria-hidden="true">
+          <div class="w-10 h-1 rounded-full bg-white/20"></div>
         </div>
 
-        <div class="space-y-3 pt-2 text-left">
-          <div>
-            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Sanctuary Speech & Interface Language</label>
-            <select id="settings-lang-select" onchange="updateSettingsLanguage(this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none">
+        <!-- Header -->
+        <div class="relative px-6 pt-4 pb-5 border-b border-white/[0.06]">
+          <button id="btn-close-settings" aria-label="Close settings" class="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/20 flex items-center justify-center">
+              <i data-lucide="settings-2" class="w-4 h-4 text-purple-300"></i>
+            </div>
+            <div>
+              <h2 data-i18n="settings_title" class="text-base font-bold text-white leading-tight">Sanctuary Settings</h2>
+              <p data-i18n="settings_subtitle" class="text-[11px] text-slate-500 mt-0.5">Customize language, companion name, or goals anytime!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+          <!-- Language -->
+          <div class="space-y-1.5">
+            <label data-i18n="settings_lang_label" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">Speech & Interface Language</label>
+            <select id="settings-lang-select" onchange="updateSettingsLanguage(this.value)" class="w-full bg-white/[0.04] border border-white/[0.08] hover:border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500/50 transition-all">
               <option value="en-US">🇺🇸 English (US)</option>
               <option value="es-ES">🇪🇸 Español</option>
               <option value="fr-FR">🇫🇷 Français</option>
@@ -2050,20 +2095,22 @@
             </select>
           </div>
 
-          <div>
-            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">AI Companion Name</label>
-            <input type="text" id="settings-companion-input" onchange="updateSettingsCompanionName(this.value)" placeholder="e.g. Kora" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none">
+          <!-- Companion Name -->
+          <div class="space-y-1.5">
+            <label data-i18n="settings_companion_label" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">AI Companion Name</label>
+            <input type="text" id="settings-companion-input" onchange="updateSettingsCompanionName(this.value)" placeholder="e.g. Kora" class="w-full bg-white/[0.04] border border-white/[0.08] hover:border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500/50 transition-all">
           </div>
 
-          <div>
-            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Personal Life Ambition / Goal</label>
-            <input type="text" id="settings-goal-input" onchange="updateSettingsGoal(this.value)" placeholder="e.g. Cultivate mental clarity & inner strength..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none">
+          <!-- Goal -->
+          <div class="space-y-1.5">
+            <label data-i18n="settings_goal_label" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">Life Ambition / Goal</label>
+            <input type="text" id="settings-goal-input" onchange="updateSettingsGoal(this.value)" placeholder="e.g. Cultivate mental clarity & inner strength..." class="w-full bg-white/[0.04] border border-white/[0.08] hover:border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-500/50 transition-all">
           </div>
 
-
-          <div>
-            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Daily Sanctuary Local Reminder</label>
-            <select id="settings-reminder-select" onchange="setSanctuaryReminder(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none">
+          <!-- Reminder -->
+          <div class="space-y-1.5">
+            <label data-i18n="settings_reminder_label" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">Daily Sanctuary Reminder</label>
+            <select id="settings-reminder-select" onchange="setSanctuaryReminder(this.value)" class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none transition-all">
               <option value="off">Off (Silent Sanctuary)</option>
               <option value="08:00">08:00 AM (Morning Anchor)</option>
               <option value="12:00">12:00 PM (Midday Pause)</option>
@@ -2071,32 +2118,32 @@
             </select>
           </div>
 
-          <div>
-            <label class="text-[10px] text-amber-400 font-bold uppercase block mb-1">Developer Subscription Override</label>
-            <select id="settings-tier-select" onchange="changeDeveloperTier(this.value)" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl px-3 py-2 text-xs text-amber-300 focus:outline-none">
+          <!-- Developer Override -->
+          <div class="space-y-1.5 pt-1 border-t border-white/[0.06]">
+            <label class="text-[10px] text-amber-500/80 font-bold uppercase tracking-widest block">Developer Override</label>
+            <select id="settings-tier-select" onchange="changeDeveloperTier(this.value)" class="w-full bg-white/[0.04] border border-amber-500/20 rounded-xl px-3.5 py-2.5 text-sm text-amber-300 focus:outline-none transition-all">
               <option value="free">Free Tier</option>
               <option value="plus">Plus Tier ($4.99/mo)</option>
               <option value="infinite">Infinite Tier ($9.99/mo)</option>
             </select>
           </div>
-
-
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="openAnalyticsModal()" class="py-2.5 bg-indigo-600/30 text-indigo-200 border border-indigo-500/40 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5">
+        <!-- Quick actions -->
+        <div class="px-6 pb-4 grid grid-cols-2 gap-2.5">
+          <button onclick="openAnalyticsModal()" class="py-2.5 bg-indigo-600/15 text-indigo-300 border border-indigo-500/20 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-indigo-600/25 transition-all">
             <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
-            <span>📊 Weekly Analytics</span>
+            <span>Weekly Analytics</span>
           </button>
-          <button onclick="openShareCardModal()" class="py-2.5 bg-amber-500/30 text-amber-200 border border-amber-500/40 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5">
+          <button onclick="openShareCardModal()" class="py-2.5 bg-amber-500/15 text-amber-300 border border-amber-500/20 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-amber-500/25 transition-all">
             <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-            <span>📸 Share Card</span>
+            <span>Share Card</span>
           </button>
         </div>
 
         <!-- SANCTUARY EXPERIENCES & ONBOARDING -->
-        <div class="space-y-2 pt-2 border-t border-white/10">
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-400 block">Sanctuary Experiences & Cutscenes</span>
+        <div class="px-6 pb-5 space-y-2 border-t border-white/[0.06] pt-4">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-400/80 block">Sanctuary Experiences & Cutscenes</span>
           <button onclick="startPrologueCutscene(); closeSettings();" class="w-full py-2.5 px-3 bg-gradient-to-r from-amber-500/20 to-purple-600/20 hover:from-amber-500/30 hover:to-purple-600/30 text-amber-200 border border-amber-500/30 rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center gap-2.5">
             <span class="text-base">🎬</span>
             <div class="text-left flex-1">
@@ -2248,6 +2295,7 @@
       specialization: 'Sovereign Architect',
       chatHistory: [],
       ritualCompletedToday: false,
+      lastRitualDate: null,
       plan: 'tier1',
       voiceEnabled: true,
       moodToday: '',
@@ -2673,6 +2721,8 @@
     function selectLanguage(langCode, label) {
       S.language = langCode;
       S.languageLabel = label;
+      cachedSanctuaryVoice = null; // reset voice cache for new language
+      applyTranslations();
       showXPToast(0, `Language Set: ${label} 🌐`, 1.0, false);
       save();
 
@@ -3059,9 +3109,10 @@
     // SETTINGS EDITABILITY FUNCTIONS (CHANGE ANYTIME)
     function updateSettingsLanguage(val) {
       S.language = val;
-      const opt = document.querySelector(`#settings-lang-select option[value="${val}"]`);
-      if (opt) S.languageLabel = opt.textContent;
-      showXPToast(0, `Language Changed to ${S.languageLabel} 🌐`, 1.0, false);
+      S.languageLabel = LANG_LABELS[val] || val;
+      cachedSanctuaryVoice = null; // reset voice cache so new language voice is selected
+      applyTranslations();
+      showXPToast(0, `${t('lang_changed')} ${S.languageLabel} 🌐`, 1.0, false);
       save();
     }
 
@@ -3202,6 +3253,188 @@
 
     function save() { try { localStorage.setItem('kora_state', JSON.stringify(S)); } catch (e) {} }
 
+    /** Maps language codes to their human-readable display labels. */
+    const LANG_LABELS = {'en-US':'English (US)','es-ES':'Español','fr-FR':'Français','de-DE':'Deutsch','ja-JP':'日本語','pt-BR':'Português','it-IT':'Italiano','en-GB':'English (UK)'};
+
+    // ════════════════════════════════════════════
+    //   FULL I18N TRANSLATION ENGINE
+    // ════════════════════════════════════════════
+    const TRANSLATIONS = {
+      'en-US': {
+        nav_sanctuary:'Sanctuary', nav_self:'Inner Self', nav_wayfinder:'Wayfinder',
+        nav_skills:'Skills', nav_nature:'Nature', nav_companion:'Companion',
+        nav_badges:'Badges', nav_detox:'Detox',
+        settings_title:'Sanctuary Settings',
+        settings_subtitle:'Customize language, companion name, or goals anytime!',
+        settings_lang_label:'Speech & Interface Language',
+        settings_companion_label:'AI Companion Name',
+        settings_goal_label:'Life Ambition / Goal',
+        settings_reminder_label:'Daily Sanctuary Reminder',
+        btn_anchor_guidepost:"Anchor Today's Guidepost (+30 XP)",
+        btn_save_reflection:'Save Reflection Entry & Claim +25 XP ✨',
+        btn_begin_breathing:'Begin Breathing Circle (+50 XP)',
+        streak_day:'Day', streak_days:'Days',
+        btn_anchor_complete:"Today's Guidepost Anchored ✨",
+        lang_changed:'Language changed to',
+      },
+      'es-ES': {
+        nav_sanctuary:'Santuario', nav_self:'Ser Interior', nav_wayfinder:'Guía',
+        nav_skills:'Habilidades', nav_nature:'Naturaleza', nav_companion:'Compañero',
+        nav_badges:'Insignias', nav_detox:'Desintox',
+        settings_title:'Ajustes del Santuario',
+        settings_subtitle:'¡Cambia idioma, nombre del compañero o metas en cualquier momento!',
+        settings_lang_label:'Idioma del Santuario',
+        settings_companion_label:'Nombre del Compañero IA',
+        settings_goal_label:'Ambición de Vida / Meta',
+        settings_reminder_label:'Recordatorio Diario',
+        btn_anchor_guidepost:'Anclar Guía de Hoy (+30 XP)',
+        btn_save_reflection:'Guardar Reflexión y Ganar +25 XP ✨',
+        btn_begin_breathing:'Iniciar Círculo de Respiración (+50 XP)',
+        streak_day:'Día', streak_days:'Días',
+        btn_anchor_complete:'Guía de Hoy Anclada ✨',
+        lang_changed:'Idioma cambiado a',
+      },
+      'fr-FR': {
+        nav_sanctuary:'Sanctuaire', nav_self:'Soi Intérieur', nav_wayfinder:'Guide',
+        nav_skills:'Compétences', nav_nature:'Nature', nav_companion:'Compagnon',
+        nav_badges:'Badges', nav_detox:'Détox',
+        settings_title:'Paramètres du Sanctuaire',
+        settings_subtitle:"Changez la langue, le compagnon ou les objectifs à tout moment\u00a0!",
+        settings_lang_label:'Langue du Sanctuaire',
+        settings_companion_label:'Nom du Compagnon IA',
+        settings_goal_label:'Ambition de Vie / Objectif',
+        settings_reminder_label:'Rappel Quotidien',
+        btn_anchor_guidepost:"Ancrer le Guide d'Aujourd'hui (+30 XP)",
+        btn_save_reflection:'Sauvegarder la Réflexion et Gagner +25 XP ✨',
+        btn_begin_breathing:'Commencer le Cercle de Respiration (+50 XP)',
+        streak_day:'Jour', streak_days:'Jours',
+        btn_anchor_complete:"Guide d'Aujourd'hui Ancré ✨",
+        lang_changed:'Langue changée en',
+      },
+      'de-DE': {
+        nav_sanctuary:'Heiligtum', nav_self:'Inneres Selbst', nav_wayfinder:'Wegweiser',
+        nav_skills:'Fähigkeiten', nav_nature:'Natur', nav_companion:'Begleiter',
+        nav_badges:'Abzeichen', nav_detox:'Entgiftung',
+        settings_title:'Heiligtum Einstellungen',
+        settings_subtitle:'Sprache, Begleitername oder Ziele jederzeit ändern!',
+        settings_lang_label:'Sprache des Heiligtums',
+        settings_companion_label:'KI-Begleiter Name',
+        settings_goal_label:'Lebensziel / Ambition',
+        settings_reminder_label:'Tägliche Erinnerung',
+        btn_anchor_guidepost:'Wegweiser verankern (+30 XP)',
+        btn_save_reflection:'Reflexion speichern & +25 XP beanspruchen ✨',
+        btn_begin_breathing:'Atemkreis beginnen (+50 XP)',
+        streak_day:'Tag', streak_days:'Tage',
+        btn_anchor_complete:'Wegweiser Verankert ✨',
+        lang_changed:'Sprache geändert zu',
+      },
+      'ja-JP': {
+        nav_sanctuary:'サンクチュアリ', nav_self:'内なる自己', nav_wayfinder:'ガイド',
+        nav_skills:'スキル', nav_nature:'自然', nav_companion:'コンパニオン',
+        nav_badges:'バッジ', nav_detox:'デトックス',
+        settings_title:'サンクチュアリ設定',
+        settings_subtitle:'いつでも言語・コンパニオン名・目標を変更できます！',
+        settings_lang_label:'サンクチュアリの言語',
+        settings_companion_label:'AIコンパニオン名',
+        settings_goal_label:'人生の目標',
+        settings_reminder_label:'毎日のリマインダー',
+        btn_anchor_guidepost:'今日のガイドポストを固定 (+30 XP)',
+        btn_save_reflection:'振り返りを保存して +25 XP を獲得 ✨',
+        btn_begin_breathing:'呼吸サークルを開始 (+50 XP)',
+        streak_day:'日', streak_days:'日',
+        btn_anchor_complete:'今日のガイドポスト完了 ✨',
+        lang_changed:'言語が変更されました:',
+      },
+      'pt-BR': {
+        nav_sanctuary:'Santuário', nav_self:'Eu Interior', nav_wayfinder:'Guia',
+        nav_skills:'Habilidades', nav_nature:'Natureza', nav_companion:'Companheiro',
+        nav_badges:'Conquistas', nav_detox:'Detox',
+        settings_title:'Configurações do Santuário',
+        settings_subtitle:'Mude o idioma, nome do companheiro ou metas a qualquer hora!',
+        settings_lang_label:'Idioma do Santuário',
+        settings_companion_label:'Nome do Companheiro IA',
+        settings_goal_label:'Ambição de Vida / Meta',
+        settings_reminder_label:'Lembrete Diário',
+        btn_anchor_guidepost:'Ancorar Guia de Hoje (+30 XP)',
+        btn_save_reflection:'Salvar Reflexão e Ganhar +25 XP ✨',
+        btn_begin_breathing:'Iniciar Círculo de Respiração (+50 XP)',
+        streak_day:'Dia', streak_days:'Dias',
+        btn_anchor_complete:'Guia de Hoje Ancorado ✨',
+        lang_changed:'Idioma alterado para',
+      },
+      'it-IT': {
+        nav_sanctuary:'Santuario', nav_self:'Sé Interiore', nav_wayfinder:'Guida',
+        nav_skills:'Abilità', nav_nature:'Natura', nav_companion:'Compagno',
+        nav_badges:'Distintivi', nav_detox:'Disintox',
+        settings_title:'Impostazioni del Santuario',
+        settings_subtitle:'Cambia lingua, compagno o obiettivi in qualsiasi momento!',
+        settings_lang_label:'Lingua del Santuario',
+        settings_companion_label:'Nome del Compagno IA',
+        settings_goal_label:'Ambizione di Vita / Obiettivo',
+        settings_reminder_label:'Promemoria Quotidiano',
+        btn_anchor_guidepost:'Ancorare la Guida di Oggi (+30 XP)',
+        btn_save_reflection:'Salva Riflessione e Guadagna +25 XP ✨',
+        btn_begin_breathing:'Inizia il Cerchio di Respirazione (+50 XP)',
+        streak_day:'Giorno', streak_days:'Giorni',
+        btn_anchor_complete:'Guida di Oggi Ancorata ✨',
+        lang_changed:'Lingua cambiata in',
+      },
+      'en-GB': {
+        nav_sanctuary:'Sanctuary', nav_self:'Inner Self', nav_wayfinder:'Wayfinder',
+        nav_skills:'Skills', nav_nature:'Nature', nav_companion:'Companion',
+        nav_badges:'Badges', nav_detox:'Detox',
+        settings_title:'Sanctuary Settings',
+        settings_subtitle:'Change language, companion name, or goals anytime!',
+        settings_lang_label:'Speech & Interface Language',
+        settings_companion_label:'AI Companion Name',
+        settings_goal_label:'Life Ambition / Goal',
+        settings_reminder_label:'Daily Sanctuary Reminder',
+        btn_anchor_guidepost:"Anchor Today's Guidepost (+30 XP)",
+        btn_save_reflection:'Save Reflection Entry & Claim +25 XP ✨',
+        btn_begin_breathing:'Begin Breathing Circle (+50 XP)',
+        streak_day:'Day', streak_days:'Days',
+        btn_anchor_complete:"Today's Guidepost Anchored ✨",
+        lang_changed:'Language changed to',
+      }
+    };
+
+    /** Returns the translated string for the current language, falling back to en-US then to the raw key. */
+    function t(key) {
+      const lang = S.language || 'en-US';
+      const dict = TRANSLATIONS[lang];
+      // 1. Try the target language dict first
+      if (dict && dict[key] !== undefined) return dict[key];
+      // 2. Fall back to en-US for any key missing from the target language
+      const enUS = TRANSLATIONS['en-US'];
+      if (enUS && enUS[key] !== undefined) return enUS[key];
+      // 3. Last resort: return the raw key so something always renders
+      return key;
+    }
+
+    /** Updates all [data-i18n] elements + html lang attribute to match S.language. */
+    function applyTranslations() {
+      const lang = S.language || 'en-US';
+      // 1. Update <html lang> for accessibility / browser locale hints
+      document.documentElement.lang = lang;
+
+      // 2. Update all marked elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const val = t(key);
+        el.textContent = val;
+      });
+
+      // 3. Refresh streak label (uses streak_day/streak_days)
+      const sc = document.getElementById('streak-counter');
+      if (sc && S.streak != null) {
+        const dayWord = S.streak === 1 ? t('streak_day') : t('streak_days');
+        sc.textContent = `${S.streak} ${dayWord}`;
+      }
+
+      // 4. Re-run updateLevelUI so XP display respects any label changes
+      if (typeof updateLevelUI === 'function') updateLevelUI();
+    }
+
     function load() {
       try {
         const d = localStorage.getItem('kora_state');
@@ -3214,8 +3447,13 @@
           if (!S.language) S.language = 'en-US';
           if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
           if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
+          if (!S.languageLabel) {
+            S.languageLabel = LANG_LABELS[S.language] || 'English (US)';
+          }
         }
-        
+      } catch(e) { console.warn('Load error:', e); }
+    }
+
     function showDashboard() {
       const root = document.getElementById('app-sanctuary-root');
       if (root) root.classList.remove('hidden');
@@ -3231,12 +3469,13 @@
       try {
         load();
         if (!S.level) S.level = 1;
-        if (!S.xp) S.xp = 0;
+        if (S.xp == null) S.xp = 0;
         if (!S.companion) S.companion = { name: 'Kora', type: 'oracle', trait: 'Perceptive' };
         if (!S.skills) S.skills = { INT: 5, EMP: 5, ACT: 5, ZEN: 5, WIS: 5, VIT: 5 };
         if (!S.unlockedSkills) S.unlockedSkills = [];
         if (!S.specialization) S.specialization = 'Sovereign Architect';
         if (!S.language) S.language = 'en-US';
+        if (S.lastRitualDate === undefined) S.lastRitualDate = null;
         if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
         if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
 
@@ -3811,35 +4050,46 @@
       return 1 + Math.min(1.0, (S.streak - 1) * 0.1);
     }
 
+    /** Returns total cumulative XP earned across all levels (triangular sum + current level XP). */
+    function getTotalXP() {
+      const n = S.level - 1;
+      return S.xp + 100 * n * (n + 1) / 2;
+    }
+
     function addXP(baseAmount, actionLabel = 'Action') {
       const mult = getStreakMultiplier();
       const finalAmount = Math.round(baseAmount * mult);
       S.xp += finalAmount;
-      const needed = S.level * 100;
+
       let leveledUp = false;
       let isEvery5 = false;
       let isEvery10 = false;
 
-      if (S.xp >= needed) {
-        S.xp -= needed;
+      // Loop to support multi-level-up in a single XP grant
+      while (S.xp >= S.level * 100) {
+        S.xp -= S.level * 100;
         S.level++;
-        S.skillPoints += 1;
-        Object.keys(S.stats).forEach(k => S.stats[k] += 2);
-        
+        S.skillPoints = (S.skillPoints || 0) + 1;
+        Object.keys(S.stats).forEach(k => { S.stats[k] = (S.stats[k] || 0) + 2; });
         leveledUp = true;
-        if (S.level % 10 === 0) {
-          isEvery10 = true;
+        isEvery10 = S.level % 10 === 0;
+        isEvery5  = !isEvery10 && S.level % 5 === 0;
+      }
+
+      if (leveledUp) {
+        if (isEvery10) {
           play10LevelCosmicSound();
-        } else if (S.level % 5 === 0) {
-          isEvery5 = true;
+        } else if (isEvery5) {
           play5LevelCrystalChime();
         } else {
           playStandardLevelUpSound();
         }
-        
         triggerConfetti();
         openLevelUpModal(isEvery5, isEvery10);
       }
+
+      // Check milestone achievements (total cumulative XP = triangular sum: 100*N*(N-1)/2 + current level XP)
+      if (getTotalXP() >= 1000 || S.level >= 5) checkAndUnlockAchievements();
 
       save();
       updateLevelUI();
@@ -5160,18 +5410,49 @@ Directives:
 
     function renderRitual() {
       const btn = document.getElementById('btn-complete-ritual');
-      if (S.ritualCompletedToday && btn) { btn.textContent = "Today's Guidepost Anchored ✨"; btn.disabled = true; }
+      if (!btn) return;
+      const span = document.createElement('span');
+      if (S.ritualCompletedToday) {
+        span.textContent = t('btn_anchor_complete');
+        btn.replaceChildren(span);
+        btn.disabled = true;
+        btn.classList.add('opacity-70');
+      } else {
+        span.setAttribute('data-i18n', 'btn_anchor_guidepost');
+        span.textContent = t('btn_anchor_guidepost');
+        btn.replaceChildren(span);
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }
     }
 
     document.getElementById('btn-complete-ritual').onclick = () => {
       if (S.ritualCompletedToday) return;
       S.ritualCompletedToday = true;
-      S.streak++;
+
+      // Streak logic: increment only if consecutive (yesterday or first time), else reset to 1
+      const today = new Date().toISOString().slice(0, 10);
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      if (!S.lastRitualDate) {
+        S.streak = 1; // first ever anchor
+      } else if (S.lastRitualDate === yesterday) {
+        S.streak = (S.streak || 1) + 1; // consecutive day
+      } else {
+        S.streak = 1; // streak broken (missed one or more days)
+      }
+      S.lastRitualDate = today;
+
       if (canEarnXP('anchor_guidepost', 1)) {
         addXP(30, 'Daily Guidepost Anchored');
       }
-      document.getElementById('streak-counter').textContent = `${S.streak} Day${S.streak > 1 ? 's' : ''}`;
+      const sc = document.getElementById('streak-counter');
+      if (sc) {
+        const dayWord = S.streak === 1 ? t('streak_day') : t('streak_days');
+        sc.textContent = `${S.streak} ${dayWord}`;
+      }
+      save();
       renderRitual();
+      checkAndUnlockAchievements();
     };
 
     function openSettings() { 
@@ -5254,6 +5535,7 @@ Directives:
           specialization: 'Sovereign Architect',
           chatHistory: [],
           ritualCompletedToday: false,
+          lastRitualDate: null,
           plan: 'tier1',
           voiceEnabled: true,
           moodToday: '',
@@ -5422,6 +5704,7 @@ Directives:
 
     window.addEventListener('DOMContentLoaded', () => {
       load();
+      applyTranslations(); // Apply persisted language immediately
       updateSubscriptionUI();
       renderWordOfTheDay();
       scheduleNext5AMRefresh();
@@ -5430,7 +5713,7 @@ Directives:
       initIntroCanvasParticles();
       document.getElementById('btn-settings').onclick = openSettings;
       document.getElementById('btn-close-settings').onclick = closeSettings;
-      if (S.companion && S.companion.name) {
+      if (S.companion.name) {
         document.getElementById('companion-name-display').textContent = S.companion.name;
         document.getElementById('custom-quantum-goal').value = S.goal || '';
         document.getElementById('custom-goal-val').textContent = S.goal || 'Cultivate mental clarity & inner strength';
@@ -5438,14 +5721,7 @@ Directives:
         renderChat(); renderRitual(); updateLevelUI(); renderRadar(); renderAchievements(); renderSkillTree(); renderJournalEntries(); selectGPSRoadmap('founder');
       }
     });
-    // ---------- STATE PERSISTENCE ----------
-    function save() {
-      try {
-        localStorage.setItem('kora_state', JSON.stringify(S));
-      } catch (e) {
-        console.error('Save error:', e);
-      }
-    }
+    // ---------- STATE PERSISTENCE (primary save is defined earlier) ----------
 
 
 
