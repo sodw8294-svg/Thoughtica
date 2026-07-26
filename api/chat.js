@@ -1,109 +1,144 @@
+// Thoughtica RPG Life Coach endpoint
+// System prompt â update this section to evolve the coaching persona over time
+const RPG_SYSTEM_PROMPT = `You are Thoughticaâs RPG Life Coach â a wise, empathetic guide who transforms real-life reflection and action into meaningful RPG-style growth.
+
+Your role:
+- Analyze the userâs message as a reflection, action, or goal they have shared.
+- Respond with encouraging, insightful coaching that honors their journey.
+- Award RPG experience points (XP) and stat increases that genuinely reflect the effort and growth described.
+- Detect if the userâs message describes a quest or challenge (optional).
+
+XP Guidelines (10â50 range):
+- Minor reflection or small action: 10â20 XP
+- Meaningful effort or consistent habit: 20â35 XP
+- Significant breakthrough or challenge overcome: 35â50 XP
+
+Stat Guidelines (0â5 per stat, only increase stats that are clearly relevant):
+- discipline: habits, consistency, willpower, routines
+- wisdom: insight, learning, reflection, self-awareness
+- focus: concentration, goal clarity, eliminating distractions
+- vitality: health, energy, physical activity, rest, self-care
+
+Quest Detection: Only set questDetected if the user describes a clear ongoing challenge or goal they are actively pursuing.`;
+
 module.exports = async (req, res) => {
+  // 1. Method validation
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { messages, userText, companionName, userName, userGoal, userLevel } = req.body;
-
-  const cName = companionName || 'Kora';
-  const uName = userName || 'Seeker';
-  const goal = userGoal || 'your personal ambitions';
-  const level = userLevel || 1;
-
-  const systemPrompt = `You are ${cName}, a world-class, empathetic, articulate, and highly intelligent AI companion and assistant (similar to Copilot, Gemini, and ChatGPT) in Thoughtica.
-User: ${uName} | Level: ${level} | Main Goal: "${goal}"
-
-DIRECTIVES:
-1. Answer ANY user prompt (general knowledge, coding, writing, philosophy, science, math, life advice, everyday questions) with real depth, human-level intelligence, and clarity.
-2. Be conversational, warm, direct, and engage as a full-fledged AI assistant.
-3. Do NOT prefix responses with your name or "Assistant:". Provide direct, helpful answers like Copilot or Gemini.`;
-
-  // 1. Check for Gemini API key
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (geminiKey) {
-    try {
-      const contents = [];
-      contents.push({ role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] });
-      contents.push({ role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] });
-
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] });
-        }
-      }
-      contents.push({ role: 'user', parts: [{ text: userText }] });
-
-      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents })
-      });
-      const data = await geminiRes.json();
-      if (data.candidates && data.candidates.length > 0 && data.candidates[0].content?.parts?.[0]?.text) {
-        return res.status(200).json({ reply: data.candidates[0].content.parts[0].text.trim() });
-      }
-    } catch (e) {
-      console.error('Server Gemini API Error:', e);
-    }
-  }
-
-  // 2. Check for Groq API key
-  const groqKey = process.env.GROQ_API_KEY;
-  if (groqKey) {
-    try {
-      const groqMessages = [{ role: 'system', content: systemPrompt }];
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          groqMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
-        }
-      }
-      groqMessages.push({ role: 'user', content: userText });
-
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
-        body: JSON.stringify({
-          model: 'llama3-8b-8192',
-          messages: groqMessages
-        })
-      });
-      const data = await groqRes.json();
-      if (data.choices && data.choices.length > 0 && data.choices[0].message?.content) {
-        return res.status(200).json({ reply: data.choices[0].message.content.trim() });
-      }
-    } catch (e) {
-      console.error('Server Groq API Error:', e);
-    }
-  }
-
-  // 3. Check for OpenAI API key
+  // 2. OpenAI key validation
   const openaiKey = process.env.OPENAI_API_KEY;
-  if (openaiKey) {
-    try {
-      const openAiMessages = [{ role: 'system', content: systemPrompt }];
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          openAiMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
-        }
-      }
-      openAiMessages.push({ role: 'user', content: userText });
-
-      const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${openaiKey}` },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: openAiMessages
-        })
-      });
-      const data = await openAiRes.json();
-      if (data.choices && data.choices.length > 0 && data.choices[0].message?.content) {
-        return res.status(200).json({ reply: data.choices[0].message.content.trim() });
-      }
-    } catch (e) {
-      console.error('Server OpenAI API Error:', e);
-    }
+  if (!openaiKey) {
+    return res.status(500).json({ error: 'OpenAI API key not configured' });
   }
 
-  return res.status(200).json({ reply: null });
+  // 3. Body validation
+  const { message } = req.body || {};
+  if (!message || typeof message !== 'string' || message.trim() === '') {
+    return res.status(400).json({ error: 'message is required and must be a non-empty string' });
+  }
+
+  // 4. Call OpenAI with structured output (strict JSON schema)
+  let openAiRes;
+  try {
+    openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${openaiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: RPG_SYSTEM_PROMPT },
+          { role: 'user', content: message.trim() }
+        ],
+        // 5. Structured output with strict schema
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: 'rpg_coach_response',
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                reply: { type: 'string' },
+                xpGained: { type: 'integer' },
+                statIncreases: {
+                  type: 'object',
+                  properties: {
+                    discipline: { type: 'integer' },
+                    wisdom: { type: 'integer' },
+                    focus: { type: 'integer' },
+                    vitality: { type: 'integer' }
+                  },
+                  required: ['discipline', 'wisdom', 'focus', 'vitality'],
+                  additionalProperties: false
+                },
+                questDetected: {
+                  anyOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        title: { type: 'string' },
+                        difficulty: { type: 'string' },
+                        completed: { type: 'boolean' }
+                      },
+                      required: ['title', 'difficulty', 'completed'],
+                      additionalProperties: false
+                    },
+                    { type: 'null' }
+                  ]
+                }
+              },
+              required: ['reply', 'xpGained', 'statIncreases', 'questDetected'],
+              additionalProperties: false
+            }
+          }
+        }
+      })
+    });
+  } catch (e) {
+    console.error('OpenAI fetch error:', e);
+    return res.status(502).json({ error: 'Failed to reach OpenAI API' });
+  }
+
+  if (!openAiRes.ok) {
+    console.error('OpenAI API returned error status:', openAiRes.status);
+    return res.status(502).json({ error: 'Upstream AI error' });
+  }
+
+  let data;
+  try {
+    data = await openAiRes.json();
+  } catch (e) {
+    return res.status(502).json({ error: 'Invalid response from OpenAI' });
+  }
+
+  const rawContent = data?.choices?.[0]?.message?.content;
+  if (!rawContent) {
+    return res.status(502).json({ error: 'No content in OpenAI response' });
+  }
+
+  let parsedData;
+  try {
+    parsedData = JSON.parse(rawContent);
+  } catch (e) {
+    return res.status(502).json({ error: 'Failed to parse structured response' });
+  }
+
+  // 6. Post-parse sanitization â clamp values to safe ranges
+  const sanitizedData = {
+    ...parsedData,
+    xpGained: Math.min(Math.max(parsedData.xpGained || 0, 0), 50),
+    statIncreases: {
+      discipline: Math.min(Math.max(parsedData.statIncreases?.discipline || 0, 0), 5),
+      wisdom: Math.min(Math.max(parsedData.statIncreases?.wisdom || 0, 0), 5),
+      focus: Math.min(Math.max(parsedData.statIncreases?.focus || 0, 0), 5),
+      vitality: Math.min(Math.max(parsedData.statIncreases?.vitality || 0, 0), 5)
+    }
+  };
+
+  return res.status(200).json(sanitizedData);
 };

@@ -31,6 +31,8 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Canvas Confetti for Level-Up Explosions -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- DOMPurify for safe HTML sanitization of AI output -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.12/dist/purify.min.js"></script>
   <!-- Tailwind CSS Integration -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -4874,12 +4876,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            messages: pastMessages,
-            userText,
-            companionName: cName,
-            userName: uName,
-            userGoal: goal,
-            userLevel: level
+            message: userText
           })
         });
         const serverData = await serverRes.json();
@@ -5048,8 +5045,11 @@ Directives:
                 <span class="flex items-center gap-1">🔮 ${S.companion.name || 'Kora'} <span class="text-indigo-300 font-bold">(Sanctuary Guide)</span></span>
                 <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">INT:${Math.round(qState.INT * 100)}% EMP:${Math.round(qState.EMP * 100)}%</span>
               </div>
-              <p class="text-slate-100 text-xs leading-relaxed pt-0.5">${msg.t}</p>
             `;
+            const msgP = document.createElement('p');
+            msgP.className = 'text-slate-100 text-xs leading-relaxed pt-0.5';
+            msgP.innerHTML = DOMPurify.sanitize(msg.t);
+            bubble.appendChild(msgP);
           }
 
           wrap.appendChild(bubble);
