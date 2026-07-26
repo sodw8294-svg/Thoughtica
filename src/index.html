@@ -1342,15 +1342,15 @@
             </div>
           </div>
 
-          <div id="companion-chat-log" class="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-none"></div>
+          <div id="companion-chat-log" class="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-none" role="log" aria-live="polite" aria-label="AI companion conversation"></div>
 
           <!-- TWO-WAY VOICE & TEXT CHAT INPUT BAR -->
           <div class="p-3 border-t border-white/5 bg-white/[0.01] flex items-center gap-2">
-            <button id="btn-speech-mic" onclick="startVoiceInput()" title="Voice Input Speech-to-Text (+20 XP)" class="p-2.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl border border-white/10 transition-all cursor-pointer">
+            <button id="btn-speech-mic" onclick="startVoiceInput()" title="Voice Input Speech-to-Text (+20 XP)" aria-label="Start voice input" class="p-2.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl border border-white/10 transition-all cursor-pointer">
               <i data-lucide="mic" id="mic-icon" class="w-4 h-4"></i>
             </button>
-            <input type="text" id="companion-chat-input" placeholder="Speak or type to Kora (+15 XP)..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 transition-all">
-            <button id="companion-chat-send" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/20 transition-all cursor-pointer">
+            <input type="text" id="companion-chat-input" maxlength="2000" placeholder="Speak or type to Kora (+15 XP)..." aria-label="Message your AI companion" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 transition-all">
+            <button id="companion-chat-send" aria-label="Send companion message" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/20 transition-all cursor-pointer">
               <i data-lucide="send" class="w-4 h-4"></i>
             </button>
           </div>
@@ -1848,11 +1848,11 @@
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">AI CONVERSATION TERMINAL</span>
           </div>
 
-          <div id="guides-chat-log" class="h-64 overflow-y-auto space-y-3 p-3 bg-black/30 rounded-xl border border-white/5 scrollbar-none"></div>
+          <div id="guides-chat-log" class="h-64 overflow-y-auto space-y-3 p-3 bg-black/30 rounded-xl border border-white/5 scrollbar-none" role="log" aria-live="polite" aria-label="Guides conversation"></div>
 
           <div class="flex items-center gap-2">
-            <input type="text" id="guides-chat-input" placeholder="Converse with your AI Mentor like any other AI (+15 XP)..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50">
-            <button onclick="sendGuidesChat()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center gap-1.5 transition-all">
+            <input type="text" id="guides-chat-input" maxlength="2000" placeholder="Converse with your AI Mentor like any other AI (+15 XP)..." aria-label="Message your AI mentor" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500/50">
+            <button id="guides-chat-send" onclick="sendGuidesChat()" aria-label="Send guide message" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-indigo-600/20 cursor-pointer flex items-center gap-1.5 transition-all">
               <span>Send</span> <i data-lucide="send" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -2294,6 +2294,7 @@
       stats: { INT: 15, STR: 12, WIL: 14, CHA: 10, WIS: 18, VIT: 12 },
       specialization: 'Sovereign Architect',
       chatHistory: [],
+      chatConversationId: null,
       ritualCompletedToday: false,
       lastRitualDate: null,
       plan: 'tier1',
@@ -3475,6 +3476,7 @@
         if (!S.unlockedSkills) S.unlockedSkills = [];
         if (!S.specialization) S.specialization = 'Sovereign Architect';
         if (!S.language) S.language = 'en-US';
+        if (!S.chatConversationId) S.chatConversationId = `chat_${Date.now()}`;
         if (S.lastRitualDate === undefined) S.lastRitualDate = null;
         if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
         if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
@@ -5105,6 +5107,29 @@
       ]);
     }
 
+    const CHAT_MAX_INPUT_LENGTH = 2000;
+    let isChatRequestInFlight = false;
+
+    function setChatBusyState(isBusy) {
+      const mainInput = document.getElementById('companion-chat-input');
+      const mainSend = document.getElementById('companion-chat-send');
+      const guidesInput = document.getElementById('guides-chat-input');
+      const guidesSend = document.getElementById('guides-chat-send');
+      const micBtn = document.getElementById('btn-speech-mic');
+
+      [mainInput, mainSend, guidesInput, guidesSend, micBtn].forEach(el => {
+        if (!el) return;
+        el.disabled = !!isBusy;
+      });
+      if (mainSend) mainSend.classList.toggle('opacity-60', !!isBusy);
+      if (guidesSend) guidesSend.classList.toggle('opacity-60', !!isBusy);
+    }
+
+    function normalizeChatReply(reply, fallbackText) {
+      if (typeof reply === 'string' && reply.trim().length > 0) return reply.trim();
+      return fallbackText;
+    }
+
     // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (COPILOT / GEMINI READY)
     async function fetchRealTimeLLMResponse(userText) {
       updateQuantumCognitiveMatrix(userText);
@@ -5112,11 +5137,15 @@
       const uName = S.name || 'Seeker';
       const goal = S.goal || 'your personal ambition';
       const level = S.level || 1;
+      if (!S.chatConversationId) S.chatConversationId = `chat_${Date.now()}`;
 
-      const pastMessages = (S.chatHistory || []).slice(-8).map(m => ({
-        role: m.s === 'user' ? 'user' : 'assistant',
-        content: m.t
-      }));
+      const pastMessages = (S.chatHistory || [])
+        .slice(-8)
+        .filter(m => m && typeof m.t === 'string')
+        .map(m => ({
+          role: m.s === 'user' ? 'user' : 'assistant',
+          content: m.t
+        }));
 
       // 1. First, attempt backend Serverless LLM Endpoint (/api/chat)
       try {
@@ -5129,20 +5158,27 @@
             companionName: cName,
             userName: uName,
             userGoal: goal,
-            userLevel: level
+            userLevel: level,
+            conversationId: S.chatConversationId
           })
         });
-        const serverData = await serverRes.json();
+        const serverData = await serverRes.json().catch(() => null);
+        if (serverData && typeof serverData.conversationId === 'string' && serverData.conversationId.trim()) {
+          S.chatConversationId = serverData.conversationId.trim();
+        }
         if (serverData && serverData.reply && serverData.reply.trim().length > 2) {
           console.log("🔮 Backend Server LLM Response Received!");
           return serverData.reply.trim();
+        }
+        if (!serverRes.ok && serverData?.error?.message) {
+          console.warn("Backend /api/chat returned error:", serverData.error.message);
         }
       } catch (serverErr) {
         console.warn("Backend /api/chat unavailable or unconfigured, trying client BYOK key fallback...", serverErr);
       }
 
       if (!S.aiApiKey || S.aiApiKey.trim() === '') {
-        return generateCompanionResponse(userText);
+        return normalizeChatReply(generateCompanionResponse(userText), "I couldn't complete that response just now, but I'm still here with you. Please try once more.");
       }
       
       const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant (like Copilot / ChatGPT) in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
@@ -5250,6 +5286,7 @@ Directives:
 
     function resetChatHistory() {
       S.chatHistory = [];
+      S.chatConversationId = `chat_${Date.now()}`;
       S.quantumState = { INT: 0.85, EMP: 0.90, ACT: 0.75, ZEN: 0.95 };
       save();
       renderChat();
@@ -5268,8 +5305,9 @@ Directives:
 
       // Deduplicate adjacent identical messages in S.chatHistory
       const dedupedHistory = [];
-      S.chatHistory.forEach((msg, idx) => {
-        if (idx === 0 || msg.t !== S.chatHistory[idx - 1].t) {
+      const safeHistory = Array.isArray(S.chatHistory) ? S.chatHistory.filter(msg => msg && typeof msg.t === 'string' && typeof msg.s === 'string') : [];
+      safeHistory.forEach((msg, idx) => {
+        if (idx === 0 || msg.t !== safeHistory[idx - 1].t) {
           dedupedHistory.push(msg);
         }
       });
@@ -5293,13 +5331,28 @@ Directives:
             bubble.textContent = msg.t;
           } else {
             bubble.className = 'max-w-[85%] rounded-2xl p-3.5 text-xs leading-relaxed bg-gradient-to-b from-indigo-950/60 to-slate-950/80 border border-indigo-500/30 text-slate-100 rounded-bl-none shadow-lg space-y-1.5';
-            bubble.innerHTML = `
-              <div class="flex items-center justify-between border-b border-white/10 pb-1.5 text-[9px] font-extrabold text-amber-300 uppercase tracking-wider">
-                <span class="flex items-center gap-1">🔮 ${S.companion.name || 'Kora'} <span class="text-indigo-300 font-bold">(Sanctuary Guide)</span></span>
-                <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">INT:${Math.round(qState.INT * 100)}% EMP:${Math.round(qState.EMP * 100)}%</span>
-              </div>
-              <p class="text-slate-100 text-xs leading-relaxed pt-0.5">${msg.t}</p>
-            `;
+            const header = document.createElement('div');
+            header.className = 'flex items-center justify-between border-b border-white/10 pb-1.5 text-[9px] font-extrabold text-amber-300 uppercase tracking-wider';
+            const leftLabel = document.createElement('span');
+            leftLabel.className = 'flex items-center gap-1';
+            leftLabel.textContent = `🔮 ${S.companion.name || 'Kora'} `;
+            const leftRole = document.createElement('span');
+            leftRole.className = 'text-indigo-300 font-bold';
+            leftRole.textContent = '(Sanctuary Guide)';
+            leftLabel.appendChild(leftRole);
+
+            const rightStats = document.createElement('span');
+            rightStats.className = 'px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+            rightStats.textContent = `INT:${Math.round(qState.INT * 100)}% EMP:${Math.round(qState.EMP * 100)}%`;
+
+            const content = document.createElement('p');
+            content.className = 'text-slate-100 text-xs leading-relaxed pt-0.5';
+            content.textContent = msg.t;
+
+            header.appendChild(leftLabel);
+            header.appendChild(rightStats);
+            bubble.appendChild(header);
+            bubble.appendChild(content);
           }
 
           wrap.appendChild(bubble);
@@ -5310,8 +5363,16 @@ Directives:
     }
 
     async function processUserChatMessage(val) {
-      if (!val) return;
-      S.chatHistory.push({ s: 'user', t: val });
+      const cleaned = typeof val === 'string' ? val.trim() : '';
+      if (!cleaned) return;
+      if (cleaned.length > CHAT_MAX_INPUT_LENGTH) {
+        showToast('Message too long', `Please keep messages under ${CHAT_MAX_INPUT_LENGTH} characters.`, 'alert-triangle');
+        return;
+      }
+      if (isChatRequestInFlight) return;
+      isChatRequestInFlight = true;
+      setChatBusyState(true);
+      S.chatHistory.push({ s: 'user', t: cleaned });
       renderChat();
 
       if (canEarnXP('chat_reflection', 10)) {
@@ -5319,18 +5380,29 @@ Directives:
       }
 
       showTypingIndicator();
-      const reply = await fetchRealTimeLLMResponse(val);
-      removeTypingIndicator();
-
-      S.chatHistory.push({ s: 'mentor', t: reply });
-      renderChat();
-      speakKoraResponse(reply);
-      save();
+      try {
+        const reply = await fetchRealTimeLLMResponse(cleaned);
+        const safeReply = normalizeChatReply(reply, "I hit a temporary response issue, but I'm here with you—please send that again.");
+        S.chatHistory.push({ s: 'mentor', t: safeReply });
+        renderChat();
+        speakKoraResponse(safeReply);
+      } catch (err) {
+        console.error("Chat processing error:", err);
+        const errorText = "I'm having trouble responding right now. Please try again in a moment.";
+        S.chatHistory.push({ s: 'mentor', t: errorText });
+        renderChat();
+      } finally {
+        removeTypingIndicator();
+        isChatRequestInFlight = false;
+        setChatBusyState(false);
+        save();
+      }
     }
 
     function sendChat() {
       const inp = document.getElementById('companion-chat-input');
       if (!inp) return;
+      if (isChatRequestInFlight) return;
       const val = inp.value.trim();
       if (!val) return;
       inp.value = '';
@@ -5340,6 +5412,7 @@ Directives:
     function sendGuidesChat() {
       const inp = document.getElementById('guides-chat-input');
       if (!inp) return;
+      if (isChatRequestInFlight) return;
       const val = inp.value.trim();
       if (!val) return;
       inp.value = '';
@@ -5361,6 +5434,7 @@ Directives:
     }
 
     document.getElementById('companion-chat-send').onclick = sendChat;
+    document.getElementById('guides-chat-send').onclick = sendGuidesChat;
 
     let currentAudioPage = 1;
     function changeAudioPage(dir) {
@@ -5534,6 +5608,7 @@ Directives:
           stats: { INT: 15, STR: 12, WIL: 14, CHA: 10, WIS: 18, VIT: 12 },
           specialization: 'Sovereign Architect',
           chatHistory: [],
+          chatConversationId: null,
           ritualCompletedToday: false,
           lastRitualDate: null,
           plan: 'tier1',
