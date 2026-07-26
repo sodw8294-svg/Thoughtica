@@ -5075,7 +5075,9 @@
     }
 
     // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (COPILOT / GEMINI READY)
-    async function fetchRealTimeLLMResponse(userText, requestId) {
+    // pastMessages must be pre-built from history BEFORE the current user message is pushed,
+    // to avoid sending the same user turn twice (once in history, once as userText).
+    async function fetchRealTimeLLMResponse(userText, requestId, pastMessages) {
       updateQuantumCognitiveMatrix(userText);
       const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
       const uName = S.name || 'Seeker';
@@ -5083,7 +5085,6 @@
       const level = S.level || 1;
       if (!S.chatConversationId) S.chatConversationId = `chat_${Date.now()}`;
 
-      const pastMessages = buildCompanionContextMessages(S.chatHistory);
       let serverErrorMessage = '';
 
       // 1. First, attempt backend Serverless LLM Endpoint (/api/chat)
@@ -5106,7 +5107,7 @@
 
         const serverReply = normalizeChatReply(serverData?.reply);
         if (serverRes.ok && serverReply) {
-          console.log("🔮 Backend Server LLM Response Received!");
+          console.info('[chat] backend LLM response received', { provider: serverData?.provider, conversationId: S.chatConversationId, historyMessages: pastMessages.length });
           return serverReply;
         }
 
@@ -5114,14 +5115,14 @@
           ? serverData.error.message.trim()
           : '';
         if (serverErrorMessage) {
-          console.warn("Backend /api/chat returned error:", serverErrorMessage);
+          console.warn('[chat] backend /api/chat returned error', { message: serverErrorMessage, status: serverRes.status, historyMessages: pastMessages.length });
         }
 
         if (!serverRes.ok) {
           throw new Error(serverErrorMessage || `Server returned status ${serverRes.status}`);
         }
       } catch (serverErr) {
-        console.warn("Backend /api/chat request failed, trying client BYOK key...", serverErr);
+        console.warn('[chat] backend /api/chat request failed, trying BYOK client key', { error: serverErr?.message, historyMessages: pastMessages.length });
       }
 
       if (!S.aiApiKey || S.aiApiKey.trim() === '') {
@@ -5324,6 +5325,9 @@ Directives:
       const requestId = ++chatRequestSequence;
       isChatRequestInFlight = true;
       setChatBusyState(true);
+      // Build context snapshot BEFORE pushing the current user message so the
+      // model never receives the same turn twice (once in history, once as userText).
+      const pastMessages = buildCompanionContextMessages(S.chatHistory);
       S.chatHistory.push({ s: 'user', t: cleaned });
       renderChat();
 
@@ -5333,7 +5337,7 @@ Directives:
 
       showTypingIndicator();
       try {
-        const reply = await fetchRealTimeLLMResponse(cleaned, requestId);
+        const reply = await fetchRealTimeLLMResponse(cleaned, requestId, pastMessages);
         if (requestId !== chatRequestSequence) return;
         const safeReply = normalizeChatReply(reply);
         if (!safeReply) throw new Error('No response text returned.');
