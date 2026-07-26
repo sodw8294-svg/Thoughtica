@@ -2061,13 +2061,13 @@
     <div id="settings-modal" class="fixed inset-0 bg-[#090A0F]/95 backdrop-blur-xl flex items-end sm:items-center justify-center z-[300] p-0 sm:p-4 hidden">
       <div class="bg-gradient-to-b from-slate-900/95 to-[#090A0F]/98 border border-white/[0.08] rounded-t-3xl sm:rounded-2xl w-full max-w-md relative overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)] sm:shadow-2xl max-h-[92dvh] overflow-y-auto scrollbar-none">
         <!-- Handle bar (mobile) -->
-        <div class="flex justify-center pt-3 pb-1 sm:hidden">
+        <div class="flex justify-center pt-3 pb-1 sm:hidden" aria-hidden="true">
           <div class="w-10 h-1 rounded-full bg-white/20"></div>
         </div>
 
         <!-- Header -->
         <div class="relative px-6 pt-4 pb-5 border-b border-white/[0.06]">
-          <button id="btn-close-settings" class="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer text-lg leading-none">×</button>
+          <button id="btn-close-settings" aria-label="Close settings" class="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer text-lg leading-none"><span aria-hidden="true">×</span></button>
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/20 flex items-center justify-center">
               <i data-lucide="settings-2" class="w-4 h-4 text-purple-300"></i>
@@ -3254,6 +3254,9 @@
 
     function save() { try { localStorage.setItem('kora_state', JSON.stringify(S)); } catch (e) {} }
 
+    /** Maps language codes to their human-readable display labels. */
+    const LANG_LABELS = {'en-US':'English (US)','es-ES':'Español','fr-FR':'Français','de-DE':'Deutsch','ja-JP':'日本語','pt-BR':'Português','it-IT':'Italiano','en-GB':'English (UK)'};
+
     // ════════════════════════════════════════════
     //   FULL I18N TRANSLATION ENGINE
     // ════════════════════════════════════════════
@@ -3419,7 +3422,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
-        if (val != null) el.textContent = val;
+        if (val !== null && val !== undefined) el.textContent = val;
       });
 
       // 3. Refresh streak label (uses streak_day/streak_days)
@@ -3446,8 +3449,7 @@
           if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
           if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
           if (!S.languageLabel) {
-            const langMap = {'en-US':'English (US)','es-ES':'Español','fr-FR':'Français','de-DE':'Deutsch','ja-JP':'日本語','pt-BR':'Português','it-IT':'Italiano','en-GB':'English (UK)'};
-            S.languageLabel = langMap[S.language] || 'English (US)';
+            S.languageLabel = LANG_LABELS[S.language] || 'English (US)';
           }
         }
       } catch(e) { console.warn('Load error:', e); }
@@ -4081,7 +4083,7 @@
         openLevelUpModal(isEvery5, isEvery10);
       }
 
-      // Check milestone achievements
+      // Check milestone achievements (total cumulative XP = current XP + XP from previous levels)
       if (S.xp + (S.level - 1) * 100 >= 1000 || S.level >= 5) checkAndUnlockAchievements();
 
       save();
