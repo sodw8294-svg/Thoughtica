@@ -2074,7 +2074,7 @@
             </div>
             <div>
               <h2 data-i18n="settings_title" class="text-base font-bold text-white leading-tight">Sanctuary Settings</h2>
-              <p data-i18n="settings_subtitle" class="text-[11px] text-slate-500 mt-0.5">Customise language, companion name, or goals anytime!</p>
+              <p data-i18n="settings_subtitle" class="text-[11px] text-slate-500 mt-0.5">Customize language, companion name, or goals anytime!</p>
             </div>
           </div>
         </div>
@@ -3263,7 +3263,7 @@
         nav_skills:'Skills', nav_nature:'Nature', nav_companion:'Companion',
         nav_badges:'Badges', nav_detox:'Detox',
         settings_title:'Sanctuary Settings',
-        settings_subtitle:'Customise language, companion name, or goals anytime!',
+        settings_subtitle:'Customize language, companion name, or goals anytime!',
         settings_lang_label:'Speech & Interface Language',
         settings_companion_label:'AI Companion Name',
         settings_goal_label:'Life Ambition / Goal',
@@ -3272,6 +3272,7 @@
         btn_save_reflection:'Save Reflection Entry & Claim +25 XP ✨',
         btn_begin_breathing:'Begin Breathing Circle (+50 XP)',
         streak_day:'Day', streak_days:'Days',
+        btn_anchor_complete:"Today's Guidepost Anchored ✨",
         lang_changed:'Language changed to',
       },
       'es-ES': {
@@ -3288,6 +3289,7 @@
         btn_save_reflection:'Guardar Reflexión y Ganar +25 XP ✨',
         btn_begin_breathing:'Iniciar Círculo de Respiración (+50 XP)',
         streak_day:'Día', streak_days:'Días',
+        btn_anchor_complete:'Guía de Hoy Anclada ✨',
         lang_changed:'Idioma cambiado a',
       },
       'fr-FR': {
@@ -3304,6 +3306,7 @@
         btn_save_reflection:'Sauvegarder la Réflexion et Gagner +25 XP ✨',
         btn_begin_breathing:'Commencer le Cercle de Respiration (+50 XP)',
         streak_day:'Jour', streak_days:'Jours',
+        btn_anchor_complete:"Guide d'Aujourd'hui Ancré ✨",
         lang_changed:'Langue changée en',
       },
       'de-DE': {
@@ -3320,6 +3323,7 @@
         btn_save_reflection:'Reflexion speichern & +25 XP beanspruchen ✨',
         btn_begin_breathing:'Atemkreis beginnen (+50 XP)',
         streak_day:'Tag', streak_days:'Tage',
+        btn_anchor_complete:'Wegweiser Verankert ✨',
         lang_changed:'Sprache geändert zu',
       },
       'ja-JP': {
@@ -3336,6 +3340,7 @@
         btn_save_reflection:'振り返りを保存して +25 XP を獲得 ✨',
         btn_begin_breathing:'呼吸サークルを開始 (+50 XP)',
         streak_day:'日', streak_days:'日',
+        btn_anchor_complete:'今日のガイドポスト完了 ✨',
         lang_changed:'言語が変更されました:',
       },
       'pt-BR': {
@@ -3352,6 +3357,7 @@
         btn_save_reflection:'Salvar Reflexão e Ganhar +25 XP ✨',
         btn_begin_breathing:'Iniciar Círculo de Respiração (+50 XP)',
         streak_day:'Dia', streak_days:'Dias',
+        btn_anchor_complete:'Guia de Hoje Ancorado ✨',
         lang_changed:'Idioma alterado para',
       },
       'it-IT': {
@@ -3368,6 +3374,7 @@
         btn_save_reflection:'Salva Riflessione e Guadagna +25 XP ✨',
         btn_begin_breathing:'Inizia il Cerchio di Respirazione (+50 XP)',
         streak_day:'Giorno', streak_days:'Giorni',
+        btn_anchor_complete:'Guida di Oggi Ancorata ✨',
         lang_changed:'Lingua cambiata in',
       },
       'en-GB': {
@@ -3384,16 +3391,20 @@
         btn_save_reflection:'Save Reflection Entry & Claim +25 XP ✨',
         btn_begin_breathing:'Begin Breathing Circle (+50 XP)',
         streak_day:'Day', streak_days:'Days',
+        btn_anchor_complete:"Today's Guidepost Anchored ✨",
         lang_changed:'Language changed to',
       }
     };
 
-    /** Returns the translated string for the current language, falling back to en-US. */
+    /** Returns the translated string for the current language, falling back to en-US then to the raw key. */
     function t(key) {
       const lang = S.language || 'en-US';
-      return (TRANSLATIONS[lang] || TRANSLATIONS['en-US'])[key]
-          || TRANSLATIONS['en-US'][key]
-          || key;
+      const dict = TRANSLATIONS[lang];
+      // 1. Try the target language dict first
+      if (dict && dict[key] !== undefined) return dict[key];
+      // 2. Fall back to en-US for any key missing from the target language
+      const enUS = TRANSLATIONS['en-US'][key];
+      return enUS !== undefined ? enUS : key;
     }
 
     /** Updates all [data-i18n] elements + html lang attribute to match S.language. */
@@ -5392,7 +5403,7 @@ Directives:
       const btn = document.getElementById('btn-complete-ritual');
       if (!btn) return;
       if (S.ritualCompletedToday) {
-        btn.innerHTML = '<span>Today\'s Guidepost Anchored ✨</span>';
+        btn.innerHTML = `<span>${t('btn_anchor_complete')}</span>`;
         btn.disabled = true;
         btn.classList.add('opacity-70');
       } else {
@@ -5685,7 +5696,7 @@ Directives:
       renderWordOfTheDay();
       scheduleNext5AMRefresh();
       lucide.createIcons();
-      setAtmosphere(S.companion && S.companion.aura ? S.companion.aura : 'twilight');
+      setAtmosphere(S.companion?.aura || 'twilight');
       initIntroCanvasParticles();
       document.getElementById('btn-settings').onclick = openSettings;
       document.getElementById('btn-close-settings').onclick = closeSettings;
