@@ -434,9 +434,994 @@
         
         <!-- Big CTA Button -->
         <div class="pt-8 w-full max-w-sm">
-          <button onclick="const root = document.getElementById('app-sanctuary-root'); if (root) root.classList.remove('hidden'); const ov = document.getElementById('landing-page-overlay'); if (ov) ov.remove();" class="w-full py-5 px-8 premium-button text-white font-extrabold text-lg rounded-2xl cursor-pointer hover:scale-[1.02] transition-transform shadow-[0_0_40px_rgba(168,85,247,0.5)] flex items-center justify-center gap-3">
+          <button onclick="enterSanctuary()" class="w-full py-5 px-8 premium-button text-white font-extrabold text-lg rounded-2xl cursor-pointer hover:scale-[1.02] transition-transform shadow-[0_0_40px_rgba(168,85,247,0.5)] flex items-center justify-center gap-3">
             Enter Sanctuary
           </button>
           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Secure, Private, and Transformative.</p>
         </div>
       </div>
+    </div> <!-- /hero content -->
+  </div> <!-- /landing-page-overlay -->
+
+  <!-- =============================================
+       SANCTUARY APP ROOT
+       Shown after user clicks "Enter Your Sanctuary"
+       ============================================= -->
+  <div id="app-sanctuary-root" class="hidden flex flex-col min-h-screen min-h-[100dvh]">
+
+    <!-- AUTH GATE: shown when not signed in -->
+    <div id="auth-gate" class="fixed inset-0 z-[9000] bg-[#090A0F] flex flex-col items-center justify-center p-6 hidden">
+      <div class="w-full max-w-sm space-y-6">
+        <div class="text-center space-y-2 mb-8">
+          <div class="text-5xl mb-4">🔮</div>
+          <h2 class="text-3xl font-extrabold premium-text-gradient font-heading">Your Sanctuary</h2>
+          <p class="text-slate-400 text-sm">Sign in to continue your journey.</p>
+        </div>
+
+        <!-- Auth Tabs -->
+        <div class="flex rounded-xl overflow-hidden border border-slate-700 mb-4">
+          <button id="tab-signin" onclick="showAuthTab('signin')" class="flex-1 py-2 text-sm font-bold bg-indigo-600 text-white transition-all">Sign In</button>
+          <button id="tab-signup" onclick="showAuthTab('signup')" class="flex-1 py-2 text-sm font-bold bg-transparent text-slate-400 transition-all">Create Account</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div id="auth-signin" class="space-y-4">
+          <input id="si-email" type="email" placeholder="Email address" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="email">
+          <input id="si-password" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="current-password">
+          <button onclick="doSignIn()" class="w-full py-3 premium-button text-white font-bold rounded-xl">Sign In</button>
+          <button onclick="doGoogleSignIn()" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-semibold text-sm flex items-center justify-center gap-2 hover:border-indigo-500 transition-all">
+            <span>🌐</span> Continue with Google
+          </button>
+          <p id="auth-error-si" class="text-rose-400 text-xs text-center hidden"></p>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="auth-signup" class="space-y-4 hidden">
+          <input id="su-name" type="text" placeholder="Your name (or alias)" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="name">
+          <input id="su-email" type="email" placeholder="Email address" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="email">
+          <input id="su-password" type="password" placeholder="Password (min 6 chars)" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="new-password">
+          <button onclick="doSignUp()" class="w-full py-3 premium-button text-white font-bold rounded-xl">Create Account</button>
+          <button onclick="doGoogleSignIn()" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-semibold text-sm flex items-center justify-center gap-2 hover:border-indigo-500 transition-all">
+            <span>🌐</span> Continue with Google
+          </button>
+          <p id="auth-error-su" class="text-rose-400 text-xs text-center hidden"></p>
+        </div>
+
+        <!-- Guest Mode -->
+        <button onclick="continueAsGuest()" class="w-full py-2 text-xs text-slate-500 hover:text-slate-300 transition-all">
+          Continue without account →
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER: screens + nav -->
+    <div id="main-app" class="flex flex-col flex-1 relative overflow-hidden hidden">
+
+      <!-- Screen Container -->
+      <main id="screen-container" class="flex-1 relative overflow-hidden">
+
+        <!-- ==============================
+             HOME SCREEN
+             ============================== -->
+        <div id="screen-home" class="screen active overflow-y-auto scrollbar-none pb-24 px-4 pt-4">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-xs text-indigo-400 font-semibold uppercase tracking-widest">Sanctuary</p>
+              <h2 id="home-greeting" class="text-2xl font-extrabold font-heading text-slate-100">Welcome, Seeker</h2>
+            </div>
+            <button onclick="navigateTo('profile')" class="w-11 h-11 rounded-full bg-indigo-900/50 border border-indigo-700/40 flex items-center justify-center text-xl">
+              ⚔️
+            </button>
+          </div>
+
+          <!-- XP / Level Bar -->
+          <div class="glass-card mb-5">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">Level</p>
+                <p id="home-level" class="text-3xl font-extrabold font-heading premium-text-gradient">1</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">XP</p>
+                <p id="home-xp" class="text-3xl font-extrabold font-heading text-emerald-400">0</p>
+              </div>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+              <div id="xp-bar" class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700" style="width:0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-600 mt-1 text-right" id="xp-to-next">0 / 100 XP to Level 2</p>
+          </div>
+
+          <!-- Daily Quest Card -->
+          <div class="glass-card mb-5">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-2xl">📜</span>
+              <div>
+                <p class="text-xs text-amber-400 font-bold uppercase tracking-widest">Daily Quest</p>
+                <p class="font-bold text-slate-100">Reflect &amp; Realign</p>
+              </div>
+            </div>
+            <div class="space-y-3" id="daily-quests">
+              <!-- Quests injected by JS -->
+            </div>
+          </div>
+
+          <!-- Aura Stats Row -->
+          <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="glass-card !mb-0 text-center !p-3">
+              <div class="text-2xl mb-1">🧠</div>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Mind</p>
+              <p id="stat-mind" class="text-lg font-extrabold text-indigo-400">10</p>
+            </div>
+            <div class="glass-card !mb-0 text-center !p-3">
+              <div class="text-2xl mb-1">🌿</div>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Soul</p>
+              <p id="stat-soul" class="text-lg font-extrabold text-emerald-400">10</p>
+            </div>
+            <div class="glass-card !mb-0 text-center !p-3">
+              <div class="text-2xl mb-1">⚡</div>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Drive</p>
+              <p id="stat-drive" class="text-lg font-extrabold text-amber-400">10</p>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="grid grid-cols-2 gap-3 mb-5">
+            <button onclick="navigateTo('chat')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
+              <div class="text-2xl mb-2">💬</div>
+              <p class="font-bold text-sm text-slate-200">Talk to Kora</p>
+              <p class="text-[11px] text-slate-500">Your AI companion</p>
+            </button>
+            <button onclick="navigateTo('journal')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
+              <div class="text-2xl mb-2">📓</div>
+              <p class="font-bold text-sm text-slate-200">Journal</p>
+              <p class="text-[11px] text-slate-500">Log your thoughts</p>
+            </button>
+          </div>
+
+          <!-- Check-In Button -->
+          <button id="checkin-btn" onclick="doCheckIn()" class="w-full py-4 premium-button text-white font-bold rounded-2xl text-base flex items-center justify-center gap-2 mb-4">
+            <span>✨</span> Daily Check-In
+          </button>
+
+          <!-- Payment success / cancel toasts -->
+          <div id="payment-toast" class="hidden glass-card mb-4 border-emerald-500/40">
+            <p id="payment-toast-msg" class="text-sm text-emerald-300 text-center font-semibold"></p>
+          </div>
+
+        </div> <!-- /screen-home -->
+
+        <!-- ==============================
+             CHAT SCREEN
+             ============================== -->
+        <div id="screen-chat" class="screen overflow-hidden flex flex-col" style="height:100%">
+          <!-- Chat Header -->
+          <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-800/60">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-lg">🤖</div>
+            <div>
+              <p class="font-bold text-slate-100 text-sm">Kora</p>
+              <p class="text-[10px] text-emerald-400 font-semibold">● AI Companion · Online</p>
+            </div>
+          </div>
+
+          <!-- Chat Messages -->
+          <div id="chat-messages" class="flex-1 overflow-y-auto scrollbar-none px-4 py-4 space-y-4 pb-2">
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+              <div class="bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]">
+                <p class="text-sm text-slate-200">Hello, Seeker! I'm Kora, your AI companion. I'm here to help you grow, reflect, and thrive. What's on your mind?</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="px-4 py-3 border-t border-slate-800/60 flex gap-2 pb-safe">
+            <input id="chat-input" type="text" placeholder="Ask Kora anything..." class="flex-1 px-4 py-3 rounded-2xl text-sm bg-slate-800/70 border-slate-700/50" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}">
+            <button onclick="sendChatMessage()" class="w-11 h-11 rounded-2xl premium-button flex items-center justify-center text-white flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div> <!-- /screen-chat -->
+
+        <!-- ==============================
+             JOURNAL SCREEN
+             ============================== -->
+        <div id="screen-journal" class="screen overflow-y-auto scrollbar-none pb-24 px-4 pt-4">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-xs text-purple-400 font-semibold uppercase tracking-widest">Chronicle</p>
+              <h2 class="text-2xl font-extrabold font-heading text-slate-100">Journal</h2>
+            </div>
+            <button onclick="openNewEntry()" class="w-11 h-11 rounded-full premium-button flex items-center justify-center text-white text-xl">+</button>
+          </div>
+
+          <!-- New Entry Composer -->
+          <div id="journal-composer" class="glass-card mb-5 hidden">
+            <p class="text-xs text-purple-400 font-bold uppercase tracking-widest mb-3">New Entry</p>
+            <textarea id="journal-text" placeholder="What's on your mind today?" rows="4" class="w-full px-3 py-2 rounded-xl text-sm mb-3 bg-slate-900/60"></textarea>
+            <div class="flex gap-2">
+              <button onclick="saveJournalEntry()" class="flex-1 py-2 premium-button text-white text-sm font-bold rounded-xl">Save Entry (+5 XP)</button>
+              <button onclick="closeComposer()" class="px-4 py-2 text-slate-400 text-sm rounded-xl border border-slate-700">Cancel</button>
+            </div>
+          </div>
+
+          <div id="journal-entries" class="space-y-4">
+            <!-- Entries injected by JS -->
+            <p class="text-slate-500 text-sm text-center py-8">No entries yet. Tap + to start writing.</p>
+          </div>
+        </div> <!-- /screen-journal -->
+
+        <!-- ==============================
+             PROFILE SCREEN
+             ============================== -->
+        <div id="screen-profile" class="screen overflow-y-auto scrollbar-none pb-24 px-4 pt-4">
+          <div class="flex items-center gap-4 mb-6">
+            <div id="avatar-orb" class="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(139,92,246,0.4)]">🔮</div>
+            <div>
+              <h2 id="profile-name" class="text-xl font-extrabold font-heading text-slate-100">Seeker</h2>
+              <p id="profile-tier-badge" class="text-xs bg-slate-800 text-indigo-400 px-2 py-0.5 rounded-full font-semibold inline-block">Free Tier</p>
+            </div>
+          </div>
+
+          <!-- Stats Card -->
+          <div class="glass-card mb-5">
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-4">Character Stats</p>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <span class="text-lg w-6">🧠</span>
+                <div class="flex-1">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-xs font-semibold text-slate-300">Mind</span>
+                    <span id="p-stat-mind" class="text-xs text-indigo-400 font-bold">10</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5"><div id="bar-mind" class="h-full rounded-full bg-indigo-500 transition-all" style="width:10%"></div></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-lg w-6">🌿</span>
+                <div class="flex-1">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-xs font-semibold text-slate-300">Soul</span>
+                    <span id="p-stat-soul" class="text-xs text-emerald-400 font-bold">10</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5"><div id="bar-soul" class="h-full rounded-full bg-emerald-500 transition-all" style="width:10%"></div></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-lg w-6">⚡</span>
+                <div class="flex-1">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-xs font-semibold text-slate-300">Drive</span>
+                    <span id="p-stat-drive" class="text-xs text-amber-400 font-bold">10</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5"><div id="bar-drive" class="h-full rounded-full bg-amber-500 transition-all" style="width:10%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upgrade / Premium -->
+          <button onclick="navigateTo('store')" class="w-full glass-card !mb-5 hover-tilt text-center cursor-pointer border-purple-700/30">
+            <p class="text-lg mb-1">✨</p>
+            <p class="font-bold text-slate-100 text-sm">Upgrade Sanctuary</p>
+            <p class="text-[11px] text-purple-400">Unlock Kora's full power</p>
+          </button>
+
+          <!-- Sign Out -->
+          <button onclick="doSignOut()" id="sign-out-btn" class="w-full py-3 rounded-xl border border-slate-700 text-slate-400 text-sm font-semibold hover:border-rose-500/50 hover:text-rose-400 transition-all mb-4">
+            Sign Out
+          </button>
+        </div> <!-- /screen-profile -->
+
+        <!-- ==============================
+             STORE SCREEN
+             ============================== -->
+        <div id="screen-store" class="screen overflow-y-auto scrollbar-none pb-24 px-4 pt-4">
+          <div class="mb-6">
+            <p class="text-xs text-amber-400 font-semibold uppercase tracking-widest">Sanctuary</p>
+            <h2 class="text-2xl font-extrabold font-heading text-slate-100">Upgrade</h2>
+          </div>
+
+          <!-- Tier Cards -->
+          <div class="space-y-4 mb-6">
+
+            <!-- Kindred -->
+            <div class="glass-card hover-tilt cursor-pointer border-indigo-700/30" onclick="purchaseTier('kindred')">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <p class="font-extrabold text-lg text-indigo-300 font-heading">Kindred</p>
+                  <p class="text-xs text-slate-400">More interactions · Expanded memory</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xl font-extrabold text-white">$2.99</p>
+                  <p class="text-[10px] text-slate-500">/month</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-400 space-y-1 mt-3">
+                <li>✓ 100 daily companion interactions</li>
+                <li>✓ 7-day conversation memory</li>
+                <li>✓ Priority response speed</li>
+              </ul>
+              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Kindred</button>
+            </div>
+
+            <!-- Soulbound -->
+            <div class="glass-card hover-tilt cursor-pointer border-purple-700/40 shadow-[0_0_30px_rgba(168,85,247,0.1)]" onclick="purchaseTier('soulbound')">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="font-extrabold text-lg text-purple-300 font-heading">Soulbound</p>
+                    <span class="text-[9px] bg-purple-700/40 text-purple-300 px-1.5 py-0.5 rounded-full font-bold uppercase">Popular</span>
+                  </div>
+                  <p class="text-xs text-slate-400">Voice · Long-term memory · Evolution</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xl font-extrabold text-white">$9.99</p>
+                  <p class="text-[10px] text-slate-500">/month</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-400 space-y-1 mt-3">
+                <li>✓ Unlimited companion interactions</li>
+                <li>✓ 30-day deep memory</li>
+                <li>✓ Companion evolution &amp; personality</li>
+                <li>✓ Voice conversations</li>
+              </ul>
+              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Soulbound</button>
+            </div>
+
+            <!-- Transcendence -->
+            <div class="glass-card hover-tilt cursor-pointer border-amber-700/30" onclick="purchaseTier('transcendence')">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <p class="font-extrabold text-lg text-amber-300 font-heading">Transcendence</p>
+                  <p class="text-xs text-slate-400">Multi-companion · Max memory · Exclusive</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xl font-extrabold text-white">$19.99</p>
+                  <p class="text-[10px] text-slate-500">/month</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-400 space-y-1 mt-3">
+                <li>✓ Up to 3 AI companions</li>
+                <li>✓ Permanent memory vault</li>
+                <li>✓ Exclusive auras &amp; themes</li>
+                <li>✓ Early access to new features</li>
+              </ul>
+              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Transcendence</button>
+            </div>
+          </div>
+
+          <!-- Cosmetics Section -->
+          <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Cosmetics · $1.99 each</p>
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <button onclick="purchaseTier('theme_midnight')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🌑</div>
+              <p class="text-[11px] font-bold text-slate-200">Midnight Void</p>
+            </button>
+            <button onclick="purchaseTier('theme_zen')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🍃</div>
+              <p class="text-[11px] font-bold text-slate-200">Zen Garden</p>
+            </button>
+            <button onclick="purchaseTier('aura_rain')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🌧️</div>
+              <p class="text-[11px] font-bold text-slate-200">Mountain Rain</p>
+            </button>
+          </div>
+
+          <!-- Auth nudge for guests -->
+          <div id="store-auth-nudge" class="glass-card border-indigo-700/30 text-center hidden">
+            <p class="text-sm text-slate-300 mb-3">Sign in to purchase and preserve your upgrades across devices.</p>
+            <button onclick="showAuthGate()" class="py-2 px-6 premium-button text-white text-sm font-bold rounded-xl">Sign In</button>
+          </div>
+        </div> <!-- /screen-store -->
+
+      </main> <!-- /screen-container -->
+
+      <!-- ==============================
+           BOTTOM NAVIGATION
+           ============================== -->
+      <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-50 bg-[#0c0e18]/90 border-t border-slate-800/60 pb-safe backdrop-blur-xl" aria-label="Main navigation">
+        <div class="nav-scroll px-2 py-1">
+          <button class="nav-item active flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-home" onclick="navigateTo('home')" aria-label="Home" aria-current="page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="text-[10px] font-semibold">Home</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-chat" onclick="navigateTo('chat')" aria-label="Chat with Kora">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="text-[10px] font-semibold">Kora</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-journal" onclick="navigateTo('journal')" aria-label="Journal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span class="text-[10px] font-semibold">Journal</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-profile" onclick="navigateTo('profile')" aria-label="Profile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="text-[10px] font-semibold">Profile</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-store" onclick="navigateTo('store')" aria-label="Upgrade store">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span class="text-[10px] font-semibold">Store</span>
+          </button>
+        </div>
+      </nav>
+
+    </div> <!-- /main-app -->
+
+  </div> <!-- /app-sanctuary-root -->
+
+  <!-- =============================================
+       FIREBASE CONFIGURATION
+       ============================================= -->
+  <script>
+    // Replace these values with your Firebase project configuration.
+    // Find them in the Firebase console: Project Settings > General > Your apps > Web app.
+    const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    // Only initialize if config has a real API key
+    let _db = null;
+    let _auth = null;
+    let _currentUser = null;
+
+    try {
+      if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+        if (!firebase.apps || !firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        _auth = firebase.auth();
+        _db = firebase.firestore();
+      }
+    } catch (e) {
+      console.warn('[thoughtica] Firebase init skipped:', e.message);
+    }
+  </script>
+
+  <!-- =============================================
+       STRIPE INTEGRATION (Stripe.js loaded on demand)
+       ============================================= -->
+  <script>
+    let _stripe = null;
+
+    async function loadStripe() {
+      if (_stripe) return _stripe;
+      if (typeof Stripe === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://js.stripe.com/v3/';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      _stripe = Stripe(window.__STRIPE_PK__ || '');
+      if (!window.__STRIPE_PK__) {
+        console.warn('[thoughtica] Stripe public key not configured. Set window.__STRIPE_PK__ before loading.');
+      }
+      return _stripe;
+    }
+
+    async function purchaseTier(tier) {
+      if (!_currentUser && !_guestMode) {
+        showAuthGate();
+        return;
+      }
+      const uid = _currentUser ? _currentUser.uid : ('guest_' + (crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2))));
+
+      try {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier, uid })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Checkout failed');
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          const stripe = await loadStripe();
+          await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        }
+      } catch (err) {
+        console.error('[thoughtica] Purchase error:', err);
+        alert('Payment could not be started. Please try again or contact support.');
+      }
+    }
+  </script>
+
+  <!-- =============================================
+       APP STATE & LOGIC
+       ============================================= -->
+  <script>
+    'use strict';
+
+    // ── State ──────────────────────────────────────
+    let _guestMode = false;
+    let _currentScreen = 'home';
+    let _chatMessages = [];
+    let _chatConversationId = null;
+    let _chatIsTyping = false;
+
+    const _defaultStats = { level: 1, xp: 0, mind: 10, soul: 10, drive: 10, checkInStreak: 0, lastCheckIn: null };
+
+    function loadStats() {
+      try {
+        return Object.assign({}, _defaultStats, JSON.parse(localStorage.getItem('thoughtica_stats') || '{}'));
+      } catch { return Object.assign({}, _defaultStats); }
+    }
+
+    function saveStats(stats) {
+      try { localStorage.setItem('thoughtica_stats', JSON.stringify(stats)); } catch {}
+    }
+
+    function loadJournal() {
+      try { return JSON.parse(localStorage.getItem('thoughtica_journal') || '[]'); } catch { return []; }
+    }
+
+    function saveJournal(entries) {
+      try { localStorage.setItem('thoughtica_journal', JSON.stringify(entries)); } catch {}
+    }
+
+    // ── XP & Levelling ─────────────────────────────
+    function xpForLevel(level) { return level * 100; }
+
+    function addXP(amount) {
+      const stats = loadStats();
+      stats.xp += amount;
+      while (stats.xp >= xpForLevel(stats.level)) {
+        stats.xp -= xpForLevel(stats.level);
+        stats.level += 1;
+        showXPToast(`⬆️ Level Up! You are now Level ${stats.level}`);
+      }
+      saveStats(stats);
+      refreshStatsUI();
+      showXPToast(`+${amount} XP`);
+    }
+
+    function showXPToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'xp-toast fixed bottom-24 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-indigo-600/90 text-white text-xs font-bold z-[9999] whitespace-nowrap';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    function refreshStatsUI() {
+      const s = loadStats();
+      const maxXP = xpForLevel(s.level);
+      const pct = Math.min(100, Math.round((s.xp / maxXP) * 100));
+      document.getElementById('home-level').textContent = s.level;
+      document.getElementById('home-xp').textContent = s.xp;
+      document.getElementById('xp-bar').style.width = pct + '%';
+      document.getElementById('xp-to-next').textContent = `${s.xp} / ${maxXP} XP to Level ${s.level + 1}`;
+      document.getElementById('stat-mind').textContent = s.mind;
+      document.getElementById('stat-soul').textContent = s.soul;
+      document.getElementById('stat-drive').textContent = s.drive;
+      document.getElementById('p-stat-mind').textContent = s.mind;
+      document.getElementById('p-stat-soul').textContent = s.soul;
+      document.getElementById('p-stat-drive').textContent = s.drive;
+      document.getElementById('bar-mind').style.width = Math.min(100, s.mind) + '%';
+      document.getElementById('bar-soul').style.width = Math.min(100, s.soul) + '%';
+      document.getElementById('bar-drive').style.width = Math.min(100, s.drive) + '%';
+    }
+
+    // ── Daily Quests ───────────────────────────────
+    const DAILY_QUESTS = [
+      { id: 'q1', label: 'Chat with Kora today', xp: 10 },
+      { id: 'q2', label: 'Write a journal entry', xp: 5 },
+      { id: 'q3', label: 'Complete your daily check-in', xp: 15 },
+    ];
+
+    function getDailyKey() {
+      return 'tq_' + new Date().toISOString().slice(0, 10);
+    }
+
+    function getDoneQuests() {
+      try { return JSON.parse(localStorage.getItem(getDailyKey()) || '[]'); } catch { return []; }
+    }
+
+    function markQuestDone(id) {
+      const done = getDoneQuests();
+      if (!done.includes(id)) {
+        done.push(id);
+        localStorage.setItem(getDailyKey(), JSON.stringify(done));
+        const q = DAILY_QUESTS.find(q => q.id === id);
+        if (q) addXP(q.xp);
+        renderQuests();
+      }
+    }
+
+    function renderQuests() {
+      const done = getDoneQuests();
+      const container = document.getElementById('daily-quests');
+      if (!container) return;
+      container.innerHTML = DAILY_QUESTS.map(q => {
+        const isDone = done.includes(q.id);
+        return `<div class="flex items-center gap-3 py-2 border-b border-slate-800/40 last:border-0">
+          <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${isDone ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'}">${isDone ? '✓' : ''}</div>
+          <p class="text-sm flex-1 ${isDone ? 'line-through text-slate-500' : 'text-slate-200'}">${q.label}</p>
+          <span class="text-[10px] text-amber-400 font-bold">+${q.xp} XP</span>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Daily Check-In ─────────────────────────────
+    function doCheckIn() {
+      const today = new Date().toISOString().slice(0, 10);
+      const stats = loadStats();
+      if (stats.lastCheckIn === today) {
+        showXPToast('✅ Already checked in today!');
+        return;
+      }
+      stats.lastCheckIn = today;
+      stats.checkInStreak = (stats.checkInStreak || 0) + 1;
+      stats.mind = Math.min(100, stats.mind + 1);
+      stats.soul = Math.min(100, stats.soul + 1);
+      stats.drive = Math.min(100, stats.drive + 1);
+      saveStats(stats);
+      markQuestDone('q3');
+      refreshStatsUI();
+      showXPToast(`🔥 Streak: ${stats.checkInStreak} days! +3 Stats`);
+
+      const btn = document.getElementById('checkin-btn');
+      if (btn) {
+        btn.textContent = '✅ Checked In Today';
+        btn.disabled = true;
+        btn.classList.add('opacity-60');
+      }
+    }
+
+    function refreshCheckInBtn() {
+      const today = new Date().toISOString().slice(0, 10);
+      const stats = loadStats();
+      const btn = document.getElementById('checkin-btn');
+      if (!btn) return;
+      if (stats.lastCheckIn === today) {
+        btn.textContent = '✅ Checked In Today';
+        btn.disabled = true;
+        btn.classList.add('opacity-60');
+      } else {
+        btn.textContent = '✨ Daily Check-In';
+        btn.disabled = false;
+        btn.classList.remove('opacity-60');
+      }
+    }
+
+    // ── Journal ────────────────────────────────────
+    function openNewEntry() {
+      document.getElementById('journal-composer').classList.remove('hidden');
+      document.getElementById('journal-text').focus();
+    }
+
+    function closeComposer() {
+      document.getElementById('journal-composer').classList.add('hidden');
+      document.getElementById('journal-text').value = '';
+    }
+
+    function saveJournalEntry() {
+      const text = document.getElementById('journal-text').value.trim();
+      if (!text) return;
+      const entries = loadJournal();
+      entries.unshift({ id: Date.now(), text, date: new Date().toISOString() });
+      saveJournal(entries);
+      closeComposer();
+      renderJournal();
+      markQuestDone('q2');
+    }
+
+    function renderJournal() {
+      const entries = loadJournal();
+      const container = document.getElementById('journal-entries');
+      if (!container) return;
+      if (!entries.length) {
+        container.innerHTML = '<p class="text-slate-500 text-sm text-center py-8">No entries yet. Tap + to start writing.</p>';
+        return;
+      }
+      container.innerHTML = '';
+      entries.forEach(e => {
+        const d = new Date(e.date);
+        const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        const card = document.createElement('div');
+        card.className = 'glass-card !mb-0';
+        const dateEl = document.createElement('p');
+        dateEl.className = 'text-[10px] text-slate-500 mb-2 font-semibold uppercase tracking-wider';
+        dateEl.textContent = label;
+        const textEl = document.createElement('p');
+        textEl.className = 'text-sm text-slate-200 leading-relaxed whitespace-pre-wrap';
+        textEl.textContent = e.text;
+        card.appendChild(dateEl);
+        card.appendChild(textEl);
+        container.appendChild(card);
+      });
+    }
+
+    // ── Navigation ─────────────────────────────────
+    function navigateTo(screen) {
+      const screens = ['home', 'chat', 'journal', 'profile', 'store'];
+      screens.forEach(s => {
+        const el = document.getElementById('screen-' + s);
+        const nav = document.getElementById('nav-' + s);
+        if (el) el.classList.toggle('active', s === screen);
+        if (nav) {
+          nav.classList.toggle('active', s === screen);
+          nav.setAttribute('aria-current', s === screen ? 'page' : 'false');
+        }
+      });
+      _currentScreen = screen;
+
+      if (screen === 'home') { renderQuests(); refreshCheckInBtn(); }
+      if (screen === 'journal') renderJournal();
+      if (screen === 'profile') refreshProfileUI();
+      if (screen === 'store') refreshStoreAuthNudge();
+    }
+
+    function refreshProfileUI() {
+      const name = _currentUser ? (_currentUser.displayName || _currentUser.email || 'Seeker') : (_guestMode ? 'Guest Seeker' : 'Seeker');
+      document.getElementById('profile-name').textContent = name;
+      document.getElementById('sign-out-btn').classList.toggle('hidden', !_currentUser);
+    }
+
+    function refreshStoreAuthNudge() {
+      const nudge = document.getElementById('store-auth-nudge');
+      if (nudge) nudge.classList.toggle('hidden', !!_currentUser || !_guestMode);
+    }
+
+    // ── AI Chat: Companion Failure Helper ──────────
+    /**
+     * Builds a user-facing failure message when the AI provider is unavailable.
+     * Uses the structured error envelope from /api/chat when available.
+     * Your conversation context is still safe and will be preserved for the next attempt.
+     */
+    function buildCompanionFailureMessage(errOrEnvelope) {
+      const code = errOrEnvelope?.error?.code || errOrEnvelope?.code || 'PROVIDER_UNAVAILABLE';
+      if (code === 'PROVIDER_NOT_CONFIGURED') {
+        return 'My connection to the AI is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure an AI provider key.';
+      }
+      const retryable = errOrEnvelope?.error?.retryable !== false;
+      const base = retryable
+        ? 'I\'m having a little trouble reaching my thoughts right now. Your conversation context is still safe — please try again in a moment.'
+        : 'Something unexpected happened. Your conversation context is still safe. Please refresh and try again.';
+      return base;
+    }
+
+    // ── AI Chat ────────────────────────────────────
+    function appendChatBubble(role, text) {
+      const container = document.getElementById('chat-messages');
+      if (!container) return;
+
+      const isUser = role === 'user';
+      const wrapper = document.createElement('div');
+      wrapper.className = isUser ? 'flex justify-end' : 'flex gap-3';
+
+      if (!isUser) {
+        const avatar = document.createElement('div');
+        avatar.className = 'w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0';
+        avatar.textContent = '🤖';
+        wrapper.appendChild(avatar);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'bg-indigo-600/80 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%]'
+        : 'bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]';
+      const p = document.createElement('p');
+      p.className = 'text-sm text-slate-200 whitespace-pre-wrap';
+      p.textContent = text;
+      bubble.appendChild(p);
+      wrapper.appendChild(bubble);
+
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+      return wrapper;
+    }
+
+    function appendTypingIndicator() {
+      const container = document.getElementById('chat-messages');
+      if (!container) return null;
+      const wrapper = document.createElement('div');
+      wrapper.id = 'typing-indicator';
+      wrapper.className = 'flex gap-3';
+      wrapper.innerHTML = `<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+        <div class="bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3"><div class="flex gap-1 items-center h-4"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:0ms"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:150ms"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:300ms"></span></div></div>`;
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+      return wrapper;
+    }
+
+    async function sendChatMessage() {
+      if (_chatIsTyping) return;
+      const input = document.getElementById('chat-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      appendChatBubble('user', text);
+      _chatMessages.push({ role: 'user', content: text });
+
+      _chatIsTyping = true;
+      const indicator = appendTypingIndicator();
+
+      const stats = loadStats();
+      const userName = _currentUser ? (_currentUser.displayName || 'Seeker') : 'Seeker';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userText: text,
+            messages: _chatMessages.slice(-24),
+            conversationId: _chatConversationId,
+            companionName: 'Kora',
+            userName,
+            userGoal: 'personal growth and mindful living',
+            userLevel: stats.level
+          })
+        });
+
+        const data = await res.json();
+        if (indicator) indicator.remove();
+        _chatIsTyping = false;
+
+        if (!res.ok || !data.reply) {
+          const msg = buildCompanionFailureMessage(data);
+          appendChatBubble('assistant', msg);
+        } else {
+          _chatConversationId = data.conversationId || _chatConversationId;
+          _chatMessages.push({ role: 'assistant', content: data.reply });
+          appendChatBubble('assistant', data.reply);
+          markQuestDone('q1');
+        }
+      } catch (err) {
+        if (indicator) indicator.remove();
+        _chatIsTyping = false;
+        appendChatBubble('assistant', buildCompanionFailureMessage(err));
+      }
+    }
+
+    // ── Auth ───────────────────────────────────────
+    function showAuthTab(tab) {
+      document.getElementById('auth-signin').classList.toggle('hidden', tab !== 'signin');
+      document.getElementById('auth-signup').classList.toggle('hidden', tab !== 'signup');
+      document.getElementById('tab-signin').classList.toggle('bg-indigo-600', tab === 'signin');
+      document.getElementById('tab-signin').classList.toggle('text-white', tab === 'signin');
+      document.getElementById('tab-signin').classList.toggle('text-slate-400', tab !== 'signin');
+      document.getElementById('tab-signup').classList.toggle('bg-indigo-600', tab === 'signup');
+      document.getElementById('tab-signup').classList.toggle('text-white', tab === 'signup');
+      document.getElementById('tab-signup').classList.toggle('text-slate-400', tab !== 'signup');
+    }
+
+    function showAuthGate() {
+      document.getElementById('auth-gate').classList.remove('hidden');
+    }
+
+    function hideAuthGate() {
+      document.getElementById('auth-gate').classList.add('hidden');
+    }
+
+    function continueAsGuest() {
+      _guestMode = true;
+      hideAuthGate();
+      launchApp();
+    }
+
+    async function doSignIn() {
+      if (!_auth) { continueAsGuest(); return; }
+      const email = document.getElementById('si-email').value.trim();
+      const password = document.getElementById('si-password').value;
+      const errEl = document.getElementById('auth-error-si');
+      errEl.classList.add('hidden');
+      try {
+        await _auth.signInWithEmailAndPassword(email, password);
+      } catch (e) {
+        errEl.textContent = e.message || 'Sign in failed. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function doSignUp() {
+      if (!_auth) { continueAsGuest(); return; }
+      const name = document.getElementById('su-name').value.trim();
+      const email = document.getElementById('su-email').value.trim();
+      const password = document.getElementById('su-password').value;
+      const errEl = document.getElementById('auth-error-su');
+      errEl.classList.add('hidden');
+      try {
+        const cred = await _auth.createUserWithEmailAndPassword(email, password);
+        if (name && cred.user) {
+          await cred.user.updateProfile({ displayName: name });
+        }
+      } catch (e) {
+        errEl.textContent = e.message || 'Sign up failed. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function doGoogleSignIn() {
+      if (!_auth) { continueAsGuest(); return; }
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await _auth.signInWithPopup(provider);
+      } catch (e) {
+        console.warn('[thoughtica] Google sign-in:', e.message);
+        const errSi = document.getElementById('auth-error-si');
+        const errSu = document.getElementById('auth-error-su');
+        [errSi, errSu].forEach(el => { el.textContent = e.message; el.classList.remove('hidden'); });
+      }
+    }
+
+    async function doSignOut() {
+      if (_auth) {
+        try { await _auth.signOut(); } catch {}
+      }
+      _currentUser = null;
+      _guestMode = false;
+      showAuthGate();
+    }
+
+    // ── Sanctuary Entry ────────────────────────────
+    function enterSanctuary() {
+      const root = document.getElementById('app-sanctuary-root');
+      if (root) root.classList.remove('hidden');
+      const ov = document.getElementById('landing-page-overlay');
+      if (ov) ov.remove();
+
+      // Check URL params for payment result
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('payment_success')) {
+        const tier = params.get('tier') || 'premium';
+        const toast = document.getElementById('payment-toast');
+        const msg = document.getElementById('payment-toast-msg');
+        if (toast && msg) {
+          msg.textContent = `✨ ${tier.charAt(0).toUpperCase() + tier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
+          toast.classList.remove('hidden');
+          setTimeout(() => toast.classList.add('hidden'), 8000);
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (params.get('payment_cancelled')) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+
+      // Firebase auth gate
+      if (_auth) {
+        _auth.onAuthStateChanged(user => {
+          _currentUser = user;
+          if (user) {
+            hideAuthGate();
+            launchApp();
+          } else if (!_guestMode) {
+            showAuthGate();
+            document.getElementById('main-app').classList.add('hidden');
+          }
+        });
+      } else {
+        // No Firebase — offer guest mode directly
+        showAuthGate();
+      }
+    }
+
+    function launchApp() {
+      document.getElementById('main-app').classList.remove('hidden');
+      refreshStatsUI();
+      renderQuests();
+      refreshCheckInBtn();
+      navigateTo('home');
+
+      // Greet the user by name
+      const name = _currentUser ? (_currentUser.displayName || _currentUser.email?.split('@')[0] || 'Seeker') : 'Seeker';
+      const greeting = document.getElementById('home-greeting');
+      if (greeting) greeting.textContent = `Welcome back, ${name}`;
+    }
+
+  </script>
+
+</body>
+</html>
