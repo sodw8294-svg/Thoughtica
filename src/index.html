@@ -3109,8 +3109,7 @@
     // SETTINGS EDITABILITY FUNCTIONS (CHANGE ANYTIME)
     function updateSettingsLanguage(val) {
       S.language = val;
-      const opt = document.querySelector(`#settings-lang-select option[value="${val}"]`);
-      if (opt) S.languageLabel = opt.textContent.trim();
+      S.languageLabel = LANG_LABELS[val] || val;
       cachedSanctuaryVoice = null; // reset voice cache so new language voice is selected
       applyTranslations();
       showXPToast(0, `${t('lang_changed')} ${S.languageLabel} 🌐`, 1.0, false);
@@ -3422,7 +3421,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
-        if (val !== null && val !== undefined) el.textContent = val;
+        el.textContent = val;
       });
 
       // 3. Refresh streak label (uses streak_day/streak_days)
@@ -4051,6 +4050,12 @@
       return 1 + Math.min(1.0, (S.streak - 1) * 0.1);
     }
 
+    /** Returns total cumulative XP earned across all levels (triangular sum + current level XP). */
+    function getTotalXP() {
+      const n = S.level - 1;
+      return S.xp + 100 * n * (n + 1) / 2;
+    }
+
     function addXP(baseAmount, actionLabel = 'Action') {
       const mult = getStreakMultiplier();
       const finalAmount = Math.round(baseAmount * mult);
@@ -4083,8 +4088,8 @@
         openLevelUpModal(isEvery5, isEvery10);
       }
 
-      // Check milestone achievements (total cumulative XP = current XP + XP from previous levels)
-      if (S.xp + (S.level - 1) * 100 >= 1000 || S.level >= 5) checkAndUnlockAchievements();
+      // Check milestone achievements (total cumulative XP = triangular sum: 100*N*(N-1)/2 + current level XP)
+      if (getTotalXP() >= 1000 || S.level >= 5) checkAndUnlockAchievements();
 
       save();
       updateLevelUI();
@@ -5406,12 +5411,16 @@ Directives:
     function renderRitual() {
       const btn = document.getElementById('btn-complete-ritual');
       if (!btn) return;
+      const span = document.createElement('span');
       if (S.ritualCompletedToday) {
-        btn.innerHTML = `<span>${t('btn_anchor_complete')}</span>`;
+        span.textContent = t('btn_anchor_complete');
+        btn.replaceChildren(span);
         btn.disabled = true;
         btn.classList.add('opacity-70');
       } else {
-        btn.innerHTML = `<span data-i18n="btn_anchor_guidepost">${t('btn_anchor_guidepost')}</span>`;
+        span.setAttribute('data-i18n', 'btn_anchor_guidepost');
+        span.textContent = t('btn_anchor_guidepost');
+        btn.replaceChildren(span);
         btn.disabled = false;
         btn.classList.remove('opacity-70');
       }
