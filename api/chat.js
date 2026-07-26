@@ -35,9 +35,9 @@ module.exports = async (req, res) => {
             content: message.trim(),
           },
         ],
-        response_format: {
-          type: 'json_schema',
-          json_schema: {
+        text: {
+          format: {
+            type: 'json_schema',
             name: 'thoughtica_life_rpg_response',
             strict: true,
             schema: {
@@ -100,6 +100,7 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
 
+    // Responses API returns structured output text in output[0].content[0].text or output_text
     let parsed;
     try {
       const text = data?.output?.[0]?.content?.[0]?.text ?? data?.output_text;
