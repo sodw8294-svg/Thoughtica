@@ -1,109 +1,123 @@
 module.exports = async (req, res) => {
+  // 1) Method guard
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
   }
 
-  const { messages, userText, companionName, userName, userGoal, userLevel } = req.body;
+  // 2) Environment key validation
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: 'Server misconfiguration: OPENAI_API_KEY is missing.' });
+  }
 
-  const cName = companionName || 'Kora';
-  const uName = userName || 'Seeker';
-  const goal = userGoal || 'your personal ambitions';
-  const level = userLevel || 1;
+  try {
+    const { message } = req.body ?? {};
 
-  const systemPrompt = `You are ${cName}, a world-class, empathetic, articulate, and highly intelligent AI companion and assistant (similar to Copilot, Gemini, and ChatGPT) in Thoughtica.
-User: ${uName} | Level: ${level} | Main Goal: "${goal}"
-
-DIRECTIVES:
-1. Answer ANY user prompt (general knowledge, coding, writing, philosophy, science, math, life advice, everyday questions) with real depth, human-level intelligence, and clarity.
-2. Be conversational, warm, direct, and engage as a full-fledged AI assistant.
-3. Do NOT prefix responses with your name or "Assistant:". Provide direct, helpful answers like Copilot or Gemini.`;
-
-  // 1. Check for Gemini API key
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (geminiKey) {
-    try {
-      const contents = [];
-      contents.push({ role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] });
-      contents.push({ role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] });
-
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] });
-        }
-      }
-      contents.push({ role: 'user', parts: [{ text: userText }] });
-
-      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents })
-      });
-      const data = await geminiRes.json();
-      if (data.candidates && data.candidates.length > 0 && data.candidates[0].content?.parts?.[0]?.text) {
-        return res.status(200).json({ reply: data.candidates[0].content.parts[0].text.trim() });
-      }
-    } catch (e) {
-      console.error('Server Gemini API Error:', e);
+    if (typeof message !== 'string' || !message.trim()) {
+      return res.status(400).json({ error: "Invalid request: 'message' must be a non-empty string." });
     }
-  }
 
-  // 2. Check for Groq API key
-  const groqKey = process.env.GROQ_API_KEY;
-  if (groqKey) {
-    try {
-      const groqMessages = [{ role: 'system', content: systemPrompt }];
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          groqMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
-        }
-      }
-      groqMessages.push({ role: 'user', content: userText });
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4.1-mini',
+        input: [
+          {
+            role: 'system',
+            content:
+              "You are Thoughtica's RPG Life Coach. Analyze the user's reflection or action, then return an encouraging RPG-style narrative response with fair XP and stat increases. Keep output strictly valid to the provided JSON schema.",
+          },
+          {
+            role: 'user',
+            content: message.trim(),
+          },
+        ],
+        text: {
+          format: {
+            type: 'json_schema',
+            name: 'thoughtica_life_rpg_response',
+            strict: true,
+            schema: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                reply: {
+                  type: 'string',
+                  description:
+                    "An encouraging, RPG-style narrative message responding to the user's reflection or action.",
+                },
+                xpGained: {
+                  type: 'integer',
+                  description: 'Total XP granted (10 to 50).',
+                },
+                statIncreases: {
+                  type: 'object',
+                  additionalProperties: false,
+                  properties: {
+                    discipline: { type: 'integer' },
+                    wisdom: { type: 'integer' },
+                    focus: { type: 'integer' },
+                    vitality: { type: 'integer' },
+                  },
+                  required: ['discipline', 'wisdom', 'focus', 'vitality'],
+                },
+                questDetected: {
+                  anyOf: [
+                    { type: 'null' },
+                    {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        title: { type: 'string' },
+                        difficulty: {
+                          type: 'string',
+                          enum: ['easy', 'medium', 'hard', 'epic'],
+                        },
+                        completed: { type: 'boolean' },
+                      },
+                      required: ['title', 'difficulty', 'completed'],
+                    },
+                  ],
+                },
+              },
+              required: ['reply', 'xpGained', 'statIncreases', 'questDetected'],
+            },
+          },
+        },
+      }),
+    });
 
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
-        body: JSON.stringify({
-          model: 'llama3-8b-8192',
-          messages: groqMessages
-        })
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      return res.status(500).json({
+        error: 'OpenAI request failed.',
+        details: errorText || `HTTP ${response.status}`,
       });
-      const data = await groqRes.json();
-      if (data.choices && data.choices.length > 0 && data.choices[0].message?.content) {
-        return res.status(200).json({ reply: data.choices[0].message.content.trim() });
-      }
-    } catch (e) {
-      console.error('Server Groq API Error:', e);
     }
-  }
 
-  // 3. Check for OpenAI API key
-  const openaiKey = process.env.OPENAI_API_KEY;
-  if (openaiKey) {
+    const data = await response.json();
+
+    // Responses API returns structured output text in output[0].content[0].text or output_text
+    let parsed;
     try {
-      const openAiMessages = [{ role: 'system', content: systemPrompt }];
-      if (Array.isArray(messages)) {
-        for (const m of messages.slice(-10)) {
-          openAiMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
-        }
-      }
-      openAiMessages.push({ role: 'user', content: userText });
-
-      const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${openaiKey}` },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: openAiMessages
-        })
-      });
-      const data = await openAiRes.json();
-      if (data.choices && data.choices.length > 0 && data.choices[0].message?.content) {
-        return res.status(200).json({ reply: data.choices[0].message.content.trim() });
-      }
-    } catch (e) {
-      console.error('Server OpenAI API Error:', e);
+      const text = data?.output?.[0]?.content?.[0]?.text ?? data?.output_text;
+      parsed = typeof text === 'string' ? JSON.parse(text) : null;
+    } catch {
+      parsed = null;
     }
-  }
 
-  return res.status(200).json({ reply: null });
+    if (!parsed) {
+      return res.status(500).json({ error: 'Model returned invalid structured output.' });
+    }
+
+    return res.status(200).json(parsed);
+  } catch (err) {
+    return res.status(500).json({
+      error: 'Internal server error.',
+      details: err instanceof Error ? err.message : 'Unknown error',
+    });
+  }
 };
