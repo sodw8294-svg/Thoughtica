@@ -153,9 +153,21 @@
       position: relative;
       border-radius: 12px;
       min-width: 44px;
+      flex: 1 1 0;
+      min-height: 52px;
+      color: #cbd5e1 !important;
+    }
+    .nav-item span {
+      color: inherit !important;
+      opacity: 0.95;
+    }
+    .nav-item i {
+      color: inherit !important;
+      opacity: 0.95;
     }
     .nav-item.active {
       background: rgba(99, 102, 241, 0.12);
+      color: #818cf8 !important;
     }
     .nav-item.active::after {
       content: '';
@@ -410,7 +422,7 @@
     <div class="relative z-10 min-h-screen flex flex-col justify-between pt-16 pb-8 px-6 sm:px-12">
       <!-- Main Pitch -->
       <div class="flex-1 flex flex-col items-center justify-center text-center space-y-8 max-w-4xl mx-auto mt-12 mb-20 animate-stagger-1">
-        <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-6xl sm:text-7xl shadow-[0_0_80px_rgba(168,85,247,0.6)] border-[4px] border-white/20 mb-4" style="animation: premium-pulse 4s infinite">
+        <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-6xl sm:text-7xl shadow-[0_0_80px_rgba(139,92,246,0.4)]">
           🔮
         </div>
         <h1 class="text-4xl sm:text-6xl font-extrabold premium-text-gradient font-heading tracking-tight leading-tight">
@@ -422,12 +434,13 @@
         
         <!-- Big CTA Button -->
         <div class="pt-8 w-full max-w-sm">
-          <button onclick="const root = document.getElementById('app-sanctuary-root'); if (root) root.classList.remove('hidden'); const ov = document.getElementById('landing-page-overlay'); if (ov) ov.classList.add('hidden'); unlockAudio(); setTimeout(() => { if (!S.introSeen) { startVoicedIntro(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); } }, 400);" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
+          <button onclick="const root = document.getElementById('app-sanctuary-root'); if (root) root.classList.remove('hidden'); const ov = document.getElementById('landing-page-overlay'); if (ov) ov.remove();" class="w-full py-5 px-8 premium-button text-white font-extrabold text-lg rounded-2xl cursor-pointer hover:scale-[1.02] transition-transform shadow-[0_0_40px_rgba(168,85,247,0.5)] flex items-center justify-center gap-3">
             Enter Sanctuary
           </button>
           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Secure, Private, and Transformative.</p>
         </div>
       </div>
+<<<<<<< HEAD
       <!-- The Vision Section -->
       <div class="w-full max-w-4xl mx-auto mt-16 mb-20 text-center animate-stagger-2 px-6">
         <div class="inline-flex items-center justify-center p-3 mb-6 bg-purple-500/10 rounded-2xl border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
@@ -6021,3 +6034,5 @@ Directives:
   </script>
 </body>
 </html>
+=======
+>>>>>>> origin/main
