@@ -3403,8 +3403,10 @@
       // 1. Try the target language dict first
       if (dict && dict[key] !== undefined) return dict[key];
       // 2. Fall back to en-US for any key missing from the target language
-      const enUS = TRANSLATIONS['en-US'][key];
-      return enUS !== undefined ? enUS : key;
+      const enUS = TRANSLATIONS['en-US'];
+      if (enUS && enUS[key] !== undefined) return enUS[key];
+      // 3. Last resort: return the raw key so something always renders
+      return key;
     }
 
     /** Updates all [data-i18n] elements + html lang attribute to match S.language. */
@@ -3417,7 +3419,7 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
-        if (val) el.textContent = val;
+        if (val != null) el.textContent = val;
       });
 
       // 3. Refresh streak label (uses streak_day/streak_days)
@@ -5700,7 +5702,7 @@ Directives:
       initIntroCanvasParticles();
       document.getElementById('btn-settings').onclick = openSettings;
       document.getElementById('btn-close-settings').onclick = closeSettings;
-      if (S.companion && S.companion.name) {
+      if (S.companion?.name) {
         document.getElementById('companion-name-display').textContent = S.companion.name;
         document.getElementById('custom-quantum-goal').value = S.goal || '';
         document.getElementById('custom-goal-val').textContent = S.goal || 'Cultivate mental clarity & inner strength';
