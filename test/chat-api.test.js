@@ -170,3 +170,41 @@ test('preserves anchor and recent messages when trimming long history', async ()
   assert.equal(contents.includes('message-39'), true);
   assert.equal(contents[contents.length - 1], 'continue');
 });
+
+test('userText appears exactly once at end of provider payload', async () => {
+  clearProviderEnv();
+  process.env.OPENAI_API_KEY = 'test-openai-key';
+
+  let payloadMessages = null;
+  global.fetch = async (_url, options) => {
+    const parsed = JSON.parse(options.body);
+    payloadMessages = parsed.messages;
+    return {
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ choices: [{ message: { content: 'Good answer.' } }] })
+    };
+  };
+
+  // Simulate properly-built history: does NOT include the current user message.
+  // This is what the frontend sends after the fix (context built before push).
+  const history = [
+    { role: 'assistant', content: 'Welcome, how can I help?' },
+    { role: 'user', content: 'What is mindfulness?' },
+    { role: 'assistant', content: 'Mindfulness is the practice of present-moment awareness.' }
+  ];
+
+  const req = { method: 'POST', body: { userText: 'Tell me more', messages: history } };
+  const res = createRes();
+
+  await chatHandler(req, res);
+
+  assert.equal(res.statusCode, 200);
+  const userContents = payloadMessages.filter(m => m.role === 'user').map(m => m.content);
+  const occurrences = userContents.filter(c => c === 'Tell me more').length;
+  assert.equal(occurrences, 1, 'Current user message must appear exactly once in the provider payload');
+  assert.equal(payloadMessages[payloadMessages.length - 1].content, 'Tell me more');
+  assert.equal(payloadMessages[payloadMessages.length - 1].role, 'user');
+});
+
