@@ -6,8 +6,12 @@ import {
   Send, Heart, Moon, Sun, Zap, Trophy, Star, Crown, Check, ChevronRight,
   ChevronLeft, X, Download, Settings, Volume2, Play, Pause, Plus,
   Trash2, ArrowUp, ArrowRight, RefreshCw, Quote, BookOpen, Compass,
-  Gem, Clock, Flame, Shield, Bell, Info, Smile, Frown, Meh, type LucideIcon
+  Gem, Clock, Flame, Shield, Bell, Info, Smile, Frown, Meh, Wind, Timer, type LucideIcon
 } from 'lucide-react'
+import { RelaxTab } from '@/components/RelaxTab'
+import { SoundtrackTab } from '@/components/SoundtrackTab'
+import { DetoxTab } from '@/components/DetoxTab'
+import { blink } from '@/blink/client'
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES & DEFAULTS
@@ -16,7 +20,7 @@ import {
 type Tier = 'free' | 'pro' | 'celestial'
 type CompanionPersona = 'calm-philosopher' | 'gentle-strategist' | 'socratic-mentor'
 type AuraMood = 'dawn-mist' | 'sage-sanctuary' | 'twilight-solitude'
-type TabId = 'companion' | 'journal' | 'soundscapes' | 'rituals' | 'reports'
+type TabId = 'companion' | 'journal' | 'relax' | 'soundscapes' | 'soundtrack' | 'detox' | 'rituals' | 'reports'
 
 interface CompanionConfig { name: string; persona: CompanionPersona; aura: AuraMood }
 interface JournalEntry { id: string; text: string; mood: 'happy' | 'neutral' | 'sad'; createdAt: string; aiReflection?: string }
@@ -1351,7 +1355,9 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
 const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: 'companion', label: 'Companion', icon: Sparkles },
   { id: 'journal', label: 'Journal', icon: PenLine },
-  { id: 'soundscapes', label: 'Soundscapes', icon: Music },
+  { id: 'relax', label: 'Relax', icon: Wind },
+  { id: 'soundtrack', label: 'Soundtrack', icon: Music },
+  { id: 'detox', label: 'Detox', icon: Timer },
   { id: 'rituals', label: 'Rituals', icon: Target },
   { id: 'reports', label: 'Reports', icon: BarChart3 },
 ]
@@ -1366,7 +1372,10 @@ function Dashboard({ state, setState }: { state: AppState; setState: (s: AppStat
     switch (activeTab) {
       case 'companion': return <CompanionTab state={state} setState={setState} />
       case 'journal': return <JournalTab state={state} setState={setState} />
+      case 'relax': return <RelaxTab />
       case 'soundscapes': return <SoundscapesTab state={state} setState={setState} />
+      case 'soundtrack': return <SoundtrackTab />
+      case 'detox': return <DetoxTab />
       case 'rituals': return <RitualsTab state={state} setState={setState} />
       case 'reports': return <ReportsTab state={state} setState={setState} />
     }
