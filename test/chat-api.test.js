@@ -60,6 +60,7 @@ test('returns provider not configured when no provider keys exist', async () => 
 test('returns successful Gemini response with conversation id', async () => {
   clearProviderEnv();
   process.env.GEMINI_API_KEY = 'test-gemini-key';
+  const rawProviderReply = '  Hi from Gemini!  ';
 
   let fetchBody = null;
   global.fetch = async (_url, options) => {
@@ -69,7 +70,7 @@ test('returns successful Gemini response with conversation id', async () => {
       status: 200,
       headers: { get: () => 'application/json' },
       json: async () => ({
-        candidates: [{ content: { parts: [{ text: '  Hi from Gemini!  ' }] } }]
+        candidates: [{ content: { parts: [{ text: rawProviderReply }] } }]
       })
     };
   };
@@ -88,6 +89,7 @@ test('returns successful Gemini response with conversation id', async () => {
 
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.reply, 'Hi from Gemini!');
+  assert.notEqual(res.body.reply, rawProviderReply);
   assert.equal(res.body.provider, 'gemini');
   assert.equal(res.body.conversationId, 'conv-123');
   assert.ok(Array.isArray(fetchBody.contents));
