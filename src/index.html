@@ -2067,7 +2067,7 @@
 
         <!-- Header -->
         <div class="relative px-6 pt-4 pb-5 border-b border-white/[0.06]">
-          <button id="btn-close-settings" aria-label="Close settings" class="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer text-lg leading-none"><span aria-hidden="true">×</span></button>
+          <button id="btn-close-settings" aria-label="Close settings" class="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/20 flex items-center justify-center">
               <i data-lucide="settings-2" class="w-4 h-4 text-purple-300"></i>
@@ -2295,7 +2295,7 @@
       specialization: 'Sovereign Architect',
       chatHistory: [],
       ritualCompletedToday: false,
-      lastRitualDate: '',
+      lastRitualDate: null,
       plan: 'tier1',
       voiceEnabled: true,
       moodToday: '',
@@ -3475,7 +3475,7 @@
         if (!S.unlockedSkills) S.unlockedSkills = [];
         if (!S.specialization) S.specialization = 'Sovereign Architect';
         if (!S.language) S.language = 'en-US';
-        if (!S.lastRitualDate) S.lastRitualDate = '';
+        if (S.lastRitualDate === undefined) S.lastRitualDate = null;
         if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
         if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
 
@@ -5437,8 +5437,8 @@ Directives:
         S.streak = 1; // first ever anchor
       } else if (S.lastRitualDate === yesterday) {
         S.streak = (S.streak || 1) + 1; // consecutive day
-      } else if (S.lastRitualDate !== today) {
-        S.streak = 1; // streak broken
+      } else {
+        S.streak = 1; // streak broken (missed one or more days)
       }
       S.lastRitualDate = today;
 
@@ -5535,7 +5535,7 @@ Directives:
           specialization: 'Sovereign Architect',
           chatHistory: [],
           ritualCompletedToday: false,
-          lastRitualDate: '',
+          lastRitualDate: null,
           plan: 'tier1',
           voiceEnabled: true,
           moodToday: '',
@@ -5709,11 +5709,11 @@ Directives:
       renderWordOfTheDay();
       scheduleNext5AMRefresh();
       lucide.createIcons();
-      setAtmosphere(S.companion?.aura || 'twilight');
+      setAtmosphere(S.companion.aura || 'twilight');
       initIntroCanvasParticles();
       document.getElementById('btn-settings').onclick = openSettings;
       document.getElementById('btn-close-settings').onclick = closeSettings;
-      if (S.companion?.name) {
+      if (S.companion.name) {
         document.getElementById('companion-name-display').textContent = S.companion.name;
         document.getElementById('custom-quantum-goal').value = S.goal || '';
         document.getElementById('custom-goal-val').textContent = S.goal || 'Cultivate mental clarity & inner strength';
