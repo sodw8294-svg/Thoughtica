@@ -5015,100 +5015,43 @@
       }
     }
 
-    // DYNAMIC NEURAL CONVERSATIONAL SYNTHESIZER (NATURAL COPILOT / GEMINI STYLE)
-    function generateCompanionResponse(userText) {
-      const text = userText.trim();
-      const lower = text.toLowerCase();
-      const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
-      const uName = S.name || 'Seeker';
-      const goal = S.goal || 'your personal ambition';
-      const level = S.level || 1;
+    const CHAT_MAX_INPUT_LENGTH = 2000;
+    const CHAT_CONTEXT_WINDOW_MESSAGES = 20;
+    let isChatRequestInFlight = false;
+    let chatRequestSequence = 0;
 
-      const pastAIMessages = (S.chatHistory || [])
-        .filter(m => m.s === 'mentor')
-        .map(m => m.t);
+    function buildCompanionContextMessages(history) {
+      const normalized = (Array.isArray(history) ? history : [])
+        .filter(m => m && typeof m.t === 'string' && typeof m.s === 'string')
+        .map(m => ({
+          role: m.s === 'user' ? 'user' : 'assistant',
+          content: m.t.trim()
+        }))
+        .filter(m => m.content.length > 0);
 
-      function pickNonRepeating(options) {
-        const unused = options.filter(opt => !pastAIMessages.includes(opt));
-        const pool = unused.length > 0 ? unused : options;
-        return pool[Math.floor(Math.random() * pool.length)];
-      }
-
-      // 1. Coding & Technical Queries
-      if (lower.match(/(code|program|javascript|python|css|html|api|build|bug|error|git|react|vue|node|app)\b/)) {
-        return pickNonRepeating([
-          `Building software and mastering code comes down to clear modular execution, ${uName}. Isolating logic into small testable units and verifying data inputs will resolve almost any bug cleanly.`,
-          `Engineering solid systems requires clean architecture and methodical debugging. Keeping your logic decoupled and state predictable is always the fastest path to production.`
-        ]);
-      }
-
-      // 2. Mindfulness, Stress & Calm Queries
-      if (lower.match(/(stress|anxious|anxiety|worry|overwhelmed|tired|burnout|calm|breathe|peace|rest)\b/)) {
-        return pickNonRepeating([
-          `Take a slow, deep breath, ${uName}. Inhale for 4 seconds, hold for 4, and exhale for 6. Your value isn't measured by frantic output—giving yourself permission to rest is essential for long-term clarity.`,
-          `Feeling overwhelmed is usually a signal that your attention is stretched across too many horizons at once. Grounding back into the present moment and focusing on a single small step will restore your momentum.`
-        ]);
-      }
-
-      // 3. Productivity, Focus & Habits
-      if (lower.match(/(habit|focus|productive|procrastinat|goal|routine|discipline|motivation|work)\b/)) {
-        return pickNonRepeating([
-          `Consistency always beats intensity, ${uName}. Sustainable progress comes from anchoring friction-free daily habits rather than relying on temporary bursts of willpower.`,
-          `To build deep focus, protect your attention from digital noise. Working in uninterrupted blocks and keeping your environment clean creates ideal conditions for deep work.`
-        ]);
-      }
-
-      // 4. Direct Explanations ("what is X", "how to X", "why is X")
-      if (lower.startsWith('what is') || lower.startsWith('what are') || lower.startsWith('whats')) {
-        const topic = text.replace(/^what\s+(is|are|s)\s+/i, '').replace(/\?$/, '').trim();
-        return pickNonRepeating([
-          `Examining ${topic} is a great way to expand your mental models. At its core, ${topic} gives you a framework for making clearer, more sovereign decisions in your daily path.`,
-          `Exploring ${topic} builds valuable perspective. Deep understanding comes from looking at foundational principles and seeing how they apply to your practical goals.`
-        ]);
-      }
-
-      if (lower.startsWith('how to') || lower.startsWith('how can i') || lower.startsWith('how do i')) {
-        const topic = text.replace(/^how\s+(to|can i|do i)\s+/i, '').replace(/\?$/, '').trim();
-        return pickNonRepeating([
-          `To master how to ${topic}, start by establishing the smallest viable prototype of action. Eliminate unnecessary friction, define clear inputs, and build consistency through daily repetition.`,
-          `Achieving mastery in how to ${topic} comes down to fast feedback loops and steady execution. Every iteration refines your capability and strengthens your momentum.`
-        ]);
-      }
-
-      if (lower.startsWith('why')) {
-        return pickNonRepeating([
-          `Understanding the underlying "why" behind your actions is the key to true self-sovereignty. When your core motivations are clear, decisions become intuitive and effortless.`,
-          `Exploring the deeper "why" helps align your daily actions with your overarching purpose, ensuring your energy is invested where it matters most.`
-        ]);
-      }
-
-      // 5. Greetings
-      if (lower.match(/^(hi|hello|hey|greetings|good morning|good evening|yo|sup|what's up)\b/)) {
-        return pickNonRepeating([
-          `Greetings, ${uName}! It's great to connect with you. I'm ready to discuss any topic, brainstorm ideas, or work through your goals today.`,
-          `Hello ${uName}! I'm ${cName}, your AI companion. Feel free to ask me questions, explore concepts, or chat about whatever is on your mind.`,
-          `Welcome, ${uName}. I'm here and fully attentive. Let me know what you'd like to dive into today!`
-        ]);
-      }
-
-      // 6. Gratitude & Praise
-      if (lower.match(/(thank|thanks|appreciate|awesome|cool|great|good job|nice)\b/)) {
-        return pickNonRepeating([
-          `You're very welcome, ${uName}! I'm always here to collaborate with you whenever you need insights or support.`,
-          `Glad I could help! Every reflection and intentional choice you make builds lasting momentum on your path.`
-        ]);
-      }
-
-      // 7. Open Conversational Responses
-      return pickNonRepeating([
-        `That's a compelling perspective, ${uName}. Exploring concepts from multiple angles is one of the best ways to sharpen your decision-making and stay aligned with "${goal}".`,
-        `I appreciate you sharing that. Systematically examining your thoughts and ideas helps turn raw reflection into clear, actionable direction.`,
-        `I'm following your line of thought closely, ${uName}. I'm here to explore any topic, idea, or challenge you'd like to work through.`
-      ]);
+      if (normalized.length <= CHAT_CONTEXT_WINDOW_MESSAGES) return normalized;
+      const anchorCount = 4;
+      const tailCount = CHAT_CONTEXT_WINDOW_MESSAGES - anchorCount;
+      const tailStart = Math.max(anchorCount, normalized.length - tailCount);
+      return [...normalized.slice(0, anchorCount), ...normalized.slice(tailStart)];
     }
 
-    const CHAT_MAX_INPUT_LENGTH = 2000;
-    let isChatRequestInFlight = false;
+    function buildCompanionFailureMessage(companionName, detail) {
+      const cName = companionName || 'Kora';
+      const safeDetail = typeof detail === 'string' ? detail.trim() : '';
+      if (safeDetail) {
+        return `I'm having trouble completing that response right now (${safeDetail}). Your conversation context is still safe—please try again in a moment.`;
+      }
+      return `I'm having trouble completing that response right now. Your conversation context is still safe, ${cName}. Please try again in a moment.`;
+    }
+
+    function syncConversationId(nextConversationId, requestId) {
+      if (requestId !== chatRequestSequence) return;
+      if (typeof nextConversationId !== 'string') return;
+      const trimmed = nextConversationId.trim();
+      if (!trimmed) return;
+      S.chatConversationId = trimmed;
+    }
 
     function setChatBusyState(isBusy) {
       const mainInput = document.getElementById('companion-chat-input');
@@ -5125,13 +5068,15 @@
       if (guidesSend) guidesSend.classList.toggle('opacity-60', !!isBusy);
     }
 
-    function normalizeChatReply(reply, fallbackText) {
-      if (typeof reply === 'string' && reply.trim().length > 0) return reply.trim();
-      return fallbackText;
+    function normalizeChatReply(reply) {
+      if (typeof reply !== 'string') return null;
+      const trimmed = reply.trim();
+      if (!trimmed) return null;
+      return trimmed;
     }
 
     // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (COPILOT / GEMINI READY)
-    async function fetchRealTimeLLMResponse(userText) {
+    async function fetchRealTimeLLMResponse(userText, requestId) {
       updateQuantumCognitiveMatrix(userText);
       const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
       const uName = S.name || 'Seeker';
@@ -5139,13 +5084,8 @@
       const level = S.level || 1;
       if (!S.chatConversationId) S.chatConversationId = `chat_${Date.now()}`;
 
-      const pastMessages = (S.chatHistory || [])
-        .slice(-8)
-        .filter(m => m && typeof m.t === 'string')
-        .map(m => ({
-          role: m.s === 'user' ? 'user' : 'assistant',
-          content: m.t
-        }));
+      const pastMessages = buildCompanionContextMessages(S.chatHistory);
+      let serverErrorMessage = '';
 
       // 1. First, attempt backend Serverless LLM Endpoint (/api/chat)
       try {
@@ -5163,96 +5103,104 @@
           })
         });
         const serverData = await serverRes.json().catch(() => null);
-        if (serverData && typeof serverData.conversationId === 'string' && serverData.conversationId.trim()) {
-          S.chatConversationId = serverData.conversationId.trim();
-        }
-        if (serverData && serverData.reply && serverData.reply.trim().length > 2) {
+        syncConversationId(serverData?.conversationId, requestId);
+
+        const serverReply = normalizeChatReply(serverData?.reply);
+        if (serverRes.ok && serverReply) {
           console.log("🔮 Backend Server LLM Response Received!");
-          return serverData.reply.trim();
+          return serverReply;
         }
-        if (!serverRes.ok && serverData?.error?.message) {
-          console.warn("Backend /api/chat returned error:", serverData.error.message);
+
+        serverErrorMessage = typeof serverData?.error?.message === 'string'
+          ? serverData.error.message.trim()
+          : '';
+        if (serverErrorMessage) {
+          console.warn("Backend /api/chat returned error:", serverErrorMessage);
+        }
+
+        if (!serverRes.ok) {
+          throw new Error(serverErrorMessage || `Server returned status ${serverRes.status}`);
         }
       } catch (serverErr) {
-        console.warn("Backend /api/chat unavailable or unconfigured, trying client BYOK key fallback...", serverErr);
+        console.warn("Backend /api/chat request failed, trying client BYOK key...", serverErr);
       }
 
       if (!S.aiApiKey || S.aiApiKey.trim() === '') {
-        return normalizeChatReply(generateCompanionResponse(userText), "I couldn't complete that response just now, but I'm still here with you. Please try once more.");
+        return buildCompanionFailureMessage(cName, serverErrorMessage);
       }
-      
+
       const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant (like Copilot / ChatGPT) in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
 Directives:
 - Answer any question directly with real depth, actionable advice, and human-level authenticity.
 - Maintain a helpful, engaging, and clear conversational tone.
 - Do NOT start your response with your name or "Assistant:". Give a direct, articulate answer.`;
 
-      try {
-        const key = S.aiApiKey.trim();
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000);
-        let replyText = null;
+      const key = S.aiApiKey.trim();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      let replyText = null;
 
+      try {
         if (key.startsWith('gsk_')) {
-          // GROQ API (Lightning Fast Llama-3)
           const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `****** },
             body: JSON.stringify({
               model: 'llama3-8b-8192',
               messages: [{ role: 'system', content: systemPrompt }, ...pastMessages, { role: 'user', content: userText }]
             }),
             signal: controller.signal
           });
-          const data = await res.json();
-          if (data.choices && data.choices.length > 0) replyText = data.choices[0].message.content;
-        } 
-        else if (key.startsWith('AIza')) {
-          // GEMINI API
-          const contents = [];
-          contents.push({ role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] });
-          contents.push({ role: 'model', parts: [{ text: `Understood. I am ${cName}.` }] });
-          for (const m of pastMessages) {
-            contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] });
-          }
-          contents.push({ role: 'user', parts: [{ text: userText }] });
-          
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw new Error(`Groq returned HTTP ${res.status}`);
+          if (data?.choices?.length > 0) replyText = data.choices[0].message?.content;
+        } else if (key.startsWith('AIza')) {
+          const contents = [
+            { role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] },
+            { role: 'model', parts: [{ text: `Understood. I am ${cName}.` }] },
+            ...pastMessages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] })),
+            { role: 'user', parts: [{ text: userText }] }
+          ];
+
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contents }),
             signal: controller.signal
           });
-          const data = await res.json();
-          if (data.candidates && data.candidates.length > 0) replyText = data.candidates[0].content.parts[0].text;
-        } 
-        else if (key.startsWith('sk-')) {
-          // OPENAI API
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw new Error(`Gemini returned HTTP ${res.status}`);
+          if (data?.candidates?.length > 0) replyText = data.candidates[0]?.content?.parts?.[0]?.text;
+        } else if (key.startsWith('sk-')) {
           const res = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `****** },
             body: JSON.stringify({
               model: 'gpt-3.5-turbo',
               messages: [{ role: 'system', content: systemPrompt }, ...pastMessages, { role: 'user', content: userText }]
             }),
             signal: controller.signal
           });
-          const data = await res.json();
-          if (data.choices && data.choices.length > 0) replyText = data.choices[0].message.content;
-        }
-
-        clearTimeout(timeoutId);
-
-        if (replyText && replyText.trim().length > 2) {
-          console.log("🔮 Live AI API Stream Received!");
-          return replyText.trim();
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw new Error(`OpenAI returned HTTP ${res.status}`);
+          if (data?.choices?.length > 0) replyText = data.choices[0].message?.content;
+        } else {
+          throw new Error('Unrecognized API key format.');
         }
       } catch (err) {
         console.error("AI API Stream Error:", err);
+        return buildCompanionFailureMessage(cName, err?.message);
+      } finally {
+        clearTimeout(timeoutId);
       }
 
-      // Fallback if API fails, times out, or key is invalid
-      return generateCompanionResponse(userText);
+      const normalizedReply = normalizeChatReply(replyText);
+      if (normalizedReply) {
+        console.log("🔮 Live AI API Stream Received!");
+        return normalizedReply;
+      }
+
+      return buildCompanionFailureMessage(cName, 'The AI provider returned an empty response.');
     }
 
     function showTypingIndicator() {
@@ -5285,6 +5233,10 @@ Directives:
     }
 
     function resetChatHistory() {
+      chatRequestSequence += 1;
+      isChatRequestInFlight = false;
+      removeTypingIndicator();
+      setChatBusyState(false);
       S.chatHistory = [];
       S.chatConversationId = `chat_${Date.now()}`;
       S.quantumState = { INT: 0.85, EMP: 0.90, ACT: 0.75, ZEN: 0.95 };
@@ -5370,6 +5322,7 @@ Directives:
         return;
       }
       if (isChatRequestInFlight) return;
+      const requestId = ++chatRequestSequence;
       isChatRequestInFlight = true;
       setChatBusyState(true);
       S.chatHistory.push({ s: 'user', t: cleaned });
@@ -5381,20 +5334,26 @@ Directives:
 
       showTypingIndicator();
       try {
-        const reply = await fetchRealTimeLLMResponse(cleaned);
-        const safeReply = normalizeChatReply(reply, "I hit a temporary response issue, but I'm here with you—please send that again.");
+        const reply = await fetchRealTimeLLMResponse(cleaned, requestId);
+        if (requestId !== chatRequestSequence) return;
+        const safeReply = normalizeChatReply(reply);
+        if (!safeReply) throw new Error('No response text returned.');
         S.chatHistory.push({ s: 'mentor', t: safeReply });
         renderChat();
         speakKoraResponse(safeReply);
       } catch (err) {
+        if (requestId !== chatRequestSequence) return;
         console.error("Chat processing error:", err);
-        const errorText = "I'm having trouble responding right now. Please try again in a moment.";
+        const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
+        const errorText = buildCompanionFailureMessage(cName, err?.message);
         S.chatHistory.push({ s: 'mentor', t: errorText });
         renderChat();
       } finally {
-        removeTypingIndicator();
-        isChatRequestInFlight = false;
-        setChatBusyState(false);
+        if (requestId === chatRequestSequence) {
+          removeTypingIndicator();
+          isChatRequestInFlight = false;
+          setChatBusyState(false);
+        }
         save();
       }
     }

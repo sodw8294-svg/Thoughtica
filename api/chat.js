@@ -1,4 +1,4 @@
-const MAX_HISTORY_MESSAGES = 10;
+const MAX_HISTORY_MESSAGES = 24;
 const MAX_USER_TEXT_LENGTH = 2000;
 const DEFAULT_TIMEOUT_MS = 15000;
 const MIN_TIMEOUT_MS = 3000;
@@ -23,16 +23,24 @@ function normalizeUserLevel(value) {
   return Math.min(999, Math.max(1, level));
 }
 
+function trimMessagesForContext(messages, maxMessages) {
+  if (messages.length <= maxMessages) return messages;
+  const anchorCount = Math.min(4, Math.max(2, Math.floor(maxMessages / 3)));
+  const tailCount = Math.max(0, maxMessages - anchorCount);
+  const tailStart = Math.max(anchorCount, messages.length - tailCount);
+  return [...messages.slice(0, anchorCount), ...messages.slice(tailStart)];
+}
+
 function normalizeMessages(messages) {
   if (!Array.isArray(messages)) return [];
-  return messages
+  const normalized = messages
     .filter(msg => msg && typeof msg.content === 'string' && typeof msg.role === 'string')
     .map(msg => ({
       role: msg.role === 'user' ? 'user' : 'assistant',
       content: msg.content.trim().slice(0, MAX_USER_TEXT_LENGTH)
     }))
-    .filter(msg => msg.content.length > 0)
-    .slice(-MAX_HISTORY_MESSAGES);
+    .filter(msg => msg.content.length > 0);
+  return trimMessagesForContext(normalized, MAX_HISTORY_MESSAGES);
 }
 
 function normalizeConversationId(value) {
@@ -42,8 +50,8 @@ function normalizeConversationId(value) {
   return trimmed.slice(0, 120);
 }
 
-function buildErrorEnvelope(code, message, conversationId, retryable = false) {
-  return {
+function buildErrorEnvelope(code, message, conversationId, retryable = false, details) {
+  const payload = {
     reply: null,
     conversationId,
     error: {
@@ -52,6 +60,10 @@ function buildErrorEnvelope(code, message, conversationId, retryable = false) {
       retryable
     }
   };
+  if (details && typeof details === 'object') {
+    payload.error.details = details;
+  }
+  return payload;
 }
 
 async function parseProviderPayload(response) {
@@ -113,77 +125,87 @@ DIRECTIVES:
 3. Do NOT prefix responses with your name or "Assistant:". Provide direct, helpful answers like Copilot or Gemini.`;
 
   const providerCalls = [];
+  const providerFailures = [];
 
   const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {
-    providerCalls.push(async () => {
-      const contents = [
-        { role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] },
-        { role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] },
-        ...messages.map(msg => ({ role: msg.role === 'user' ? 'user' : 'model', parts: [{ text: msg.content }] })),
-        { role: 'user', parts: [{ text: userText }] }
-      ];
+    providerCalls.push({
+      name: 'gemini',
+      run: async () => {
+        const contents = [
+          { role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] },
+          { role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] },
+          ...messages.map(msg => ({ role: msg.role === 'user' ? 'user' : 'model', parts: [{ text: msg.content }] })),
+          { role: 'user', parts: [{ text: userText }] }
+        ];
 
-      const response = await fetchWithTimeout(
-        `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-1.5-flash'}:generateContent?key=${geminiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents })
-        },
-        timeoutMs
-      );
-      const data = await parseProviderPayload(response);
-      if (!response.ok) throw new Error(`Gemini HTTP ${response.status}`);
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (typeof text !== 'string' || !text.trim()) throw new Error('Gemini returned an empty response.');
-      return { reply: text.trim(), provider: 'gemini' };
+        const response = await fetchWithTimeout(
+          `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-1.5-flash'}:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents })
+          },
+          timeoutMs
+        );
+        const data = await parseProviderPayload(response);
+        if (!response.ok) throw new Error(`Gemini HTTP ${response.status}`);
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (typeof text !== 'string' || !text.trim()) throw new Error('Gemini returned an empty response.');
+        return { reply: text.trim(), provider: 'gemini' };
+      }
     });
   }
 
   const groqKey = process.env.GROQ_API_KEY;
   if (groqKey) {
-    providerCalls.push(async () => {
-      const response = await fetchWithTimeout(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', groqKey].join(' ') },
-          body: JSON.stringify({
-            model: process.env.GROQ_MODEL || 'llama3-8b-8192',
-            messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }]
-          })
-        },
-        timeoutMs
-      );
-      const data = await parseProviderPayload(response);
-      if (!response.ok) throw new Error(`Groq HTTP ${response.status}`);
-      const text = data?.choices?.[0]?.message?.content;
-      if (typeof text !== 'string' || !text.trim()) throw new Error('Groq returned an empty response.');
-      return { reply: text.trim(), provider: 'groq' };
+    providerCalls.push({
+      name: 'groq',
+      run: async () => {
+        const response = await fetchWithTimeout(
+          'https://api.groq.com/openai/v1/chat/completions',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', groqKey].join(' ') },
+            body: JSON.stringify({
+              model: process.env.GROQ_MODEL || 'llama3-8b-8192',
+              messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }]
+            })
+          },
+          timeoutMs
+        );
+        const data = await parseProviderPayload(response);
+        if (!response.ok) throw new Error(`Groq HTTP ${response.status}`);
+        const text = data?.choices?.[0]?.message?.content;
+        if (typeof text !== 'string' || !text.trim()) throw new Error('Groq returned an empty response.');
+        return { reply: text.trim(), provider: 'groq' };
+      }
     });
   }
 
   const openaiKey = process.env.OPENAI_API_KEY;
   if (openaiKey) {
-    providerCalls.push(async () => {
-      const response = await fetchWithTimeout(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', openaiKey].join(' ') },
-          body: JSON.stringify({
-            model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-            messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }]
-          })
-        },
-        timeoutMs
-      );
-      const data = await parseProviderPayload(response);
-      if (!response.ok) throw new Error(`OpenAI HTTP ${response.status}`);
-      const text = data?.choices?.[0]?.message?.content;
-      if (typeof text !== 'string' || !text.trim()) throw new Error('OpenAI returned an empty response.');
-      return { reply: text.trim(), provider: 'openai' };
+    providerCalls.push({
+      name: 'openai',
+      run: async () => {
+        const response = await fetchWithTimeout(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', openaiKey].join(' ') },
+            body: JSON.stringify({
+              model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+              messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }]
+            })
+          },
+          timeoutMs
+        );
+        const data = await parseProviderPayload(response);
+        if (!response.ok) throw new Error(`OpenAI HTTP ${response.status}`);
+        const text = data?.choices?.[0]?.message?.content;
+        if (typeof text !== 'string' || !text.trim()) throw new Error('OpenAI returned an empty response.');
+        return { reply: text.trim(), provider: 'openai' };
+      }
     });
   }
 
@@ -195,23 +217,45 @@ DIRECTIVES:
     ));
   }
 
-  for (const runProvider of providerCalls) {
+  for (const providerCall of providerCalls) {
+    const startedAt = Date.now();
     try {
-      const result = await runProvider();
+      const result = await providerCall.run();
+      console.info('[api/chat] provider response succeeded', {
+        provider: providerCall.name,
+        conversationId,
+        historyMessages: messages.length,
+        latencyMs: Date.now() - startedAt
+      });
       return res.status(200).json({
         reply: result.reply,
         provider: result.provider,
         conversationId
       });
     } catch (err) {
-      console.error('[api/chat] provider call failed:', err?.message || err);
+      const failureMessage = err?.message || 'Unknown provider error';
+      providerFailures.push({
+        provider: providerCall.name,
+        latencyMs: Date.now() - startedAt,
+        message: failureMessage
+      });
+      console.error('[api/chat] provider call failed', {
+        provider: providerCall.name,
+        conversationId,
+        historyMessages: messages.length,
+        latencyMs: Date.now() - startedAt,
+        error: failureMessage
+      });
     }
   }
 
   return res.status(502).json(buildErrorEnvelope(
     'PROVIDER_UNAVAILABLE',
-    'AI provider is temporarily unavailable. Please try again in a moment.',
+    'I’m having trouble reaching the AI provider right now, but your conversation context is safe. Please try again in a moment.',
     conversationId,
-    true
+    true,
+    {
+      providersTried: providerFailures
+    }
   ));
 };

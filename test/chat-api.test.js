@@ -109,5 +109,64 @@ test('returns provider unavailable when provider call fails', async () => {
 
   assert.equal(res.statusCode, 502);
   assert.equal(res.body.error.code, 'PROVIDER_UNAVAILABLE');
+  assert.match(res.body.error.message, /conversation context is safe/i);
   assert.equal(res.body.reply, null);
+  assert.equal(Array.isArray(res.body.error.details.providersTried), true);
+});
+
+test('returns provider unavailable when provider returns empty content', async () => {
+  clearProviderEnv();
+  process.env.OPENAI_API_KEY = 'test-openai-key';
+  global.fetch = async () => ({
+    ok: true,
+    status: 200,
+    headers: { get: () => 'application/json' },
+    json: async () => ({ choices: [{ message: { content: '   ' } }] })
+  });
+
+  const req = { method: 'POST', body: { userText: 'Tell me something useful' } };
+  const res = createRes();
+
+  await chatHandler(req, res);
+
+  assert.equal(res.statusCode, 502);
+  assert.equal(res.body.error.code, 'PROVIDER_UNAVAILABLE');
+  assert.equal(res.body.reply, null);
+});
+
+test('preserves anchor and recent messages when trimming long history', async () => {
+  clearProviderEnv();
+  process.env.OPENAI_API_KEY = 'test-openai-key';
+
+  let payloadMessages = null;
+  global.fetch = async (_url, options) => {
+    const parsed = JSON.parse(options.body);
+    payloadMessages = parsed.messages;
+    return {
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ choices: [{ message: { content: 'Context received.' } }] })
+    };
+  };
+
+  const longHistory = Array.from({ length: 40 }, (_v, i) => ({
+    role: i % 2 === 0 ? 'user' : 'assistant',
+    content: `message-${i}`
+  }));
+
+  const req = { method: 'POST', body: { userText: 'continue', messages: longHistory } };
+  const res = createRes();
+
+  await chatHandler(req, res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(payloadMessages.length, 26);
+  const contents = payloadMessages.map(msg => msg.content);
+  assert.equal(contents.includes('message-0'), true);
+  assert.equal(contents.includes('message-1'), true);
+  assert.equal(contents.includes('message-2'), true);
+  assert.equal(contents.includes('message-3'), true);
+  assert.equal(contents.includes('message-39'), true);
+  assert.equal(contents[contents.length - 1], 'continue');
 });
