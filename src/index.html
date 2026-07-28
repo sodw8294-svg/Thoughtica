@@ -912,8 +912,9 @@
       const _resolvedStripePk = window.__STRIPE_PK__ ||
         (/^%[A-Z0-9_]+%$/.test(_stripePkEnv) ? '' : _stripePkEnv);
       if (!_resolvedStripePk) {
-        console.warn('[thoughtica] Stripe public key not configured. Set VITE_STRIPE_PK at build time.');
-        throw new Error('Payment service is not configured. Please contact support.');
+        const err = new Error('Payment service is not configured. Please contact support.');
+        console.error('[thoughtica] Stripe public key not configured. Set VITE_STRIPE_PK at build time.', err);
+        throw err;
       }
       _stripe = Stripe(_resolvedStripePk);
       return _stripe;
