@@ -31,6 +31,7 @@ interface SoulReport { id: string; date: string; moodTrend: number[]; topTopics:
 
 interface AppState {
   onboardingDone: boolean
+  primaryGoal: string
   companion: CompanionConfig
   tier: Tier
   trialActive: boolean
@@ -86,7 +87,7 @@ const ALL_BADGES: Badge[] = [
   { id: 'zen-master', name: 'Zen Master', description: 'Reached Level 5 in your mindfulness journey.', icon: 'Trophy' },
   { id: 'sound-explorer', name: 'Sound Explorer', description: 'Tried all four soundscapes.', icon: 'Music' },
   { id: 'path-clearer', name: 'Path Clearer', description: 'Completed 10 path markers.', icon: 'Target' },
-  { id: 'ai-bond', name: 'AI Bond', description: 'Had 50 conversations with your companion.', icon: 'Sparkles' },
+  { id: 'ai-bond', name: 'Companion Bond', description: 'Had 50 conversations with your companion.', icon: 'Sparkles' },
 ]
 
 const SOUND_PRESETS = [
@@ -109,6 +110,7 @@ function todayStr() { return new Date().toISOString().split('T')[0] }
 function getDefaultState(): AppState {
   return {
     onboardingDone: false,
+    primaryGoal: '',
     companion: { name: 'Aria', persona: 'calm-philosopher', aura: 'sage-sanctuary' },
     tier: 'free',
     trialActive: false,
@@ -183,9 +185,15 @@ const COMPANION_RESPONSES: Record<string, string[]> = {
     'Your mind is a sanctuary. Let\'s tend to it together, one thought at a time. What would feel nourishing right now?',
     'Rilke wrote: "Be patient toward all that is unsolved in your heart." Some answers ripen with time, not effort.',
   ],
+  goal: [
+    'Every step forward — no matter how small — brings you closer to what you\'re building. What\'s one action you could take today?',
+    'Progress on your Main Quest doesn\'t always look dramatic. Sometimes it\'s a quiet consistency. How are you feeling about your journey?',
+    'Your goal is a living thing — it grows as you do. Let\'s think about what the next milestone might look like.',
+    'Quest journeys have peaks and valleys. The valleys are where the real growth happens. What has this stretch of the road taught you?',
+  ],
 }
 
-function generateCompanionResponse(userMessage: string, persona: CompanionPersona): string {
+function generateCompanionResponse(userMessage: string, persona: CompanionPersona, primaryGoal?: string): string {
   const lower = userMessage.toLowerCase()
   let pool = COMPANION_RESPONSES.general
 
@@ -199,9 +207,18 @@ function generateCompanionResponse(userMessage: string, persona: CompanionPerson
     pool = COMPANION_RESPONSES.advice
   } else if (lower.includes('remind') || lower.includes('remember') || lower.includes('don\'t forget')) {
     pool = COMPANION_RESPONSES.reminder
+  } else if (lower.includes('goal') || lower.includes('quest') || lower.includes('progress') || lower.includes('achieve')) {
+    pool = COMPANION_RESPONSES.goal
   }
 
-  return pool[Math.floor(Math.random() * pool.length)]
+  let response = pool[Math.floor(Math.random() * pool.length)]
+  if (primaryGoal && Math.random() < 0.35) {
+    // primaryGoal is rendered as plain text in React JSX, so no HTML escaping needed.
+    // Trim to avoid leading/trailing whitespace in the message.
+    const goal = primaryGoal.trim().slice(0, 120)
+    response += ` Remember, your Main Quest — "${goal}" — is always the compass pointing the way.`
+  }
+  return response
 }
 
 function generateAiReflection(journalText: string): string {
@@ -277,9 +294,10 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
   const [name, setName] = useState(state.companion.name)
   const [persona, setPersona] = useState<CompanionPersona>(state.companion.persona)
   const [aura, setAura] = useState<AuraMood>(state.companion.aura)
+  const [primaryGoal, setPrimaryGoal] = useState(state.primaryGoal)
 
   const finish = () => {
-    const updated = { ...state, onboardingDone: true, companion: { name, persona, aura } }
+    const updated = { ...state, onboardingDone: true, primaryGoal, companion: { name, persona, aura } }
     setState(updated)
     onComplete()
   }
@@ -306,7 +324,27 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
       ),
     },
     {
-      title: 'Meet Your AI Companion',
+      title: 'Your Main Quest',
+      subtitle: 'What is the primary goal you want to pursue on this journey?',
+      content: (
+        <div className="space-y-5 py-4">
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest</label>
+            <input
+              value={primaryGoal}
+              onChange={e => setPrimaryGoal(e.target.value)}
+              className="mt-1.5 w-full px-4 py-3 rounded-xl border border-border bg-white/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              placeholder="e.g. Build a healthy daily routine"
+            />
+            <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
+              Your Companion will use this as your Main Quest — guiding you, celebrating your progress, and helping you stay anchored to what matters most.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: 'Meet Your Companion',
       subtitle: 'Customize the guide who will walk beside you.',
       content: (
         <div className="space-y-5 py-4">
@@ -320,7 +358,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Persona</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Companion Style</label>
             <div className="mt-1.5 grid gap-2">
               {(Object.entries(PERSONAS) as [CompanionPersona, typeof PERSONAS[keyof typeof PERSONAS]][]).map(([k, v]) => (
                 <button
@@ -382,7 +420,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             </div>
             <p className="text-xs text-muted-foreground">$0 today. Cancel anytime. Full access to:</p>
             <ul className="space-y-2 text-xs text-foreground">
-              {['Unlimited AI Companion interactions', 'AI Reflection & Analysis on all journal entries', 'Custom Soundscape Mixer', 'Full AI Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
+              {['Unlimited Companion interactions', 'Companion Reflection & Analysis on all journal entries', 'Custom Soundscape Mixer', 'Full Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
                 <li key={i} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-primary shrink-0" />{f}</li>
               ))}
             </ul>
@@ -499,8 +537,8 @@ function UpgradeModal({ state, setState, onClose }: { state: AppState; setState:
               <p className="font-bold text-foreground text-sm">Sovereign Pro</p>
               <p className="text-2xl font-bold text-foreground mt-1">${isAnnual ? PRICING.pro.annual : PRICING.pro.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
               <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited AI</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />AI Reflections</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited Companion</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Companion Reflections</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Sound Mixer</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Soul Reports</li>
               </ul>
@@ -638,6 +676,15 @@ function AppHeader({ state, setState }: { state: AppState; setState: (s: AppStat
               </div>
               <div className="space-y-4">
                 <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest</label>
+                  <input
+                    value={state.primaryGoal}
+                    onChange={e => setState({ ...state, primaryGoal: e.target.value })}
+                    className="mt-1 w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder="Your long-term primary goal"
+                  />
+                </div>
+                <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Companion Name</label>
                   <input
                     value={state.companion.name}
@@ -722,7 +769,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
     }
 
     if (canUseAi) {
-      const response = generateCompanionResponse(userMsg.text, state.companion.persona)
+      const response = generateCompanionResponse(userMsg.text, state.companion.persona, state.primaryGoal)
       const companionMsg: ChatMessage = { id: crypto.randomUUID(), role: 'companion', text: response, timestamp: new Date().toISOString() }
       updated.chatMessages = [...updated.chatMessages, companionMsg]
       updated.xp = state.xp + 5
@@ -755,7 +802,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
           {state.tier === 'free' && (
             <div className="ml-auto text-right">
               <p className="text-[11px] font-semibold text-muted-foreground">
-                <span className={state.aiInteractionsRemaining <= 3 ? 'text-destructive' : 'text-primary'}>{state.aiInteractionsRemaining}</span>/{FREE_AI_LIMIT} interactions
+                <span className={state.aiInteractionsRemaining <= 3 ? 'text-destructive' : 'text-primary'}>{state.aiInteractionsRemaining}</span>/{FREE_AI_LIMIT} daily sessions
               </p>
               <div className="w-24 h-1.5 bg-muted rounded-full mt-1 overflow-hidden">
                 <div className={`h-full rounded-full transition-all ${state.aiInteractionsRemaining <= 3 ? 'bg-destructive' : 'bg-primary'}`} style={{ width: `${(state.aiInteractionsRemaining / FREE_AI_LIMIT) * 100}%` }} />
@@ -786,7 +833,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
         {isOverLimit && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-4">
             <GlassCard className="p-4 space-y-2">
-              <p className="text-sm font-semibold text-foreground">Daily AI limit reached</p>
+              <p className="text-sm font-semibold text-foreground">Daily Companion limit reached</p>
               <p className="text-xs text-muted-foreground">Upgrade to Sovereign Pro for unlimited interactions.</p>
               <button
                 onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
@@ -946,7 +993,7 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
                   <div className="mt-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-[11px] font-semibold text-primary">AI Reflection</span>
+                      <span className="text-[11px] font-semibold text-primary">Companion Reflection</span>
                     </div>
                     <p className="text-xs text-foreground/80 leading-relaxed">{entry.aiReflection}</p>
                   </div>
@@ -959,7 +1006,7 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
                     {aiLoading ? (
                       <><RefreshCw className="w-3 h-3 animate-spin" />Analyzing...</>
                     ) : (
-                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock AI Reflection (Free Trial)' : 'Request AI Reflection'}</>
+                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock Companion Reflection (Free Trial)' : 'Request Companion Reflection'}</>
                     )}
                   </button>
                 )}
@@ -1339,7 +1386,7 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
           className="w-full p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 text-center hover:bg-primary/10 transition-colors"
         >
           <Sparkles className="w-5 h-5 text-primary mx-auto mb-2" />
-          <p className="text-sm font-semibold text-primary">Unlock Full AI Soul Reports</p>
+          <p className="text-sm font-semibold text-primary">Unlock Full Soul Reports</p>
           <p className="text-[11px] text-muted-foreground mt-1">Get weekly cognitive insights, emotional trends, and life optimizations.</p>
           <p className="text-xs font-semibold text-primary mt-2">Start 7-Day Free Trial →</p>
         </button>
@@ -1452,7 +1499,7 @@ export const Route = createFileRoute('/')({
   head: () => ({
     meta: [
       { title: 'Thoughtica · Mind Sanctuary' },
-      { name: 'description', content: 'Your AI-powered mindful companion for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.' },
+      { name: 'description', content: 'Your mindful Companion for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.' },
     ],
   }),
   component: Home,
