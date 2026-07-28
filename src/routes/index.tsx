@@ -213,7 +213,10 @@ function generateCompanionResponse(userMessage: string, persona: CompanionPerson
 
   let response = pool[Math.floor(Math.random() * pool.length)]
   if (primaryGoal && Math.random() < 0.35) {
-    response += ` Remember, your Main Quest — "${primaryGoal}" — is always the compass pointing the way.`
+    // primaryGoal is rendered as plain text in React JSX, so no HTML escaping needed.
+    // Trim to avoid leading/trailing whitespace in the message.
+    const goal = primaryGoal.trim().slice(0, 120)
+    response += ` Remember, your Main Quest — "${goal}" — is always the compass pointing the way.`
   }
   return response
 }
@@ -326,7 +329,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
       content: (
         <div className="space-y-5 py-4">
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Primary Goal</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest</label>
             <input
               value={primaryGoal}
               onChange={e => setPrimaryGoal(e.target.value)}
@@ -673,7 +676,7 @@ function AppHeader({ state, setState }: { state: AppState; setState: (s: AppStat
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest (Primary Goal)</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest</label>
                   <input
                     value={state.primaryGoal}
                     onChange={e => setState({ ...state, primaryGoal: e.target.value })}
