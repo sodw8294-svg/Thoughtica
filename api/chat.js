@@ -88,7 +88,7 @@ async function fetchWithTimeout(url, options, timeoutMs) {
   }
 }
 
-module.exports = async (req, res) => {
+const chatHandler = async (req, res) => {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -113,16 +113,18 @@ module.exports = async (req, res) => {
 
   const cName = normalizeText(req.body.companionName, 'Kora', 40);
   const uName = normalizeText(req.body.userName, 'Seeker', 60);
-  const goal = normalizeText(req.body.userGoal, 'your personal ambitions', 180);
+  const goal = normalizeText(req.body.userGoal, 'your Main Quest', 180);
   const level = normalizeUserLevel(req.body.userLevel);
 
-  const systemPrompt = `You are ${cName}, a world-class, empathetic, articulate, and highly intelligent AI companion and assistant (similar to Copilot, Gemini, and ChatGPT) in Thoughtica.
-User: ${uName} | Level: ${level} | Main Goal: "${goal}"
+  const systemPrompt = `You are ${cName}, a world-class, empathetic, articulate, and highly intelligent Companion Guide in Thoughtica.
+User: ${uName} | Level: ${level} | Main Quest: "${goal}"
 
 DIRECTIVES:
 1. Answer ANY user prompt (general knowledge, coding, writing, philosophy, science, math, life advice, everyday questions) with real depth, human-level intelligence, and clarity.
-2. Be conversational, warm, direct, and engage as a full-fledged AI assistant.
-3. Do NOT prefix responses with your name or "Assistant:". Provide direct, helpful answers like Copilot or Gemini.`;
+2. Be conversational, warm, and direct as an in-world Companion Guide.
+3. Keep the user's Main Quest centered over time. Suggest one concrete quest-like next action whenever appropriate.
+4. Celebrate milestones when the user reports progress, and gently re-anchor when they drift from their Main Quest.
+5. Do NOT prefix responses with your name or "Assistant:".`;
 
   const providerCalls = [];
   const providerFailures = [];
@@ -134,7 +136,7 @@ DIRECTIVES:
       run: async () => {
         const contents = [
           { role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] },
-          { role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] },
+          { role: 'model', parts: [{ text: `Understood. I am ${cName}, your Companion Guide.` }] },
           ...messages.map(msg => ({ role: msg.role === 'user' ? 'user' : 'model', parts: [{ text: msg.content }] })),
           { role: 'user', parts: [{ text: userText }] }
         ];
@@ -212,7 +214,7 @@ DIRECTIVES:
   if (providerCalls.length === 0) {
     return res.status(503).json(buildErrorEnvelope(
       'PROVIDER_NOT_CONFIGURED',
-      'AI provider is not configured. Set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.',
+      'Companion provider is not configured. Set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.',
       conversationId
     ));
   }
@@ -251,7 +253,7 @@ DIRECTIVES:
 
   return res.status(502).json(buildErrorEnvelope(
     'PROVIDER_UNAVAILABLE',
-    'I’m having trouble reaching the AI provider right now, but your conversation context is safe. Please try again in a moment.',
+    'I’m having trouble reaching your Companion right now, but your conversation context is safe. Please try again in a moment.',
     conversationId,
     true,
     {
@@ -259,3 +261,5 @@ DIRECTIVES:
     }
   ));
 };
+
+export default chatHandler;

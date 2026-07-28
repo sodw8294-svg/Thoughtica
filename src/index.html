@@ -571,7 +571,7 @@
             <button onclick="navigateTo('chat')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
               <div class="text-2xl mb-2">💬</div>
               <p class="font-bold text-sm text-slate-200">Talk to Kora</p>
-              <p class="text-[11px] text-slate-500">Your AI companion</p>
+              <p class="text-[11px] text-slate-500">Your Companion Guide</p>
             </button>
             <button onclick="navigateTo('journal')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
               <div class="text-2xl mb-2">📓</div>
@@ -601,7 +601,7 @@
             <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-lg">🤖</div>
             <div>
               <p class="font-bold text-slate-100 text-sm">Kora</p>
-              <p class="text-[10px] text-emerald-400 font-semibold">● AI Companion · Online</p>
+              <p class="text-[10px] text-emerald-400 font-semibold">● Companion Guide · Online</p>
             </div>
           </div>
 
@@ -610,14 +610,14 @@
             <div class="flex gap-3">
               <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
               <div class="bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]">
-                <p class="text-sm text-slate-200">Hello, Seeker! I'm Kora, your AI companion. I'm here to help you grow, reflect, and thrive. What's on your mind?</p>
+                <p class="text-sm text-slate-200">Hello, Seeker! I'm Kora, your Companion Guide. I'm here to help you grow, reflect, and thrive. What's on your mind?</p>
               </div>
             </div>
           </div>
 
           <!-- Chat Input -->
           <div class="px-4 py-3 border-t border-slate-800/60 flex gap-2 pb-safe">
-            <input id="chat-input" type="text" placeholder="Ask Kora anything..." class="flex-1 px-4 py-3 rounded-2xl text-sm bg-slate-800/70 border-slate-700/50" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}">
+            <input id="chat-input" type="text" placeholder="Consult your Companion..." class="flex-1 px-4 py-3 rounded-2xl text-sm bg-slate-800/70 border-slate-700/50" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}">
             <button onclick="sendChatMessage()" class="w-11 h-11 rounded-2xl premium-button flex items-center justify-center text-white flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
@@ -783,7 +783,7 @@
                 </div>
               </div>
               <ul class="text-xs text-slate-400 space-y-1 mt-3">
-                <li>✓ Up to 3 AI companions</li>
+                <li>✓ Up to 3 companion guides</li>
                 <li>✓ Permanent memory vault</li>
                 <li>✓ Exclusive auras &amp; themes</li>
                 <li>✓ Early access to new features</li>
@@ -1182,7 +1182,7 @@
     function buildCompanionFailureMessage(errOrEnvelope) {
       const code = errOrEnvelope?.error?.code || errOrEnvelope?.code || 'PROVIDER_UNAVAILABLE';
       if (code === 'PROVIDER_NOT_CONFIGURED') {
-        return 'My connection to the AI is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure an AI provider key.';
+        return 'My companion connection is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure a companion provider key.';
       }
       const retryable = errOrEnvelope?.error?.retryable !== false;
       const base = retryable
@@ -1262,7 +1262,7 @@
             conversationId: _chatConversationId,
             companionName: 'Kora',
             userName,
-            userGoal: 'personal growth and mindful living',
+            userGoal: 'build a calmer and more intentional life',
             userLevel: stats.level
           })
         });

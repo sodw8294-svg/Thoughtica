@@ -331,7 +331,7 @@ export function DetoxTab() {
                   )}
                 </div>
 
-                <button
+                <motion.button
                   onClick={() => setShowUrgeModal(true)}
                   whileTap={{ scale: 0.97 }}
                   className="w-full p-3 rounded-xl border border-dashed border-destructive/30 bg-destructive/5 hover:bg-destructive/10 transition-colors text-center"
@@ -339,7 +339,7 @@ export function DetoxTab() {
                   <AlertTriangle className="w-5 h-5 text-destructive mx-auto mb-1" />
                   <p className="text-sm font-semibold text-destructive">I'm Feeling an Urge</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5">Log it to interrupt the impulse cycle</p>
-                </button>
+                </motion.button>
 
                 {/* Quick urge log */}
                 {timerRunning && (
@@ -406,11 +406,11 @@ export function DetoxTab() {
                 </div>
               </div>
 
-              {/* AI Insights */}
+              {/* Companion Insights */}
               <div>
                 <h3 className="font-bold text-foreground text-sm flex items-center gap-2 mb-3">
                   <Sparkles className="w-4 h-4 text-primary" />
-                  AI Detox Insights
+                  Companion Detox Insights
                 </h3>
                 {insights.length > 0 ? (
                   <div className="space-y-3">
@@ -446,7 +446,7 @@ export function DetoxTab() {
                 ) : (
                   <div className="text-center py-12">
                     <Brain className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">Complete a focus session to generate your first AI detox insight.</p>
+                    <p className="text-sm text-muted-foreground">Complete a focus session to generate your first Companion detox insight.</p>
                     <button
                       onClick={() => setActiveView('timer')}
                       className="mt-3 text-xs font-semibold text-primary hover:underline flex items-center gap-1 justify-center"

@@ -86,7 +86,7 @@ const ALL_BADGES: Badge[] = [
   { id: 'zen-master', name: 'Zen Master', description: 'Reached Level 5 in your mindfulness journey.', icon: 'Trophy' },
   { id: 'sound-explorer', name: 'Sound Explorer', description: 'Tried all four soundscapes.', icon: 'Music' },
   { id: 'path-clearer', name: 'Path Clearer', description: 'Completed 10 path markers.', icon: 'Target' },
-  { id: 'ai-bond', name: 'AI Bond', description: 'Had 50 conversations with your companion.', icon: 'Sparkles' },
+  { id: 'ai-bond', name: 'Companion Bond', description: 'Had 50 conversations with your companion.', icon: 'Sparkles' },
 ]
 
 const SOUND_PRESETS = [
@@ -185,7 +185,7 @@ const COMPANION_RESPONSES: Record<string, string[]> = {
   ],
 }
 
-function generateCompanionResponse(userMessage: string, persona: CompanionPersona): string {
+function generateCompanionResponse(userMessage: string, persona: CompanionPersona, mainQuest: string): string {
   const lower = userMessage.toLowerCase()
   let pool = COMPANION_RESPONSES.general
 
@@ -201,7 +201,15 @@ function generateCompanionResponse(userMessage: string, persona: CompanionPerson
     pool = COMPANION_RESPONSES.reminder
   }
 
-  return pool[Math.floor(Math.random() * pool.length)]
+  const base = pool[Math.floor(Math.random() * pool.length)]
+  const hasMilestone = lower.includes('done') || lower.includes('finished') || lower.includes('completed') || lower.includes('won')
+  const celebration = hasMilestone
+    ? 'That’s a meaningful milestone — take a breath and celebrate this win.'
+    : ''
+  const questAnchor = mainQuest.trim()
+    ? ` Main Quest reminder: "${mainQuest.trim()}". What is one Side Quest you can take in the next 24 hours to move it forward?`
+    : ' What is one Side Quest you can take next to keep your journey moving?'
+  return [base, celebration, questAnchor].filter(Boolean).join(' ')
 }
 
 function generateAiReflection(journalText: string): string {
@@ -277,9 +285,10 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
   const [name, setName] = useState(state.companion.name)
   const [persona, setPersona] = useState<CompanionPersona>(state.companion.persona)
   const [aura, setAura] = useState<AuraMood>(state.companion.aura)
+  const [mainQuest, setMainQuest] = useState(state.intention)
 
   const finish = () => {
-    const updated = { ...state, onboardingDone: true, companion: { name, persona, aura } }
+    const updated = { ...state, onboardingDone: true, companion: { name, persona, aura }, intention: mainQuest.trim() || state.intention }
     setState(updated)
     onComplete()
   }
@@ -302,11 +311,21 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
               Reframe stress. Cultivate clarity. Your journey toward a more intentional life begins here — with a companion who understands.
             </p>
           </div>
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Quest</label>
+            <input
+              value={mainQuest}
+              onChange={e => setMainQuest(e.target.value)}
+              className="mt-1.5 w-full px-4 py-3 rounded-xl border border-border bg-white/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              placeholder="e.g. Build a steadier, calmer daily routine"
+            />
+            <p className="mt-1 text-[11px] text-muted-foreground">Your Companion will keep this quest in view throughout your journey.</p>
+          </div>
         </div>
       ),
     },
     {
-      title: 'Meet Your AI Companion',
+      title: 'Meet Your Companion Guide',
       subtitle: 'Customize the guide who will walk beside you.',
       content: (
         <div className="space-y-5 py-4">
@@ -320,7 +339,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Persona</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Companion Persona</label>
             <div className="mt-1.5 grid gap-2">
               {(Object.entries(PERSONAS) as [CompanionPersona, typeof PERSONAS[keyof typeof PERSONAS]][]).map(([k, v]) => (
                 <button
@@ -382,7 +401,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             </div>
             <p className="text-xs text-muted-foreground">$0 today. Cancel anytime. Full access to:</p>
             <ul className="space-y-2 text-xs text-foreground">
-              {['Unlimited AI Companion interactions', 'AI Reflection & Analysis on all journal entries', 'Custom Soundscape Mixer', 'Full AI Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
+              {['Unlimited Companion guidance', 'Prepared for your journey on every journal entry', 'Custom Soundscape Mixer', 'Full Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
                 <li key={i} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-primary shrink-0" />{f}</li>
               ))}
             </ul>
@@ -499,8 +518,8 @@ function UpgradeModal({ state, setState, onClose }: { state: AppState; setState:
               <p className="font-bold text-foreground text-sm">Sovereign Pro</p>
               <p className="text-2xl font-bold text-foreground mt-1">${isAnnual ? PRICING.pro.annual : PRICING.pro.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
               <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited AI</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />AI Reflections</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited Companion Guidance</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Prepared for your journey</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Sound Mixer</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Soul Reports</li>
               </ul>
@@ -722,7 +741,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
     }
 
     if (canUseAi) {
-      const response = generateCompanionResponse(userMsg.text, state.companion.persona)
+      const response = generateCompanionResponse(userMsg.text, state.companion.persona, state.intention)
       const companionMsg: ChatMessage = { id: crypto.randomUUID(), role: 'companion', text: response, timestamp: new Date().toISOString() }
       updated.chatMessages = [...updated.chatMessages, companionMsg]
       updated.xp = state.xp + 5
@@ -786,7 +805,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
         {isOverLimit && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-4">
             <GlassCard className="p-4 space-y-2">
-              <p className="text-sm font-semibold text-foreground">Daily AI limit reached</p>
+              <p className="text-sm font-semibold text-foreground">Daily Companion guidance limit reached</p>
               <p className="text-xs text-muted-foreground">Upgrade to Sovereign Pro for unlimited interactions.</p>
               <button
                 onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
@@ -821,7 +840,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) } }}
-            placeholder={isOverLimit ? 'Upgrade to continue...' : `Message ${state.companion.name}...`}
+            placeholder={isOverLimit ? 'Upgrade to continue...' : `Consult ${state.companion.name}...`}
             disabled={isOverLimit}
             className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-white/80 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow disabled:opacity-50"
           />
@@ -946,7 +965,7 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
                   <div className="mt-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-[11px] font-semibold text-primary">AI Reflection</span>
+                      <span className="text-[11px] font-semibold text-primary">Prepared for your journey</span>
                     </div>
                     <p className="text-xs text-foreground/80 leading-relaxed">{entry.aiReflection}</p>
                   </div>
@@ -959,7 +978,7 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
                     {aiLoading ? (
                       <><RefreshCw className="w-3 h-3 animate-spin" />Analyzing...</>
                     ) : (
-                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock AI Reflection (Free Trial)' : 'Request AI Reflection'}</>
+                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock Journey Reflection (Free Trial)' : 'Consult your Companion'}</>
                     )}
                   </button>
                 )}
@@ -1191,18 +1210,18 @@ function RitualsTab({ state, setState }: { state: AppState; setState: (s: AppSta
 
       {/* Path Markers */}
       <GlassCard className="p-4">
-        <h3 className="font-bold text-foreground text-sm flex items-center gap-2 mb-3"><Target className="w-4 h-4 text-primary" />Path Markers</h3>
+        <h3 className="font-bold text-foreground text-sm flex items-center gap-2 mb-3"><Target className="w-4 h-4 text-primary" />Side Quests</h3>
         <div className="flex items-center gap-2 mb-3">
           <input
             value={newTask}
             onChange={e => setNewTask(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') addTask() }}
-            placeholder="Add a daily intention..."
+            placeholder="Add a Side Quest..."
             className="flex-1 px-3 py-2 rounded-lg border border-border bg-white/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
           <button onClick={addTask} className="p-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"><Plus className="w-4 h-4" /></button>
         </div>
-        {state.pathMarkers.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No path markers yet. Add your first task above.</p>}
+        {state.pathMarkers.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No Side Quests yet. Add your first quest above.</p>}
         <div className="space-y-1.5">
           {state.pathMarkers.map(m => (
             <div key={m.id} className={`flex items-center gap-2 p-2.5 rounded-lg transition-all ${m.completed ? 'bg-primary/5' : 'bg-white/60'}`}>
@@ -1226,13 +1245,13 @@ function RitualsTab({ state, setState }: { state: AppState; setState: (s: AppSta
         <p className="text-lg font-bold text-foreground">{state.wordOfDay.word}</p>
         <p className="text-xs text-muted-foreground mt-1">{state.wordOfDay.definition}</p>
         <div className="mt-4 space-y-2">
-          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Today's Intention (+{XP_PER_INTENTION} XP)</label>
+          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Main Quest (+{XP_PER_INTENTION} XP)</label>
           <div className="flex items-center gap-2">
             <input
               value={intentionInput}
               onChange={e => setIntentionInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') saveIntention() }}
-              placeholder="e.g. I will approach today with curiosity..."
+              placeholder="e.g. Build a steadier, calmer daily routine..."
               className="flex-1 px-3 py-2 rounded-lg border border-border bg-white/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
             <button onClick={saveIntention} className="px-3 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:opacity-90">Set</button>
@@ -1268,7 +1287,7 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
           </div>
           <div className="text-center p-3 rounded-xl bg-muted/50">
             <p className="text-2xl font-bold text-foreground">{totalTasks}</p>
-            <p className="text-[10px] text-muted-foreground">Tasks Done</p>
+            <p className="text-[10px] text-muted-foreground">Side Quests Completed</p>
           </div>
           <div className="text-center p-3 rounded-xl bg-muted/50">
             <p className="text-2xl font-bold text-foreground">{state.streak}</p>
@@ -1339,7 +1358,7 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
           className="w-full p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 text-center hover:bg-primary/10 transition-colors"
         >
           <Sparkles className="w-5 h-5 text-primary mx-auto mb-2" />
-          <p className="text-sm font-semibold text-primary">Unlock Full AI Soul Reports</p>
+          <p className="text-sm font-semibold text-primary">Unlock Full Soul Reports</p>
           <p className="text-[11px] text-muted-foreground mt-1">Get weekly cognitive insights, emotional trends, and life optimizations.</p>
           <p className="text-xs font-semibold text-primary mt-2">Start 7-Day Free Trial →</p>
         </button>
@@ -1452,7 +1471,7 @@ export const Route = createFileRoute('/')({
   head: () => ({
     meta: [
       { title: 'Thoughtica · Mind Sanctuary' },
-      { name: 'description', content: 'Your AI-powered mindful companion for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.' },
+      { name: 'description', content: 'Your mindful Companion Guide for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.' },
     ],
   }),
   component: Home,
