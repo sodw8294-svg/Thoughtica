@@ -1,7 +1,7 @@
 {
   "name": "Thoughtica · Mind Sanctuary",
   "short_name": "Thoughtica",
-  "description": "Your AI-powered mindful companion for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.",
+  "description": "Your mindful Companion Guide for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

@@ -1,7 +1,6 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-
-const chatHandler = require('../api/chat');
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import chatHandler from '../api/chat.js';
 const originalFetch = global.fetch;
 
 function createRes() {
