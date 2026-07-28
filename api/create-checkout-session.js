@@ -5,6 +5,11 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('[create-checkout-session] STRIPE_SECRET_KEY is not configured');
+    return res.status(500).json({ error: 'Payment service is not configured' });
+  }
+
   const { tier, uid } = req.body;
 
   if (!tier || !uid) {
@@ -12,7 +17,9 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const baseUrl = process.env.PUBLIC_URL || 'https://thoughtica.io';
+    // Support Vercel's auto-injected deployment URL or an explicit override
+    const baseUrl = process.env.PUBLIC_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://thoughtica.io');
 
     const tierConfig = {
       kindred: {
