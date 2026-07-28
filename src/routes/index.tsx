@@ -214,7 +214,13 @@ function generateCompanionResponse(userMessage: string, persona: CompanionPerson
 
   // If the user has a Main Quest set, occasionally anchor the response to it
   if (mainQuest && Math.random() < 0.35) {
-    response += ` By the way — every step you take connects back to your Main Quest: "${mainQuest}". You're making progress.`
+    const anchors = [
+      ` By the way — every step you take connects back to your Main Quest: "${mainQuest}". You're making progress.`,
+      ` Remember your Main Quest: "${mainQuest}". Each small action is a step along that map.`,
+      ` Your journey toward "${mainQuest}" continues — and this moment is part of it.`,
+      ` Let's keep your Main Quest in view: "${mainQuest}". What one action today moves you closer?`,
+    ]
+    response += anchors[Math.floor(Math.random() * anchors.length)]
   }
 
   return response
