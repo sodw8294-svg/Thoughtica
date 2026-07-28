@@ -23,7 +23,15 @@ if (!admin.apps.length) {
   }
 }
 
-const db = _firebaseInitError ? null : admin.firestore();
+let db = null;
+if (!_firebaseInitError) {
+  try {
+    db = admin.firestore();
+  } catch (e) {
+    _firebaseInitError = e.message;
+    console.error('[stripe-webhook] Failed to get Firestore instance:', e.message);
+  }
+}
 
 // Vercel raw body parsing for Stripe signatures
 const config = {

@@ -908,15 +908,14 @@
       }
       // Stripe publishable key is injected at build time via VITE_STRIPE_PK.
       // window.__STRIPE_PK__ is also accepted for server-side injection.
-      // If neither is configured the SDK is loaded but payment buttons will
-      // surface a clear error rather than silently failing.
       const _stripePkEnv = '%VITE_STRIPE_PK%';
       const _resolvedStripePk = window.__STRIPE_PK__ ||
         (/^%[A-Z0-9_]+%$/.test(_stripePkEnv) ? '' : _stripePkEnv);
       if (!_resolvedStripePk) {
         console.warn('[thoughtica] Stripe public key not configured. Set VITE_STRIPE_PK at build time.');
+        throw new Error('Payment service is not configured. Please contact support.');
       }
-      _stripe = Stripe(_resolvedStripePk || 'pk_missing');
+      _stripe = Stripe(_resolvedStripePk);
       return _stripe;
     }
 
