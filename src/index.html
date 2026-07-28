@@ -571,7 +571,7 @@
             <button onclick="navigateTo('chat')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
               <div class="text-2xl mb-2">💬</div>
               <p class="font-bold text-sm text-slate-200">Talk to Kora</p>
-              <p class="text-[11px] text-slate-500">Your AI companion</p>
+              <p class="text-[11px] text-slate-500">Your Companion</p>
             </button>
             <button onclick="navigateTo('journal')" class="glass-card !mb-0 hover-tilt text-left !p-4 cursor-pointer">
               <div class="text-2xl mb-2">📓</div>
@@ -601,7 +601,7 @@
             <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-lg">🤖</div>
             <div>
               <p class="font-bold text-slate-100 text-sm">Kora</p>
-              <p class="text-[10px] text-emerald-400 font-semibold">● AI Companion · Online</p>
+              <p class="text-[10px] text-emerald-400 font-semibold">● Companion · Online</p>
             </div>
           </div>
 
@@ -610,7 +610,7 @@
             <div class="flex gap-3">
               <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
               <div class="bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]">
-                <p class="text-sm text-slate-200">Hello, Seeker! I'm Kora, your AI companion. I'm here to help you grow, reflect, and thrive. What's on your mind?</p>
+                <p class="text-sm text-slate-200">Hello, Seeker! I'm Kora, your Companion. I'm here to help you grow, reflect, and thrive on your quest. What's on your mind?</p>
               </div>
             </div>
           </div>
@@ -783,7 +783,7 @@
                 </div>
               </div>
               <ul class="text-xs text-slate-400 space-y-1 mt-3">
-                <li>✓ Up to 3 AI companions</li>
+                <li>✓ Up to 3 Companions</li>
                 <li>✓ Permanent memory vault</li>
                 <li>✓ Exclusive auras &amp; themes</li>
                 <li>✓ Early access to new features</li>
@@ -1182,7 +1182,7 @@
     function buildCompanionFailureMessage(errOrEnvelope) {
       const code = errOrEnvelope?.error?.code || errOrEnvelope?.code || 'PROVIDER_UNAVAILABLE';
       if (code === 'PROVIDER_NOT_CONFIGURED') {
-        return 'My connection to the AI is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure an AI provider key.';
+        return 'My connection is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure a provider key.';
       }
       const retryable = errOrEnvelope?.error?.retryable !== false;
       const base = retryable

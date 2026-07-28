@@ -44,6 +44,7 @@ interface AppState {
   aiInteractionsRemaining: number
   pathMarkers: PathMarker[]
   intention: string
+  mainQuest: string
   wordOfDay: { word: string; definition: string; date: string }
   badges: Badge[]
   soundMix: { rain: number; wind: number; fire: number; ocean: number }
@@ -85,8 +86,8 @@ const ALL_BADGES: Badge[] = [
   { id: '7-day-streak', name: '7-Day Streak Master', description: 'Maintained a 7-day mindfulness streak.', icon: 'Flame' },
   { id: 'zen-master', name: 'Zen Master', description: 'Reached Level 5 in your mindfulness journey.', icon: 'Trophy' },
   { id: 'sound-explorer', name: 'Sound Explorer', description: 'Tried all four soundscapes.', icon: 'Music' },
-  { id: 'path-clearer', name: 'Path Clearer', description: 'Completed 10 path markers.', icon: 'Target' },
-  { id: 'ai-bond', name: 'AI Bond', description: 'Had 50 conversations with your companion.', icon: 'Sparkles' },
+  { id: 'path-clearer', name: 'Path Clearer', description: 'Completed 10 side quests.', icon: 'Target' },
+  { id: 'ai-bond', name: 'Companion Bond', description: 'Had 50 conversations with your Companion.', icon: 'Sparkles' },
 ]
 
 const SOUND_PRESETS = [
@@ -122,6 +123,7 @@ function getDefaultState(): AppState {
     aiInteractionsRemaining: FREE_AI_LIMIT,
     pathMarkers: [],
     intention: '',
+    mainQuest: '',
     wordOfDay: { word: 'Equanimity', definition: 'Mental calmness and composure, especially in difficult situations.', date: todayStr() },
     badges: [],
     soundMix: { rain: 65, wind: 30, fire: 40, ocean: 50 },
@@ -148,48 +150,55 @@ function saveState(s: AppState) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   COMPANION AI RESPONSE GENERATOR
+   COMPANION RESPONSE GENERATOR
    ═══════════════════════════════════════════════════════════════ */
 
 const COMPANION_RESPONSES: Record<string, string[]> = {
   feeling: [
-    'Thank you for sharing that. Your feelings are valid messengers — not obstacles. What do you think this emotion is trying to tell you?',
-    'I hear you. Sometimes just naming what we feel opens a door. Would you like to explore this together?',
-    'That resonates deeply. Emotions are the body\'s wisdom — let\'s sit with this a moment and see what unfolds.',
+    'Thank you for sharing that. Your feelings are valid messengers — not obstacles. What do you think this emotion is trying to tell you on your journey?',
+    'I hear you. Sometimes just naming what we feel opens a door. Would you like to explore this together and see how it connects to your Main Quest?',
+    'That resonates deeply. Emotions are the body\'s wisdom — let\'s sit with this a moment and see what unfolds. Your path forward is still clear.',
   ],
   stress: [
-    'Stress is often our mind\'s way of preparing for something important. Let\'s deconstruct it: what\'s the one thing weighing heaviest right now?',
-    'I sense tension. Try this: breathe in for 4 counts, hold for 4, out for 6. I\'ll count with you. Ready?',
-    'Stress narrows our vision. Let\'s widen the lens — in six months, how significant will this feel?',
+    'Stress is often our mind\'s way of preparing for something important on the path. Let\'s deconstruct it: what\'s the one thing weighing heaviest right now?',
+    'I sense tension. Try this: breathe in for 4 counts, hold for 4, out for 6. The quest continues when you\'re ready. I\'ll count with you.',
+    'Stress narrows our vision of the map. Let\'s widen the lens — in six months, how significant will this feel on your larger journey?',
   ],
   gratitude: [
-    'Gratitude is a quiet superpower. What you\'ve noticed reveals what you truly value. Hold onto that.',
-    'Beautiful. Research shows that naming three gratitudes daily rewires neural pathways toward joy. You\'re doing that work right now.',
-    'That\'s a profound observation. Gratitude transforms what we have into enough — and you just practiced that.',
+    'Gratitude is a quiet superpower on any quest. What you\'ve noticed reveals what you truly value. Hold onto that — it will guide you forward.',
+    'Beautiful. Research shows that naming three gratitudes daily rewires neural pathways toward joy. You\'re doing that inner work right now.',
+    'That\'s a profound observation. Gratitude transforms what we have into enough — and you just practiced that. One step further on your path.',
   ],
   advice: [
-    'Here\'s what I\'d offer: clarity comes from action, not rumination. What\'s the smallest step you could take today toward resolution?',
-    'Consider this — every challenge you\'ve faced before, you\'ve survived. What strengths from those experiences can you draw on now?',
-    'The Stoics believed we suffer more in imagination than in reality. Let\'s separate what\'s actually happening from what you\'re fearing might happen.',
+    'Here\'s what I\'d offer: clarity comes from action, not rumination. What\'s the smallest step you could take today toward your Main Quest?',
+    'Consider this — every challenge you\'ve faced before, you\'ve survived. What strengths from those experiences can you draw on now to keep moving forward?',
+    'The Stoics believed we suffer more in imagination than in reality. Let\'s separate what\'s actually happening from what you\'re fearing might happen on this journey.',
   ],
   reminder: [
-    'I\'ve noted this. A gentle nudge: self-compassion isn\'t self-indulgence — it\'s the foundation from which real change grows.',
-    'Reminder set. Remember, progress isn\'t linear. A spiral staircase still goes upward, even when it feels like you\'re going in circles.',
-    'I\'ll hold this for you. Between now and then, try to notice one moment of unexpected beauty each day.',
+    'I\'ve noted this. A gentle nudge: self-compassion isn\'t self-indulgence — it\'s the foundation from which real progress grows. Your Main Quest awaits.',
+    'Reminder set. Remember, progress isn\'t linear. A spiral staircase still goes upward, even when it feels like you\'re going in circles on the map.',
+    'I\'ll hold this for you. Between now and then, try to notice one moment of unexpected beauty each day — it\'s fuel for the journey.',
+  ],
+  goal: [
+    'Your Main Quest is the north star of this journey. Every action you take today can be a small step toward it. What side quest can you complete to move closer?',
+    'Great quests are built from small, consistent steps. What\'s one thing you could do in the next hour to progress toward your Main Quest?',
+    'You\'ve set a worthy Main Quest. The path isn\'t always straight, but every step counts. What milestone would make you feel proud today?',
   ],
   general: [
-    'That\'s worth exploring. What would it look like if you gave yourself permission to approach this with curiosity instead of judgment?',
-    'I\'m with you. Sometimes the bravest thing we can do is simply show up. And you\'re here — that counts for everything.',
-    'Your mind is a sanctuary. Let\'s tend to it together, one thought at a time. What would feel nourishing right now?',
-    'Rilke wrote: "Be patient toward all that is unsolved in your heart." Some answers ripen with time, not effort.',
+    'That\'s worth exploring. What would it look like if you gave yourself permission to approach this with curiosity instead of judgment on your journey?',
+    'I\'m with you. Sometimes the bravest thing we can do is simply show up and keep walking the path. And you\'re here — that counts for everything.',
+    'Your mind is a sanctuary. Let\'s tend to it together, one thought at a time. What next step on your quest would feel nourishing right now?',
+    'Rilke wrote: "Be patient toward all that is unsolved in your heart." Some answers ripen with time, not effort — and your journey reflects that.',
   ],
 }
 
-function generateCompanionResponse(userMessage: string, persona: CompanionPersona): string {
+function generateCompanionResponse(userMessage: string, persona: CompanionPersona, mainQuest?: string): string {
   const lower = userMessage.toLowerCase()
   let pool = COMPANION_RESPONSES.general
 
-  if (lower.includes('stress') || lower.includes('anxious') || lower.includes('overwhelm') || lower.includes('worried')) {
+  if (lower.includes('goal') || lower.includes('quest') || lower.includes('mission') || lower.includes('purpose') || lower.includes('dream')) {
+    pool = COMPANION_RESPONSES.goal
+  } else if (lower.includes('stress') || lower.includes('anxious') || lower.includes('overwhelm') || lower.includes('worried')) {
     pool = COMPANION_RESPONSES.stress
   } else if (lower.includes('grateful') || lower.includes('thankful') || lower.includes('blessed') || lower.includes('appreciate')) {
     pool = COMPANION_RESPONSES.gratitude
@@ -201,10 +210,23 @@ function generateCompanionResponse(userMessage: string, persona: CompanionPerson
     pool = COMPANION_RESPONSES.reminder
   }
 
-  return pool[Math.floor(Math.random() * pool.length)]
+  let response = pool[Math.floor(Math.random() * pool.length)]
+
+  // If the user has a Main Quest set, occasionally anchor the response to it
+  if (mainQuest && Math.random() < 0.35) {
+    const anchors = [
+      ` By the way — every step you take connects back to your Main Quest: "${mainQuest}". You're making progress.`,
+      ` Remember your Main Quest: "${mainQuest}". Each small action is a step along that map.`,
+      ` Your journey toward "${mainQuest}" continues — and this moment is part of it.`,
+      ` Let's keep your Main Quest in view: "${mainQuest}". What one action today moves you closer?`,
+    ]
+    response += anchors[Math.floor(Math.random() * anchors.length)]
+  }
+
+  return response
 }
 
-function generateAiReflection(journalText: string): string {
+function generateJournalReflection(journalText: string): string {
   const reflections = [
     'I notice themes of self-awareness and growth in your words. The patterns suggest you\'re navigating a period of meaningful transition. Consider: what would your future self thank you for doing today?',
     'Your reflection reveals a mind attuned to nuance — that\'s a gift. The tension you describe between what is and what could be is the birthplace of insight. Sit with that tension; it has something to teach.',
@@ -269,7 +291,7 @@ function MoodIcon({ mood }: { mood: 'happy' | 'neutral' | 'sad' }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ONBOARDING OVERLAY
+   TUTORIAL OVERLAY
    ═══════════════════════════════════════════════════════════════ */
 
 function Onboarding({ state, setState, onComplete }: { state: AppState; setState: (s: AppState) => void; onComplete: () => void }) {
@@ -277,9 +299,10 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
   const [name, setName] = useState(state.companion.name)
   const [persona, setPersona] = useState<CompanionPersona>(state.companion.persona)
   const [aura, setAura] = useState<AuraMood>(state.companion.aura)
+  const [mainQuestInput, setMainQuestInput] = useState(state.mainQuest)
 
   const finish = () => {
-    const updated = { ...state, onboardingDone: true, companion: { name, persona, aura } }
+    const updated = { ...state, onboardingDone: true, companion: { name, persona, aura }, mainQuest: mainQuestInput.trim() }
     setState(updated)
     onComplete()
   }
@@ -299,15 +322,35 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
           </motion.div>
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-              Reframe stress. Cultivate clarity. Your journey toward a more intentional life begins here — with a companion who understands.
+              Reframe stress. Cultivate clarity. Your quest toward a more intentional life begins here — with a Companion who walks beside you.
             </p>
           </div>
         </div>
       ),
     },
     {
-      title: 'Meet Your AI Companion',
-      subtitle: 'Customize the guide who will walk beside you.',
+      title: 'Set Your Main Quest',
+      subtitle: 'What is the one long-term goal that matters most to you right now?',
+      content: (
+        <div className="space-y-5 py-4">
+          <div>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your Main Quest</label>
+            <input
+              value={mainQuestInput}
+              onChange={e => setMainQuestInput(e.target.value)}
+              className="mt-1.5 w-full px-4 py-3 rounded-xl border border-border bg-white/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              placeholder="e.g. Build a business I love, Get healthier, Find my purpose..."
+            />
+            <p className="mt-2 text-[11px] text-muted-foreground leading-relaxed">
+              Your Companion will keep this Main Quest in view and help you make progress on it every day.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: 'Meet Your Companion',
+      subtitle: 'Customize the Guide who will walk beside you.',
       content: (
         <div className="space-y-5 py-4">
           <div>
@@ -320,7 +363,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Persona</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Guide Persona</label>
             <div className="mt-1.5 grid gap-2">
               {(Object.entries(PERSONAS) as [CompanionPersona, typeof PERSONAS[keyof typeof PERSONAS]][]).map(([k, v]) => (
                 <button
@@ -382,7 +425,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
             </div>
             <p className="text-xs text-muted-foreground">$0 today. Cancel anytime. Full access to:</p>
             <ul className="space-y-2 text-xs text-foreground">
-              {['Unlimited AI Companion interactions', 'AI Reflection & Analysis on all journal entries', 'Custom Soundscape Mixer', 'Full AI Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
+              {['Unlimited Companion interactions', 'Reflection & Insight on all journal entries', 'Custom Soundscape Mixer', 'Full Soul Reports', 'Exclusive Badges & Themes'].map((f, i) => (
                 <li key={i} className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-primary shrink-0" />{f}</li>
               ))}
             </ul>
@@ -499,8 +542,8 @@ function UpgradeModal({ state, setState, onClose }: { state: AppState; setState:
               <p className="font-bold text-foreground text-sm">Sovereign Pro</p>
               <p className="text-2xl font-bold text-foreground mt-1">${isAnnual ? PRICING.pro.annual : PRICING.pro.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
               <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited AI</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />AI Reflections</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited Companion</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Reflections</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Sound Mixer</li>
                 <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Soul Reports</li>
               </ul>
@@ -701,7 +744,7 @@ function AppHeader({ state, setState }: { state: AppState; setState: (s: AppStat
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TAB 1: AI COMPANION CHAT
+   TAB 1: COMPANION CHAT
    ═══════════════════════════════════════════════════════════════ */
 
 function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppState) => void }) {
@@ -722,7 +765,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
     }
 
     if (canUseAi) {
-      const response = generateCompanionResponse(userMsg.text, state.companion.persona)
+      const response = generateCompanionResponse(userMsg.text, state.companion.persona, state.mainQuest)
       const companionMsg: ChatMessage = { id: crypto.randomUUID(), role: 'companion', text: response, timestamp: new Date().toISOString() }
       updated.chatMessages = [...updated.chatMessages, companionMsg]
       updated.xp = state.xp + 5
@@ -733,7 +776,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
   }
 
   const quickActions = [
-    { label: 'Request Advice', icon: Compass, text: 'I could use some advice right now.' },
+    { label: 'Consult Your Guide', icon: Compass, text: 'I could use some guidance right now.' },
     { label: 'Set Mindful Reminder', icon: Bell, text: 'Help me set a mindful reminder for today.' },
     { label: 'Deconstruct Stress', icon: Brain, text: 'I\'m feeling stressed and need to deconstruct it.' },
   ]
@@ -786,7 +829,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
         {isOverLimit && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-4">
             <GlassCard className="p-4 space-y-2">
-              <p className="text-sm font-semibold text-foreground">Daily AI limit reached</p>
+              <p className="text-sm font-semibold text-foreground">Daily Companion limit reached</p>
               <p className="text-xs text-muted-foreground">Upgrade to Sovereign Pro for unlimited interactions.</p>
               <button
                 onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
@@ -860,18 +903,18 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
     setMood('neutral')
   }
 
-  const requestAiReflection = async (entryId: string) => {
+  const requestReflection = async (entryId: string) => {
     if (state.tier === 'free') {
       setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })
       return
     }
     setAiLoading(true)
-    // simulate AI processing
+    // simulate Companion processing
     setTimeout(() => {
       const updated = { ...state }
       const entry = updated.journalEntries.find(e => e.id === entryId)
       if (entry) {
-        entry.aiReflection = generateAiReflection(entry.text)
+        entry.aiReflection = generateJournalReflection(entry.text)
         updated.xp = state.xp + 20
       }
       setState(updated)
@@ -946,20 +989,20 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
                   <div className="mt-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-[11px] font-semibold text-primary">AI Reflection</span>
+                      <span className="text-[11px] font-semibold text-primary">Companion's Reflection</span>
                     </div>
                     <p className="text-xs text-foreground/80 leading-relaxed">{entry.aiReflection}</p>
                   </div>
                 ) : (
                   <button
-                    onClick={() => requestAiReflection(entry.id)}
+                    onClick={() => requestReflection(entry.id)}
                     disabled={aiLoading}
                     className="flex items-center gap-1.5 text-[11px] font-medium text-primary hover:underline transition-colors"
                   >
                     {aiLoading ? (
-                      <><RefreshCw className="w-3 h-3 animate-spin" />Analyzing...</>
+                      <><RefreshCw className="w-3 h-3 animate-spin" />Preparing reflection...</>
                     ) : (
-                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock AI Reflection (Free Trial)' : 'Request AI Reflection'}</>
+                      <><Sparkles className="w-3 h-3" />{state.tier === 'free' ? 'Unlock Reflection (Free Trial)' : 'Request Reflection'}</>
                     )}
                   </button>
                 )}
@@ -1166,11 +1209,17 @@ function RitualsTab({ state, setState }: { state: AppState; setState: (s: AppSta
       {/* XP & Level */}
       <GlassCard className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="font-bold text-foreground text-sm flex items-center gap-2"><Trophy className="w-4 h-4 text-primary" />Your Progress</h3>
+          <h3 className="font-bold text-foreground text-sm flex items-center gap-2"><Trophy className="w-4 h-4 text-primary" />Your Journey</h3>
           <span className="text-[10px] font-medium text-muted-foreground">🔥 {state.streak} day streak</span>
         </div>
         <XpBar xp={state.xp} level={state.level} />
         <p className="text-[11px] text-muted-foreground mt-2">Level {state.level}: {['Novice', 'Practitioner', 'Mindful Monk', 'Sage Adept', 'Zen Master', 'Enlightened'][Math.min(state.level - 1, 5)]}</p>
+        {state.mainQuest && (
+          <div className="mt-3 p-2.5 rounded-lg bg-primary/5 border border-primary/10">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">Main Quest</p>
+            <p className="text-xs text-primary font-medium">🗺️ {state.mainQuest}</p>
+          </div>
+        )}
       </GlassCard>
 
       {/* Badges */}
@@ -1189,20 +1238,20 @@ function RitualsTab({ state, setState }: { state: AppState; setState: (s: AppSta
         </div>
       </GlassCard>
 
-      {/* Path Markers */}
+      {/* Side Quests */}
       <GlassCard className="p-4">
-        <h3 className="font-bold text-foreground text-sm flex items-center gap-2 mb-3"><Target className="w-4 h-4 text-primary" />Path Markers</h3>
+        <h3 className="font-bold text-foreground text-sm flex items-center gap-2 mb-3"><Target className="w-4 h-4 text-primary" />Side Quests</h3>
         <div className="flex items-center gap-2 mb-3">
           <input
             value={newTask}
             onChange={e => setNewTask(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') addTask() }}
-            placeholder="Add a daily intention..."
+            placeholder="Add a side quest..."
             className="flex-1 px-3 py-2 rounded-lg border border-border bg-white/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
           <button onClick={addTask} className="p-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"><Plus className="w-4 h-4" /></button>
         </div>
-        {state.pathMarkers.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No path markers yet. Add your first task above.</p>}
+        {state.pathMarkers.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No quests yet. Chart your first side quest above.</p>}
         <div className="space-y-1.5">
           {state.pathMarkers.map(m => (
             <div key={m.id} className={`flex items-center gap-2 p-2.5 rounded-lg transition-all ${m.completed ? 'bg-primary/5' : 'bg-white/60'}`}>
@@ -1306,7 +1355,7 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
         )}
       </GlassCard>
 
-      {/* Pro AI Soul Report */}
+      {/* Pro Soul Report */}
       {isPro ? (
         <GlassCard className="p-4 bg-gradient-to-br from-primary/5 to-accent/5">
           <div className="flex items-center gap-2 mb-3">
@@ -1314,14 +1363,21 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
             <h3 className="font-bold text-foreground text-sm">Weekly Soul Report</h3>
           </div>
           <p className="text-xs text-foreground/80 leading-relaxed">
-            Your cognitive patterns this week show a growing capacity for self-reflection. 
-            You've been processing themes of growth and acceptance. Your primary stress trigger 
+            Your patterns this week show a growing capacity for self-reflection. 
+            You've been processing themes of growth and acceptance. Your primary challenge 
             appears related to uncertainty — a common marker of high awareness individuals. 
             Recommendation: continue your journaling practice, and try the "Deconstruct Stress" 
             quick action with {state.companion.name} when you feel tension building.
           </p>
+          {state.mainQuest && (
+            <div className="mt-3 p-2.5 rounded-lg bg-primary/5 border border-primary/10">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">Main Quest Progress</p>
+              <p className="text-xs text-primary font-medium">🗺️ {state.mainQuest}</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Every journal entry and side quest completed is a step toward this quest.</p>
+            </div>
+          )}
           <div className="mt-4 p-3 rounded-xl bg-white/60 border border-slate-200/60">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Shareable Cognitive Snapshot</p>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Journey Snapshot</p>
             <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
               <div><span className="text-muted-foreground">Mood:</span> <span className="font-semibold text-foreground">{dominantMood}</span></div>
               <div><span className="text-muted-foreground">Level:</span> <span className="font-semibold text-foreground">{state.level}</span></div>
@@ -1339,8 +1395,8 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
           className="w-full p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 text-center hover:bg-primary/10 transition-colors"
         >
           <Sparkles className="w-5 h-5 text-primary mx-auto mb-2" />
-          <p className="text-sm font-semibold text-primary">Unlock Full AI Soul Reports</p>
-          <p className="text-[11px] text-muted-foreground mt-1">Get weekly cognitive insights, emotional trends, and life optimizations.</p>
+          <p className="text-sm font-semibold text-primary">Unlock Full Soul Reports</p>
+          <p className="text-[11px] text-muted-foreground mt-1">Get weekly journey insights, emotional trends, and life optimizations prepared for your adventure.</p>
           <p className="text-xs font-semibold text-primary mt-2">Start 7-Day Free Trial →</p>
         </button>
       )}
@@ -1452,7 +1508,7 @@ export const Route = createFileRoute('/')({
   head: () => ({
     meta: [
       { title: 'Thoughtica · Mind Sanctuary' },
-      { name: 'description', content: 'Your AI-powered mindful companion for daily clarity, immersive journaling, ambient soundscapes, and cognitive sovereignty.' },
+      { name: 'description', content: 'Your mindful Companion for daily clarity, immersive journaling, ambient soundscapes, and intentional living. Begin your quest.' },
     ],
   }),
   component: Home,
@@ -1489,7 +1545,7 @@ function ThoughticaApp() {
     saveState(next)
   }, [])
 
-  // On mount, check if onboarding needed
+  // On mount, check if tutorial needed
   useEffect(() => {
     if (!state.onboardingDone) {
       const t = setTimeout(() => setShowOnboarding(true), 400)
