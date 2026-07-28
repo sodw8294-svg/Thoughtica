@@ -1374,16 +1374,18 @@
       const ov = document.getElementById('landing-page-overlay');
       if (ov) ov.remove();
 
-      // Check URL params for payment result
+      // Check URL params for payment result.
+      // NOTE: ?payment_success=true is only used for a neutral "processing" notice.
+      // It is NOT proof of entitlement — premium status is set exclusively by
+      // the verified Stripe webhook (api/stripe-webhook.js).
       const params = new URLSearchParams(window.location.search);
       if (params.get('payment_success')) {
-        const tier = params.get('tier') || 'premium';
         const toast = document.getElementById('payment-toast');
         const msg = document.getElementById('payment-toast-msg');
         if (toast && msg) {
-          msg.textContent = `✨ ${tier.charAt(0).toUpperCase() + tier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
+          msg.textContent = '✅ Payment received — your plan is being activated. This may take a moment.';
           toast.classList.remove('hidden');
-          setTimeout(() => toast.classList.add('hidden'), 8000);
+          setTimeout(() => toast.classList.add('hidden'), 10000);
         }
         window.history.replaceState({}, '', window.location.pathname);
       } else if (params.get('payment_cancelled')) {

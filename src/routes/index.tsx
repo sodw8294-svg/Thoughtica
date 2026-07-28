@@ -106,6 +106,30 @@ const PRICING = {
 
 function todayStr() { return new Date().toISOString().split('T')[0] }
 
+// Initiate Stripe Checkout — premium entitlement is ONLY granted by the
+// verified server-side webhook (api/stripe-webhook.js). Never set tier/
+// trialActive/aiInteractionsRemaining locally from a UI action.
+async function purchaseTierStripe(tier: string): Promise<void> {
+  try {
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier, uid: 'anonymous' }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Checkout failed')
+    if (data.url) {
+      window.location.href = data.url
+    } else {
+      console.error('[thoughtica] No checkout URL returned from server')
+      alert('Payment could not be started. Please try again or contact support.')
+    }
+  } catch (err) {
+    console.error('[thoughtica] Checkout error:', err)
+    alert('Payment could not be started. Please try again or contact support.')
+  }
+}
+
 function getDefaultState(): AppState {
   return {
     onboardingDone: false,
@@ -389,11 +413,7 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
           </GlassCard>
           <div className="grid gap-2">
             <button
-              onClick={() => {
-                const updated = { ...state, tier: 'pro' as Tier, trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 }
-                setState(updated)
-                finish()
-              }}
+              onClick={() => purchaseTierStripe('pro')}
               className="w-full py-3 px-4 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
             >
               Activate 7-Day Free Trial — $0 Today
@@ -462,8 +482,7 @@ function UpgradeModal({ state, setState, onClose }: { state: AppState; setState:
   const isAnnual = state.billingInterval === 'annual'
 
   const upgrade = (t: Tier) => {
-    const updated = { ...state, tier: t, trialActive: t === 'pro', trialStartDate: t === 'pro' ? new Date().toISOString() : null, aiInteractionsRemaining: 9999 }
-    setState(updated)
+    purchaseTierStripe(t)
     onClose()
   }
 
@@ -599,7 +618,7 @@ function AppHeader({ state, setState }: { state: AppState; setState: (s: AppStat
           <div className="flex items-center gap-2">
             <TierBadge tier={state.tier} />
             {state.tier === 'free' && (
-              <button onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })} className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity">
+              <button onClick={() => purchaseTierStripe('pro')} className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity">
                 <Crown className="w-3 h-3" />Try Pro Free
               </button>
             )}
@@ -789,7 +808,7 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
               <p className="text-sm font-semibold text-foreground">Daily AI limit reached</p>
               <p className="text-xs text-muted-foreground">Upgrade to Sovereign Pro for unlimited interactions.</p>
               <button
-                onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
+                onClick={() => purchaseTierStripe('pro')}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-semibold"
               >
                 Try 7 Days Free
@@ -862,7 +881,7 @@ function JournalTab({ state, setState }: { state: AppState; setState: (s: AppSta
 
   const requestAiReflection = async (entryId: string) => {
     if (state.tier === 'free') {
-      setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })
+      purchaseTierStripe('pro')
       return
     }
     setAiLoading(true)
@@ -1088,7 +1107,7 @@ function SoundscapesTab({ state, setState }: { state: AppState; setState: (s: Ap
           </GlassCard>
         ) : (
           <button
-            onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
+            onClick={() => purchaseTierStripe('pro')}
             className="w-full mt-3 p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 text-center hover:bg-primary/10 transition-colors"
           >
             <p className="text-sm font-semibold text-primary">Unlock Custom Mixer</p>
@@ -1335,7 +1354,7 @@ function ReportsTab({ state, setState }: { state: AppState; setState: (s: AppSta
         </GlassCard>
       ) : (
         <button
-          onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
+          onClick={() => purchaseTierStripe('pro')}
           className="w-full p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 text-center hover:bg-primary/10 transition-colors"
         >
           <Sparkles className="w-5 h-5 text-primary mx-auto mb-2" />
