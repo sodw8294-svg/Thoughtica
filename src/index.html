@@ -891,6 +891,20 @@
 
     async function loadStripe() {
       if (_stripe) return _stripe;
+
+      // Fetch the publishable key from the server if not already set
+      if (!window.__STRIPE_PK__) {
+        try {
+          const cfgRes = await fetch('/api/config');
+          if (cfgRes.ok) {
+            const cfg = await cfgRes.json();
+            window.__STRIPE_PK__ = cfg.stripePk || '';
+          }
+        } catch (e) {
+          console.warn('[thoughtica] Could not fetch Stripe config:', e.message);
+        }
+      }
+
       if (typeof Stripe === 'undefined') {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
@@ -900,10 +914,10 @@
           document.head.appendChild(s);
         });
       }
-      _stripe = Stripe(window.__STRIPE_PK__ || '');
       if (!window.__STRIPE_PK__) {
-        console.warn('[thoughtica] Stripe public key not configured. Set window.__STRIPE_PK__ before loading.');
+        console.warn('[thoughtica] Stripe public key not configured. Set STRIPE_PUBLIC_KEY in your Vercel environment.');
       }
+      _stripe = Stripe(window.__STRIPE_PK__ || '');
       return _stripe;
     }
 

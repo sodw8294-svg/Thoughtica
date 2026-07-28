@@ -1,0 +1,10 @@
+{
+  "name": "thoughtica-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "firebase-admin": "^14.2.0",
+    "stripe": "^22.3.2"
+  }
+}
