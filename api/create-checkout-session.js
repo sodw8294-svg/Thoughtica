@@ -1,14 +1,32 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
 
 module.exports = async (req, res) => {
+  // Handle CORS preflight
+  Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  // Validate required environment variable before use
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('[stripe] STRIPE_SECRET_KEY is not configured');
+    return res.status(503).json({ error: 'Payment service is not configured. Contact support.' });
+  }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
   const { tier, uid } = req.body;
 
   if (!tier || !uid) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ error: 'Missing required fields: tier and uid' });
   }
 
   try {
@@ -88,6 +106,9 @@ module.exports = async (req, res) => {
     res.status(200).json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Stripe Checkout Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    const userMessage = error.type === 'StripeAuthenticationError'
+      ? 'Payment service configuration error. Contact support.'
+      : 'Failed to start checkout. Please try again.';
+    res.status(500).json({ error: userMessage });
   }
 };
