@@ -548,7 +548,7 @@
   
   <!-- PREMIUM STOREFRONT MODAL -->
   <div id="modal-premium" class="fixed inset-0 z-[10000] bg-[#020306]/90 backdrop-blur-3xl hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
-    <div class="premium-glass-card w-full max-w-6xl p-6 md:p-8 rounded-[2.5rem] relative text-left shadow-[0_0_80px_rgba(168,85,247,0.3)] max-h-[90vh] overflow-y-auto scrollbar-none">
+    <div class="premium-glass-card w-full max-w-6xl p-6 md:p-8 rounded-[2.5rem] relative text-left shadow-[0_0_80px_rgba(168,85,247,0.3)] my-8">
       <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer z-10"><i data-lucide="x" class="w-8 h-8"></i></button>
       
       <div class="text-center space-y-4 mb-10 mt-4 md:mt-0">
@@ -689,12 +689,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div id="delayed-paywall-exit" class="mt-8 text-center hidden opacity-0 transition-opacity duration-1000 pb-4">
-        <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="px-6 py-3 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-full font-bold text-sm border border-white/10 transition-all cursor-pointer">
-          Continue to Sanctuary (Free Version)
-        </button>
       </div>
 
     </div>
@@ -929,7 +923,26 @@
         </div>
       </div>
 
-
+      <!-- ONBOARDING STEP 2: COMPANION NAME SELECTION -->
+      <div id="intro-step-2" class="intro-step space-y-6">
+        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 flex items-center justify-center mx-auto text-4xl shadow-[0_0_30px_rgba(168,85,247,0.3)]" style="animation: premium-pulse 3s infinite">🔮</div>
+        <div>
+          <h2 class="text-3xl font-extrabold premium-text-gradient font-heading tracking-tight">Name Your Companion</h2>
+          <p class="text-sm text-slate-400 mt-2 font-medium">Your personal guide who will speak and journey with you</p>
+        </div>
+        <div class="max-w-md mx-auto space-y-5 pt-4">
+          <input type="text" id="intro-companion-name-input" value="Kora" placeholder="Enter companion name..." class="w-full luxury-input rounded-2xl px-5 py-4 text-sm text-white text-center font-extrabold focus:outline-none">
+          <div class="flex justify-center gap-3 text-xs flex-wrap">
+            <button onclick="setSuggestedCompanionName('Kora')" class="px-4 py-2 bg-white/5 border border-white/10 hover:border-purple-500/50 rounded-xl text-slate-300 font-bold transition-all hover-tilt">Kora</button>
+            <button onclick="setSuggestedCompanionName('Aria')" class="px-4 py-2 bg-white/5 border border-white/10 hover:border-purple-500/50 rounded-xl text-slate-300 font-bold transition-all hover-tilt">Aria</button>
+            <button onclick="setSuggestedCompanionName('Echo')" class="px-4 py-2 bg-white/5 border border-white/10 hover:border-purple-500/50 rounded-xl text-slate-300 font-bold transition-all hover-tilt">Echo</button>
+            <button onclick="setSuggestedCompanionName('Atlas')" class="px-4 py-2 bg-white/5 border border-white/10 hover:border-purple-500/50 rounded-xl text-slate-300 font-bold transition-all hover-tilt">Atlas</button>
+          </div>
+          <button onclick="saveCompanionNameStep()" class="w-full py-4 premium-button text-white font-extrabold text-sm rounded-2xl shadow-xl mt-4 cursor-pointer hover:scale-[1.02]">
+            Confirm Identity & Continue ➔
+          </button>
+        </div>
+      </div>
 
       <!-- ONBOARDING STEP 3: DEFINE PERSONAL LIFE AMBITION & GOALS -->
       <div id="intro-step-3" class="intro-step space-y-6">
@@ -1259,7 +1272,7 @@
           <span id="streak-counter">1 Day</span>
         </div>
 
-        <button onclick="openKoraLiveVoiceModal()" title="Converse with Kora Live Voiced AI 🔮" class="px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 text-white hover:scale-105 transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_20px_rgba(99,102,241,0.5)] border border-cyan-400/40 relative">
+        <button onclick="toggleCompanionDrawer()" title="Converse with Kora AI Journey Companion 🔮" class="px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 text-white hover:scale-105 transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_20px_rgba(99,102,241,0.5)] border border-cyan-400/40 relative">
           <span class="text-sm">🔮</span>
           <span class="font-extrabold text-[11px] uppercase tracking-wider">Ask Kora</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping absolute top-1 right-1"></span>
@@ -1343,8 +1356,6 @@
         <!-- RIGHT COLUMN: EXPEDITION & WAYPOINT DECK -->
         <div class="lg:col-span-12 flex flex-col h-full space-y-4 overflow-y-auto scrollbar-none pr-1">
           
-
-
           <!-- HIGH-CONVERSION 7-DAY FREE TRIAL HERO BANNER -->
           <div id="free-tier-conversion-banner" class="bg-gradient-to-r from-amber-950/40 via-purple-950/50 to-indigo-950/60 border border-amber-500/30 rounded-2xl p-4 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3.5">
@@ -1363,7 +1374,6 @@
               Claim 7-Day Free Trial ✨
             </button>
           </div>
-
 
           <!-- SANCTUARY EXPEDITION BANNER -->
           <div class="bg-gradient-to-r from-purple-900/20 via-indigo-900/20 to-cyan-900/10 border border-purple-500/20 rounded-2xl p-5 backdrop-blur-xl shadow-xl flex justify-between items-center">
@@ -2190,340 +2200,6 @@
 
       </section>
 
-      <!-- SCREEN: CUSTOM AI COMPANION SYSTEM -->
-      <section id="screen-aibot" class="screen h-full flex flex-col justify-between scrollbar-none hidden pb-12 overflow-y-auto">
-        
-        <!-- Header -->
-        <div class="p-4 border-b border-white/5 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between shrink-0">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-xl shadow-lg border border-white/20">🤖</div>
-            <div>
-              <h2 id="custom-ai-header-title" class="text-sm font-extrabold text-white tracking-wide font-heading">AI Companion</h2>
-              <p class="text-[10px] text-cyan-300 font-bold uppercase tracking-widest flex items-center gap-1.5">
-                <span id="custom-ai-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="custom-ai-status-label">Sanctuary Sync: Active</span>
-              </p>
-            </div>
-          </div>
-          <button onclick="resetCustomAIChat()" class="px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 rounded-lg text-[10px] font-bold cursor-pointer transition-all flex items-center gap-1">
-            <span>Reset History</span> 🔄
-          </button>
-        </div>
-
-        <!-- Dashboard Grid Container -->
-        <div class="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-6 p-4 md:p-6 overflow-y-auto scrollbar-none">
-          
-          <!-- LEFT COLUMN: PORTAL, STATUS & SOMATIC SYNC -->
-          <div class="lg:col-span-5 space-y-5 flex flex-col">
-            
-            <!-- AVATAR & LEVEL PROGRESSION CARD -->
-            <div class="relative bg-slate-950/60 border border-white/10 rounded-3xl p-5 shadow-2xl overflow-hidden backdrop-blur-xl flex flex-col items-center text-center">
-              <div id="companion-aura-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600/25 rounded-full blur-[60px] pointer-events-none transition-all duration-700"></div>
-              
-              <!-- Modular Avatar SVG Container -->
-              <div class="relative w-36 h-36 rounded-2xl bg-slate-900/80 border border-white/5 flex items-center justify-center overflow-hidden shadow-inner z-10">
-                <svg id="companion-avatar-svg" viewBox="0 0 100 100" class="w-full h-full"></svg>
-                <!-- Interactive Expression Pulse Rings -->
-                <div id="avatar-pulse-ring" class="absolute inset-0 border border-indigo-400/25 rounded-2xl animate-ping pointer-events-none opacity-0"></div>
-              </div>
-              
-              <!-- Companion Identification -->
-              <div class="mt-4 z-10">
-                <h3 id="companion-badge-name" class="text-base font-extrabold text-white font-heading">Nexus</h3>
-                <div class="flex items-center justify-center gap-1.5 mt-0.5">
-                  <span id="companion-badge-rank" class="text-[9px] font-black uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md tracking-wider">New Ally</span>
-                  <span id="companion-relationship-lvl" class="text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-md tracking-wider">LVL 1</span>
-                </div>
-              </div>
-
-              <!-- Relationship Progression Tracker -->
-              <div class="w-full mt-4 space-y-1 z-10 text-left">
-                <div class="flex justify-between text-[9px] text-slate-400 font-extrabold uppercase">
-                  <span>Relationship XP</span>
-                  <span id="companion-relationship-xp-txt">0 / 100 XP</span>
-                </div>
-                <div class="w-full h-2 bg-white/5 border border-white/5 rounded-full overflow-hidden">
-                  <div id="companion-relationship-xp-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 transition-all duration-500" style="width: 0%"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- DAILY SOMATIC CHECK-IN SYNC -->
-            <div id="companion-checkin-card" class="bg-slate-950/60 border border-white/10 rounded-3xl p-5 shadow-2xl backdrop-blur-xl space-y-4">
-              <div class="flex justify-between items-center border-b border-white/10 pb-2.5">
-                <h4 class="text-xs font-extrabold text-indigo-300 uppercase tracking-widest flex items-center gap-1.5">
-                  🧠 Daily Somatic Sync
-                </h4>
-                <span class="text-[9px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded">+25 Rel XP</span>
-              </div>
-
-              <!-- Check-In Inputs -->
-              <div class="space-y-3 text-left">
-                <div>
-                  <label class="text-[9px] text-slate-400 font-extrabold uppercase block mb-1">Current Mood Resonance</label>
-                  <select id="checkin-mood" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                    <option value="Serene">🧘 Serene / Calm</option>
-                    <option value="Energized">⚡ Energized / Productive</option>
-                    <option value="Focused">🎯 Focused / Flow</option>
-                    <option value="Anxious">😰 Anxious / Stressed</option>
-                    <option value="Restless">🌀 Restless / Distracted</option>
-                    <option value="Drained">🔋 Drained / Fatigued</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 font-extrabold uppercase block mb-1">Today's Principal Ambition</label>
-                  <input type="text" id="checkin-goal" placeholder="e.g. Finish the presentation slides..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 select-text">
-                </div>
-                <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="text-[9px] text-slate-400 font-extrabold uppercase">Energy Resonance (1-100)</label>
-                    <span id="checkin-energy-val" class="text-[10px] text-cyan-300 font-extrabold">75%</span>
-                  </div>
-                  <input type="range" id="checkin-energy" min="1" max="100" value="75" oninput="document.getElementById('checkin-energy-val').textContent = this.value + '%'" class="w-full accent-cyan-400 cursor-pointer">
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 font-extrabold uppercase block mb-1">Primary Hurdle / Friction</label>
-                  <input type="text" id="checkin-hurdle" placeholder="e.g. Tendency to open YouTube..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 select-text">
-                </div>
-              </div>
-
-              <button onclick="submitSomaticSync()" id="btn-submit-sync" class="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all cursor-pointer">
-                Seal Sync & Update Companion ⚡
-              </button>
-            </div>
-
-            <!-- SMART CHIP SUGGESTIONS -->
-            <div class="flex gap-2 overflow-x-auto scrollbar-none text-[10px] uppercase font-bold shrink-0">
-              <button onclick="sendQuickCompanionPrompt('Anchor Focus')" class="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 rounded-xl shrink-0 cursor-pointer transition-all flex items-center gap-1">🛡️ Anchor Focus</button>
-              <button onclick="sendQuickCompanionPrompt('Strategy Request')" class="px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 rounded-xl shrink-0 cursor-pointer transition-all flex items-center gap-1">📈 Strategy Request</button>
-              <button onclick="sendQuickCompanionPrompt('Clarity Breathe')" class="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 rounded-xl shrink-0 cursor-pointer transition-all flex items-center gap-1">🧘 Clarity Breathe</button>
-              <button onclick="sendQuickCompanionPrompt('Motivation Boost')" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-xl shrink-0 cursor-pointer transition-all flex items-center gap-1">🔥 Motivation Boost</button>
-            </div>
-
-          </div>
-
-          <!-- RIGHT COLUMN: CHAT, STYLIST & MEMORY TABS -->
-          <div class="lg:col-span-7 flex flex-col h-[70vh] border border-white/10 bg-slate-950/40 rounded-3xl overflow-hidden shadow-2xl relative backdrop-blur-xl">
-            
-            <!-- Tab Switcher Navigation -->
-            <div class="flex bg-slate-950/80 border-b border-white/10 p-1">
-              <button onclick="switchCompanionTab('chat')" id="tab-btn-comp-chat" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-white/5 text-white">
-                💬 Sanctuary Chat
-              </button>
-              <button onclick="switchCompanionTab('stylist')" id="tab-btn-comp-stylist" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-slate-400 hover:text-white">
-                🎨 Appearance Stylist
-              </button>
-              <button onclick="switchCompanionTab('memory')" id="tab-btn-comp-memory" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer text-slate-400 hover:text-white">
-                💾 Memory Vault
-              </button>
-            </div>
-
-            <!-- Tab Content Viewport Container -->
-            <div class="flex-1 flex flex-col overflow-hidden relative">
-
-              <!-- TAB 1: SANCTUARY CHAT -->
-              <div id="tab-panel-comp-chat" class="absolute inset-0 flex flex-col">
-                
-                <!-- Chat Search Header -->
-                <div class="px-3.5 py-2 bg-slate-950/40 border-b border-white/5 flex gap-2 items-center">
-                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 shrink-0"></i>
-                  <input type="text" id="comp-chat-search" oninput="searchCompanionMessages(this.value)" placeholder="Search conversation logs..." class="flex-1 bg-transparent text-[11px] text-white focus:outline-none placeholder-slate-600 select-text">
-                </div>
-
-                <!-- Chat Feed Scroll Area -->
-                <div id="custom-ai-chat-log" class="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-none flex flex-col gap-2"></div>
-
-                <!-- Messaging Input Block -->
-                <div class="p-3 border-t border-white/10 bg-slate-950/90 flex items-center gap-2">
-                  <input type="text" id="custom-ai-chat-input" placeholder="Type a message to your custom companion..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all select-text">
-                  <button onclick="sendCustomAIChat()" class="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg transition-all flex items-center justify-center shrink-0 cursor-pointer">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- TAB 2: APPEARANCE STYLIST & PRESETS -->
-              <div id="tab-panel-comp-stylist" class="absolute inset-0 p-4 space-y-4 overflow-y-auto scrollbar-none hidden bg-slate-950/20 text-left">
-                
-                <!-- Presets & Character Configurations -->
-                <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-3.5">
-                  <h5 class="text-xs font-extrabold text-indigo-300 uppercase tracking-wider">Matrix Alignment & Character Preset</h5>
-                  
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Companion Identity Name</label>
-                      <input type="text" id="custom-ai-name" placeholder="e.g. Eldrin" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 select-text">
-                    </div>
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Character Preset</label>
-                      <select id="custom-ai-preset" onchange="applyCompanionPresetConfig(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        <option value="wise_mentor">Wise Mentor 🔮</option>
-                        <option value="guild_master">RPG Guild Master ⚔️</option>
-                        <option value="calm_supporter">Calm Supporter 🌊</option>
-                        <option value="strict_coach">Strict Coach 🏆</option>
-                        <option value="cheerful_friend">Cheerful Friend 🌟</option>
-                        <option value="stoic_guide">Stoic Guide 🏔️</option>
-                        <option value="philosopher">Philosopher 🕯️</option>
-                        <option value="custom">Custom Persona 🛠️</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Personality Prompt Description</label>
-                    <textarea id="custom-ai-personality" rows="2" placeholder="Describe how the AI should behave..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 select-text"></textarea>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Motivation Style</label>
-                      <select id="custom-ai-motivation-style" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        <option value="encouraging">Warm encouragement & support</option>
-                        <option value="tough_love">Direct tough love</option>
-                        <option value="analytical">Data-driven analysis & metrics</option>
-                        <option value="philosophical">Thoughtful philosophical prompts</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Communication Style</label>
-                      <select id="custom-ai-comm-style" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                        <option value="formal">Formal & Respectful</option>
-                        <option value="casual">Casual & Laid-back</option>
-                        <option value="cryptic">Poetic & Cryptic</option>
-                        <option value="energetic">High-energy & Playful</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Stylist Cosmetics -->
-                <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-3.5">
-                  <h5 class="text-xs font-extrabold text-indigo-300 uppercase tracking-wider">Stylist Cosmetics & Modular Avatar</h5>
-                  
-                  <div class="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Aura Background Glow</label>
-                      <select id="stylist-aura" onchange="previewCompanionStylist()" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        <option value="indigo">Twilight Indigo</option>
-                        <option value="emerald">Forest Moss</option>
-                        <option value="rose">Sunset Crimson</option>
-                        <option value="violet">Mystic Purple</option>
-                        <option value="amber">Dawn Gold</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Hair Cut Style</label>
-                      <select id="stylist-hair" onchange="previewCompanionStylist()" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        <option value="short">Short Crop</option>
-                        <option value="long">Flowing Long</option>
-                        <option value="braids">Braid Ties</option>
-                        <option value="wizard">Sage Wizard Cap</option>
-                        <option value="bald">Bald & Centered</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Hair Dye Color</label>
-                      <div class="flex gap-2">
-                        <input type="color" id="stylist-hair-color" value="#818cf8" oninput="previewCompanionStylist()" class="bg-transparent border-0 w-8 h-8 cursor-pointer shrink-0">
-                        <input type="text" id="stylist-hair-color-txt" value="#818cf8" readonly class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1 text-center text-xs text-slate-300">
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Eye Expression Style</label>
-                      <select id="stylist-eyes" onchange="previewCompanionStylist()" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        <option value="focused">Focused / Sharp</option>
-                        <option value="calm">Calm / Peaceful</option>
-                        <option value="spark">Sparkle / Energetic</option>
-                        <option value="glow">Glowing / Mystic</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Iris Glow Color</label>
-                      <div class="flex gap-2">
-                        <input type="color" id="stylist-eye-color" value="#38bdf8" oninput="previewCompanionStylist()" class="bg-transparent border-0 w-8 h-8 cursor-pointer shrink-0">
-                        <input type="text" id="stylist-eye-color-txt" value="#38bdf8" readonly class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1 text-center text-xs text-slate-300">
-                      </div>
-                    </div>
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Clothing Costume</label>
-                      <select id="stylist-clothing" onchange="previewCompanionStylist()" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        <option value="robe">Robe of Mindfulness</option>
-                        <option value="armor">Plate Armor of Focus</option>
-                        <option value="casual">Casual Hooded Tunic</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <label class="text-[9px] text-slate-400 font-bold uppercase block mb-1">Clothing Base Color</label>
-                      <div class="flex gap-2">
-                        <input type="color" id="stylist-clothing-color" value="#4f46e5" oninput="previewCompanionStylist()" class="bg-transparent border-0 w-8 h-8 cursor-pointer shrink-0">
-                        <input type="text" id="stylist-clothing-color-txt" value="#4f46e5" readonly class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1 text-center text-xs text-slate-300">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <button onclick="saveCustomAIAppearance()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all cursor-pointer">
-                  Sync Settings & Deploy Changes ➔
-                </button>
-              </div>
-
-              <!-- TAB 3: MEMORY VAULT -->
-              <div id="tab-panel-comp-memory" class="absolute inset-0 p-4 space-y-4 overflow-y-auto scrollbar-none hidden bg-slate-950/20 text-left">
-                
-                <!-- Memory Controls Header -->
-                <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex justify-between items-center">
-                  <div>
-                    <h5 class="text-xs font-extrabold text-slate-200 uppercase tracking-wide">Long-Term Memory Matrix</h5>
-                    <p class="text-[10px] text-slate-400 mt-0.5">Let your companion retain facts to personalize advice.</p>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-slate-400">Memory Track:</span>
-                    <button onclick="toggleCompanionMemorySwitch()" id="btn-memory-toggle" class="px-2.5 py-1 text-[10px] font-bold rounded-lg border border-indigo-500/40 bg-indigo-500/20 text-indigo-300 transition-all cursor-pointer">
-                      ON
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Manually Add Memory Form -->
-                <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-2">
-                  <h6 class="text-[10px] font-extrabold text-indigo-300 uppercase tracking-widest">Seal New Memory Fact</h6>
-                  <div class="flex gap-2">
-                    <input type="text" id="new-memory-input" placeholder="e.g. Prefers strength training over cardio..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 select-text">
-                    <button onclick="addNewCompanionMemory()" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-xs rounded-xl shadow cursor-pointer transition-all">
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Memories List Container -->
-                <div class="space-y-2.5">
-                  <div class="flex justify-between items-center text-[10px] uppercase tracking-wide text-slate-400 font-extrabold px-1">
-                    <span>Remembered Facts</span>
-                    <span id="memories-count-badge">0 Facts</span>
-                  </div>
-                  
-                  <div id="companion-memories-list" class="space-y-2 max-h-[350px] overflow-y-auto scrollbar-none"></div>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
     </main>
 
     <!-- ATMOSPHERIC NAVIGATION BAR -->
@@ -2557,170 +2233,88 @@
           <span class="text-base leading-none">🏆</span>
           <span class="text-[9px] font-extrabold tracking-tight">Badges</span>
         </button>
-        <button onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="aibot">
-          <span class="text-base leading-none">🤖</span>
-          <span class="text-[9px] font-extrabold tracking-tight">AI Chat</span>
-        </button>
         <button onclick="switchScreen('detox')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="detox">
           <span class="text-base leading-none">🛡️</span>
           <span class="text-[9px] font-extrabold tracking-tight">Detox</span>
         </button>
       </div>
-          <span id="floating-xp-counter" class="text-indigo-400 font-bold">+15 XP per message</span>
+    <!-- OMNIPRESENT FLOATING AI JOURNEY COMPANION DRAWER & FAB -->
+    <!-- Floating Action Button (Bottom Right) -->
+    <button onclick="toggleCompanionDrawer()" title="Open Kora AI Journey Companion" class="fixed bottom-20 right-4 z-[280] w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white shadow-[0_0_30px_rgba(99,102,241,0.7)] border-2 border-white/30 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all cursor-pointer group">
+      <span class="group-hover:rotate-12 transition-transform">🔮</span>
+      <span class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-[#090A0F] rounded-full shadow-sm animate-pulse"></span>
+    </button>
+
+    <!-- Floating Drawer Overlay -->
+    <div id="floating-companion-drawer" class="fixed inset-y-0 right-0 z-[350] w-full max-w-sm sm:max-w-md bg-[#090A0F]/95 backdrop-blur-2xl border-l border-indigo-500/30 shadow-[0_0_80px_rgba(99,102,241,0.3)] flex flex-col transition-all duration-300 transform translate-x-full">
+      <!-- Drawer Header with Active Sanctuary Context Badge -->
+      <div class="p-4 border-b border-white/10 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-xl border-2 border-white/20 shadow-lg shadow-indigo-500/30 relative">
+            🔮
+            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#090A0F]"></span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white flex items-center gap-1.5 font-heading">
+              <span id="floating-companion-title">Kora AI Companion</span>
+              <span class="px-2 py-0.5 rounded text-[8px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wide">JOURNEY GUIDE</span>
+            </h3>
+            <p id="floating-context-badge" class="text-[10px] text-cyan-300 font-bold flex items-center gap-1 mt-0.5">
+              <span>📍 Active Screen: Sanctuary Navigator</span>
+            </p>
+          </div>
+        </div>
+        <button onclick="toggleCompanionDrawer()" class="p-2 text-slate-400 hover:text-white text-2xl cursor-pointer transition-colors">×</button>
+      </div>
+
+      <!-- Live Sanctuary Synergy Bar -->
+      <div class="px-4 py-2 bg-white/[0.02] border-b border-white/5 flex items-center justify-between text-[10px]">
+        <div class="flex items-center gap-2 text-slate-300 font-medium">
+          <span class="text-amber-400 font-bold">✨ Synergy Matrix:</span>
+          <span id="floating-synergy-text" class="text-slate-200">Level 1 • Serene Resonance</span>
+        </div>
+        <button onclick="synthesizeScreenAdvice()" class="px-2.5 py-0.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/40 rounded-lg font-bold transition-all cursor-pointer">
+          Synthesize Screen Advice ⚡
+        </button>
+      </div>
+
+      <!-- Interactive Quick Action Chip Prompts -->
+      <div class="p-3 bg-white/[0.01] border-b border-white/5 flex gap-2 overflow-x-auto scrollbar-none text-[10px]">
+        <button onclick="sendFloatingPrompt('Give me a tailored strategy for my current goal.')" class="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl shrink-0 cursor-pointer font-bold transition-all">🎯 Goal Strategy</button>
+        <button onclick="sendFloatingPrompt('What boss or quest should I tackle right now?')" class="px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-xl shrink-0 cursor-pointer font-bold transition-all">⚔️ Next Quest</button>
+        <button onclick="sendFloatingPrompt('I feel distracted. Give me an immediate focus anchor.')" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-xl shrink-0 cursor-pointer font-bold transition-all">🛡️ Focus Anchor</button>
+        <button onclick="sendFloatingPrompt('Guide me through a 1-minute clarity reflection.')" class="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl shrink-0 cursor-pointer font-bold transition-all">🧘 Clarity Reset</button>
+      </div>
+
+      <!-- Chat Log Container -->
+      <div id="floating-chat-log" class="flex-1 p-4 overflow-y-auto space-y-3.5 scrollbar-none text-xs">
+        <div class="p-3.5 bg-indigo-950/40 border border-indigo-500/30 rounded-2xl space-y-1.5 shadow-lg">
+          <div class="flex items-center justify-between text-[9px] font-extrabold uppercase text-indigo-300">
+            <span>🔮 Kora • Journey AI Companion</span>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ONLINE</span>
+          </div>
+          <p class="text-slate-200 leading-relaxed text-[11px]">Greetings! I am right here with you across every tab in Thoughtica. Ask me anything, request tailored strategies, or talk through your goals anytime!</p>
+        </div>
+      </div>
+
+      <!-- Rich Interactive Input Area -->
+      <div class="p-3.5 border-t border-white/10 bg-slate-950/90 space-y-2">
+        <div class="flex items-center gap-2">
+          <button onclick="startFloatingVoiceInput()" title="Voice Speech Dictation (+20 XP)" class="p-2.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl border border-white/10 transition-all cursor-pointer shrink-0 hover:border-indigo-500/40">
+            <i data-lucide="mic" id="floating-mic-icon" class="w-4 h-4"></i>
+          </button>
+          <input type="text" id="floating-chat-input" placeholder="Ask Kora anything on your journey..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 shadow-inner">
+          <button onclick="sendFloatingChat()" class="p-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-600/30 cursor-pointer shrink-0 transition-all hover:scale-105">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="flex justify-between items-center text-[9px] text-slate-400 px-1">
+          <span>💡 Tip: Ask Kora for screen-specific tips anytime</span>
+          <span id="floating-xp-counter" class="text-indigo-400 font-bold">+15 XP per discussion</span>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- FUTURE-SELF LETTER MODAL -->
-  <div id="modal-future-self" class="fixed inset-0 bg-[#090A0F]/95 backdrop-blur-2xl z-[400] flex items-center justify-center p-4 hidden">
-    <div class="relative w-full max-w-md bg-gradient-to-b from-purple-950/80 via-indigo-950/70 to-slate-950/90 border border-purple-400/40 rounded-3xl shadow-[0_0_80px_rgba(168,85,247,0.4)] overflow-hidden">
-      <!-- Envelope header -->
-      <div class="relative p-6 pb-4 border-b border-purple-500/20">
-        <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-indigo-600/5 to-transparent"></div>
-        <div class="relative flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-400 flex items-center justify-center text-2xl shadow-lg shadow-purple-500/40 border border-white/20">✉️</div>
-            <div>
-              <div class="text-[10px] font-extrabold uppercase tracking-widest text-purple-300 mb-0.5">Message from Your Future Self</div>
-              <div id="future-self-date-label" class="text-xs font-bold text-slate-200">One year from today...</div>
-            </div>
-          </div>
-          <button onclick="closeFutureSelfLetter()" class="text-slate-400 hover:text-white text-2xl cursor-pointer">×</button>
-        </div>
-      </div>
-      <!-- Letter body -->
-      <div class="p-6 space-y-4 max-h-[55vh] overflow-y-auto scrollbar-none">
-        <div id="future-self-letter-loading" class="hidden text-center py-8 space-y-3">
-          <div class="text-4xl animate-pulse">✉️</div>
-          <p class="text-sm text-slate-300 font-medium">Kora is channeling your future self...</p>
-          <p class="text-xs text-slate-500">This may take a moment. Breathe.</p>
-        </div>
-        <div id="future-self-letter-body" class="hidden">
-          <p class="text-[11px] text-[9px] uppercase font-extrabold tracking-widest text-purple-300 mb-3">Dear <span id="future-self-name">Seeker</span>,</p>
-          <div id="future-self-letter-text" class="text-[12px] text-slate-100 leading-loose space-y-3 font-medium"></div>
-          <p class="mt-4 text-[11px] text-purple-300 font-bold">With belief in who you're becoming,</p>
-          <p class="text-[12px] text-white font-extrabold"><span id="future-self-sign-name">Future You</span> 🔮</p>
-        </div>
-      </div>
-      <!-- Actions -->
-      <div class="p-4 border-t border-purple-500/20 space-y-2">
-        <div class="flex gap-2">
-          <button onclick="copyFutureSelfLetter()" id="future-self-copy-btn" class="flex-1 py-2.5 bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/40 rounded-xl text-xs font-extrabold cursor-pointer transition-all">📋 Copy Letter</button>
-          <button onclick="regenerateFutureSelfLetter()" class="py-2.5 px-4 bg-purple-600/20 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 rounded-xl text-xs font-extrabold cursor-pointer transition-all">🔄</button>
-        </div>
-        <button onclick="resonateFutureSelfLetter()" class="w-full py-2.5 bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/50 hover:to-indigo-600/50 text-white border border-purple-400/40 rounded-xl text-xs font-extrabold cursor-pointer transition-all">💬 This resonates — talk to Kora about it →</button>
-        <button onclick="closeFutureSelfLetter()" class="w-full py-2 text-slate-500 text-xs cursor-pointer hover:text-slate-300 transition-all">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- 🌅 KORA MORNING RITUAL — 3-Step Interactive Check-In  -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div id="modal-kora-morning-ritual" class="fixed inset-0 bg-[#090A0F]/97 backdrop-blur-2xl z-[450] flex items-center justify-center p-4 hidden">
-    <div class="relative w-full max-w-sm flex flex-col bg-gradient-to-b from-indigo-950/95 via-slate-950/98 to-slate-950 border border-indigo-400/35 rounded-3xl shadow-[0_0_100px_rgba(99,102,241,0.5)] overflow-hidden">
-      
-      <!-- Kora glow header -->
-      <div class="relative p-5 pb-3 flex flex-col items-center">
-        <div class="absolute inset-0 bg-gradient-to-b from-indigo-600/10 to-transparent"></div>
-        <div id="morning-kora-avatar" class="relative z-10 w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/50 border-2 border-white/20 mb-2">
-          🔮
-          <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#090A0F]"></span>
-        </div>
-        <p class="relative z-10 text-[10px] font-extrabold uppercase tracking-widest text-indigo-300">Kora • Morning Session</p>
-        <!-- Progress dots -->
-        <div class="flex gap-2 mt-3 relative z-10">
-          <div id="morning-dot-1" class="w-6 h-1.5 rounded-full bg-indigo-400 transition-all duration-500"></div>
-          <div id="morning-dot-2" class="w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></div>
-          <div id="morning-dot-3" class="w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></div>
-        </div>
-      </div>
-
-      <!-- Step 1: Resonance Check -->
-      <div id="morning-step-1" class="px-5 pb-5 space-y-4">
-        <div class="text-center">
-          <h3 class="text-[15px] font-extrabold text-white mb-0.5">How are you actually showing up?</h3>
-          <p class="text-[11px] text-slate-400">Be honest. Kora sees you.</p>
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <button data-mood="Radiant" onclick="selectMorningMood('Radiant')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-amber-400/50 hover:bg-amber-500/10 cursor-pointer transition-all">
-            <span class="text-xl">🌟</span><span class="text-[10px] font-bold text-slate-300">Radiant</span>
-          </button>
-          <button data-mood="Energized" onclick="selectMorningMood('Energized')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-orange-400/50 hover:bg-orange-500/10 cursor-pointer transition-all">
-            <span class="text-xl">⚡</span><span class="text-[10px] font-bold text-slate-300">Energized</span>
-          </button>
-          <button data-mood="Focused" onclick="selectMorningMood('Focused')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-indigo-400/50 hover:bg-indigo-500/10 cursor-pointer transition-all">
-            <span class="text-xl">🎯</span><span class="text-[10px] font-bold text-slate-300">Focused</span>
-          </button>
-          <button data-mood="Calm" onclick="selectMorningMood('Calm')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-cyan-400/50 hover:bg-cyan-500/10 cursor-pointer transition-all">
-            <span class="text-xl">🌊</span><span class="text-[10px] font-bold text-slate-300">Calm</span>
-          </button>
-          <button data-mood="Reflective" onclick="selectMorningMood('Reflective')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-purple-400/50 hover:bg-purple-500/10 cursor-pointer transition-all">
-            <span class="text-xl">🌙</span><span class="text-[10px] font-bold text-slate-300">Reflective</span>
-          </button>
-          <button data-mood="Struggling" onclick="selectMorningMood('Struggling')" class="morning-mood-btn p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-1.5 hover:border-rose-400/50 hover:bg-rose-500/10 cursor-pointer transition-all">
-            <span class="text-xl">🌫️</span><span class="text-[10px] font-bold text-slate-300">Struggling</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 2: Today's Intention -->
-      <div id="morning-step-2" class="px-5 pb-5 space-y-3 hidden">
-        <div class="text-center">
-          <h3 class="text-[15px] font-extrabold text-white mb-0.5">What's your ONE intention today?</h3>
-          <p class="text-[11px] text-slate-400">Not a to-do list — one powerful direction.</p>
-        </div>
-        <div id="morning-mood-echo" class="flex items-center gap-2 p-2.5 bg-indigo-950/50 border border-indigo-500/25 rounded-xl">
-          <span id="morning-mood-echo-icon" class="text-base">🔮</span>
-          <p id="morning-mood-echo-text" class="text-[11px] text-indigo-200 font-medium"></p>
-        </div>
-        <textarea id="morning-intention-input" rows="3" placeholder="I want to..." class="w-full bg-white/5 border border-white/10 focus:border-indigo-500/60 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none resize-none scrollbar-none transition-all"></textarea>
-        <div class="flex gap-2">
-          <button onclick="suggestMorningIntention()" class="flex-1 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-xl text-[11px] font-bold cursor-pointer transition-all">✨ Suggest one</button>
-          <button onclick="submitMorningIntention()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[11px] font-extrabold cursor-pointer transition-all shadow-lg shadow-indigo-600/30">Set intention →</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Kora's Strategy -->
-      <div id="morning-step-3" class="px-5 pb-5 space-y-3 hidden">
-        <div class="text-center">
-          <h3 class="text-[15px] font-extrabold text-white mb-0.5">Your Morning Strategy ⚡</h3>
-          <p class="text-[11px] text-slate-400">Kora is crafting your personalized plan...</p>
-        </div>
-        <!-- Loading state -->
-        <div id="morning-strategy-loading" class="py-4 flex flex-col items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-lg animate-pulse shadow-lg shadow-indigo-500/40">🔮</div>
-          <div class="flex gap-1">
-            <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style="animation-delay:0ms"></div>
-            <div class="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay:150ms"></div>
-            <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay:300ms"></div>
-          </div>
-        </div>
-        <!-- Strategy content -->
-        <div id="morning-strategy-content" class="hidden space-y-3">
-          <div class="p-3.5 bg-indigo-950/40 border border-indigo-500/30 rounded-2xl">
-            <p class="text-[9px] font-extrabold uppercase tracking-widest text-indigo-300 mb-1.5">🔮 Kora's Strategy for You</p>
-            <p id="morning-strategy-text" class="text-[12px] text-slate-100 leading-relaxed font-medium"></p>
-          </div>
-          <div id="morning-strategy-actions" class="space-y-2"></div>
-          <!-- XP reward -->
-          <div id="morning-xp-reward" class="hidden flex items-center justify-center gap-2 p-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl">
-            <span class="text-base">⚡</span>
-            <span class="text-[11px] font-extrabold text-emerald-300">+40 XP • Morning Ritual Complete!</span>
-          </div>
-          <button onclick="completeMorningRitual()" class="w-full py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:scale-[1.02] text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-indigo-600/30 cursor-pointer transition-all">
-            Begin your day →
-          </button>
-        </div>
-      </div>
-
-      <!-- Close X -->
-      <button onclick="closeMorningRitual()" class="absolute top-4 right-4 text-slate-600 hover:text-white text-xl cursor-pointer z-20">×</button>
-    </div>
-  </div>
-
-
 
     <!-- SETTINGS MODAL WITH LANGUAGE, COMPANION & GOAL CUSTOMIZATION -->
     <div id="settings-modal" class="fixed inset-0 bg-[#090A0F]/90 backdrop-blur-md flex items-center justify-center z-[300] p-4 hidden">
@@ -2744,6 +2338,11 @@
               <option value="it-IT">🇮🇹 Italiano</option>
               <option value="en-GB">🇬🇧 English (UK)</option>
             </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">AI Companion Name</label>
+            <input type="text" id="settings-companion-input" onchange="updateSettingsCompanionName(this.value)" placeholder="e.g. Kora" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none">
           </div>
 
           <div>
@@ -2834,7 +2433,7 @@
 
   <!-- UPGRADE TO PREMIUM SUBSCRIPTION MODAL -->
   <div id="modal-upgrade" class="fixed inset-0 bg-[#090A0F]/90 backdrop-blur-md flex items-center justify-center z-[400] p-4 hidden">
-    <div class="bg-slate-950/90 border border-white/10 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative max-h-[90vh] overflow-y-auto scrollbar-none">
+    <div class="bg-slate-950/90 border border-white/10 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative">
       <button onclick="closeUpgradeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl cursor-pointer">×</button>
       
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase mb-2 shadow-sm animate-pulse">
@@ -2980,15 +2579,6 @@
       unlockedSkills: [],
       xpTracker: { date: new Date().toISOString().slice(0, 10), actions: {} },
       completedQuests: 0,
-      // KORA BREAKTHROUGH COMPANION STATE
-      moodHistory: [],                    // [{date, mood}] rolling 30-day log
-      koraRealTalkMode: false,            // Direct accountability vs supportive mode
-      lastFutureSelfLetterDate: '',       // ISO date of last letter generation
-      shadowQuestionAnswered: '',         // ISO date if today's shadow question answered
-      morningBriefingDate: '',            // ISO date of last morning briefing shown
-      microChallengeDate: '',             // ISO date of today's micro-challenge
-      microChallengeCompleted: false,     // Whether today's challenge is done
-      koraInterventionCount: 0,           // Total proactive Kora interventions received
       detox: {
         platforms: { instagram: false, tiktok: false, twitter: false, youtube: false, reddit: false, facebook: false, snapchat: false, discord: false },
         streak: 0,
@@ -3091,25 +2681,24 @@
 
       const masterGain = ctx.createGain();
       masterGain.gain.setValueAtTime(0.001, ctx.currentTime);
-      masterGain.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 4.0); // Gentler master volume to prevent clipping
+      masterGain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 4.0);
 
       // Lowpass filter for warm, non-harsh, organic tone
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(250, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 12.0);
+      filter.frequency.setValueAtTime(180, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(450, ctx.currentTime + 12.0);
 
       // Ultra-slow breathing LFO for filter frequency (non-tedious, natural swell)
       const lfo = ctx.createOscillator();
       lfo.frequency.value = 0.04; // 25s breathing wave
       const lfoGain = ctx.createGain();
-      lfoGain.gain.value = 80;
-      lfo.connect(lfoGain);
-      lfoGain.connect(filter.frequency);
+      lfoGain.gain.value = 60;
+      lfo.connect(filter.frequency);
       lfo.start();
 
-      // Clear, warm speaker-compatible sine chord (shifted up 1 octave from low sub-bass pitches to avoid rattling)
-      const freqs = [130.81, 196.00, 261.63, 329.63, 392.00];
+      // Deep, grounding warm sine chord: C2 (65.4), G2 (98), C3 (130.8), E3 (164.8), G3 (196)
+      const freqs = [65.41, 98.00, 130.81, 164.81, 196.00];
       const oscs = [];
 
       freqs.forEach((freq, idx) => {
@@ -3118,7 +2707,7 @@
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
         const gain = ctx.createGain();
-        gain.gain.value = 0.04 - idx * 0.006; // Softer individual gains for warm blending
+        gain.gain.value = 0.15 - idx * 0.02;
 
         osc.connect(gain);
         gain.connect(filter);
@@ -3134,19 +2723,17 @@
 
     function stop2050IntroMusic() {
       if (!prologueMusicNodes) return;
-      const nodesToStop = prologueMusicNodes;
-      prologueMusicNodes = null;
       try {
         const ctx = audioCtx;
-        if (ctx && nodesToStop.masterGain) {
-          nodesToStop.masterGain.gain.setValueAtTime(nodesToStop.masterGain.gain.value, ctx.currentTime);
-          nodesToStop.masterGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.5);
+        if (ctx && prologueMusicNodes.masterGain) {
+          prologueMusicNodes.masterGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.5);
         }
         setTimeout(() => {
-          if (nodesToStop.oscs) {
-            nodesToStop.oscs.forEach(o => { try { o.stop(); } catch(e){} });
+          if (prologueMusicNodes && prologueMusicNodes.oscs) {
+            prologueMusicNodes.oscs.forEach(o => { try { o.stop(); } catch(e){} });
+            if (prologueMusicNodes.lfo) { try { prologueMusicNodes.lfo.stop(); } catch(e){} }
           }
-          if (nodesToStop.lfo) { try { nodesToStop.lfo.stop(); } catch(e){} }
+          prologueMusicNodes = null;
         }, 1600);
       } catch (e) {}
     }
@@ -3164,7 +2751,7 @@
       filter.type = 'lowpass';
       filter.frequency.value = 350;
 
-      // Soft grounding sine drone (gains reduced to avoid speaker saturation/rattle)
+      // Soft grounding sine drone: C3, E3, G3
       const freqs = [130.81, 164.81, 196.00];
       const oscs = [];
 
@@ -3174,7 +2761,7 @@
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
         const pGain = ctx.createGain();
-        pGain.gain.value = 0.04;
+        pGain.gain.value = 0.12;
         osc.connect(pGain);
         pGain.connect(filter);
         osc.start();
@@ -3205,17 +2792,9 @@
     function stop1MinSanctuaryTheme() {
       if (sanctuaryThemeTimer) { clearTimeout(sanctuaryThemeTimer); sanctuaryThemeTimer = null; }
       if (!sanctuaryThemeNodes) return;
-      const nodesToStop = sanctuaryThemeNodes;
-      sanctuaryThemeNodes = null;
       try {
-        const ctx = audioCtx;
-        if (ctx && nodesToStop.masterGain) {
-          nodesToStop.masterGain.gain.setValueAtTime(nodesToStop.masterGain.gain.value, ctx.currentTime);
-          nodesToStop.masterGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.5);
-        }
-        setTimeout(() => {
-          if (nodesToStop.oscs) nodesToStop.oscs.forEach(o => { try { o.stop(); } catch(e){} });
-        }, 1600);
+        if (sanctuaryThemeNodes.oscs) sanctuaryThemeNodes.oscs.forEach(o => { try { o.stop(); } catch(e){} });
+        sanctuaryThemeNodes = null;
       } catch(e) {}
     }
 
@@ -3425,11 +3004,25 @@
       save();
 
       document.getElementById('intro-step-1').classList.remove('active');
-      document.getElementById('intro-step-3').classList.add('active');
-      document.getElementById('intro-phase-badge').textContent = "STEP 2: DEFINE LIFE AMBITION";
+      document.getElementById('intro-step-2').classList.add('active');
+      document.getElementById('intro-phase-badge').textContent = "STEP 2: NAME YOUR COMPANION";
     }
 
+    function setSuggestedCompanionName(name) {
+      document.getElementById('intro-companion-name-input').value = name;
+    }
 
+    function saveCompanionNameStep() {
+      const val = document.getElementById('intro-companion-name-input').value.trim() || 'Kora';
+      S.companion.name = val;
+      document.getElementById('companion-name-display').textContent = val;
+      showXPToast(0, `Companion Named: ${val} 🔮`, 1.0, false);
+      save();
+
+      document.getElementById('intro-step-2').classList.remove('active');
+      document.getElementById('intro-step-3').classList.add('active');
+      document.getElementById('intro-phase-badge').textContent = "STEP 3: DEFINE LIFE AMBITION";
+    }
 
     function selectIntroFocus(focusName) {
       S.focusArea = focusName;
@@ -3445,7 +3038,7 @@
       S.goal = val;
       if (document.getElementById('custom-quantum-goal')) document.getElementById('custom-quantum-goal').value = val;
       if (document.getElementById('custom-goal-val')) document.getElementById('custom-goal-val').textContent = val;
-      if (document.getElementById('dashboard-story-title')) document.getElementById('dashboard-story-title').textContent = `${val} — Step into Quiet Discovery`;
+      if (document.getElementById('dashboard-story-title')) document.getElementById('dashboard-story-title').textContent = `${val} - Step into Quiet Discovery`;
       showXPToast(20, `Journey Goal Locked: ${val}`, 1.0, false);
       save();
 
@@ -3709,278 +3302,14 @@
       speakSanctuaryMasterVoice(text);
     }
 
-    // ── 🔮 DEDICATED FULL-SCREEN KORA LIVE VOICE SANCTUARY ENGINE ─────────────
-    let isKoraVoiceLoopActive = false;
-    let koraSpeechRec = null;
-
-    function openKoraLiveVoiceModal() {
-      const modal = document.getElementById('modal-kora-live-voice-screen');
-      if (!modal) return;
-      modal.classList.remove('hidden');
-
-      // Update realtalk toggle button label in voice screen
-      const realTalkBtn = document.getElementById('kora-voice-realtalk-btn');
-      if (realTalkBtn) {
-        realTalkBtn.textContent = S.koraRealTalkMode ? '💬 Real Talk: ON' : '💬 Real Talk: OFF';
-      }
-
-      startContinuousVoiceMode();
-      
-      // Ensure text input Enter key handler is attached
-      const txtInput = document.getElementById('kora-voice-text-input');
-      if (txtInput && !txtInput.dataset.listenerAttached) {
-        txtInput.dataset.listenerAttached = "true";
-        txtInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            sendKoraVoiceTextInput();
-          }
-        });
-      }
-    }
-
-    function toggleKoraVoiceKeyboardMode() {
-      const container = document.getElementById('kora-voice-text-input-container');
-      const input = document.getElementById('kora-voice-text-input');
-      const btn = document.getElementById('kora-voice-keyboard-btn');
-      
-      if (container.classList.contains('hidden')) {
-        // Switch to text typing mode: pause continuous voice listening
-        stopContinuousVoiceMode();
-        setOrbState('idle');
-        container.classList.remove('hidden');
-        if (input) input.focus();
-        if (btn) btn.innerHTML = '<i data-lucide="mic" class="w-4 h-4"></i><span>Voice Mode</span>';
-        const subtitle = document.getElementById('kora-voice-status-label');
-        if (subtitle) subtitle.textContent = "Text Mode Active (Silent)";
-        const dot = document.getElementById('kora-voice-status-dot');
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-500";
-        safeguardAllIcons();
-      } else {
-        // Switch back to voice mode
-        container.classList.add('hidden');
-        if (btn) btn.innerHTML = '<i data-lucide="keyboard" class="w-4 h-4"></i><span>Text Mode</span>';
-        startContinuousVoiceMode();
-        safeguardAllIcons();
-      }
-    }
-
-    async function sendKoraVoiceTextInput() {
-      const input = document.getElementById('kora-voice-text-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-      
-      input.value = '';
-      
-      // Update UI with user input
-      const userTranscriptEl = document.getElementById('kora-user-spoken-transcript');
-      if (userTranscriptEl) userTranscriptEl.textContent = `"${text}"`;
-      
-      setOrbState('thinking');
-      const aiResponseEl = document.getElementById('kora-ai-spoken-response');
-      if (aiResponseEl) aiResponseEl.textContent = "Reflecting...";
-      
-      // Process using exact same pipeline
-      await processUserChatMessage(text);
-    }
-
-    function closeKoraLiveVoiceModal() {
-      const modal = document.getElementById('modal-kora-live-voice-screen');
-      if (modal) modal.classList.add('hidden');
-      stopContinuousVoiceMode();
-    }
-
-    function toggleKoraVoiceListeningState() {
-      if (isKoraVoiceLoopActive) {
-        stopContinuousVoiceMode();
-      } else {
-        startContinuousVoiceMode();
-      }
-    }
-
-    function toggleContinuousVoiceMode() {
-      // Direct shortcut into dedicated voice sanctuary modal screen
-      openKoraLiveVoiceModal();
-    }
-
-    function startContinuousVoiceMode() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {
-        showToast('Voice Error', 'Speech recognition is supported natively in Chrome, Edge, and Safari.', 'mic');
-        return;
-      }
-      isKoraVoiceLoopActive = true;
-      S.voiceEnabled = true;
-      updateVoiceUIState(true);
-
-      const transcriptEl = document.getElementById('kora-user-spoken-transcript');
-      if (transcriptEl) transcriptEl.textContent = '"Listening... Speak naturally to Kora..."';
-
-      listenForUserVoice();
-    }
-
-    function stopContinuousVoiceMode() {
-      isKoraVoiceLoopActive = false;
-      if (koraSpeechRec) {
-        try { koraSpeechRec.stop(); } catch(e){}
-        koraSpeechRec = null;
-      }
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      updateVoiceUIState(false);
-    }
-
-    function setOrbState(state) {
-      const orb = document.getElementById('kora-voice-core-orb');
-      const orbIcon = document.getElementById('kora-voice-orb-icon');
-      const waveform = document.getElementById('kora-voice-waveform');
-      const statusLabel = document.getElementById('kora-voice-status-label');
-      const statusDot = document.getElementById('kora-voice-status-dot');
-      const bgAura = document.getElementById('voice-bg-aura-1');
-
-      if (!orb) return;
-
-      if (state === 'listening') {
-        orb.className = "w-44 h-44 rounded-full bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 shadow-[0_0_100px_rgba(6,182,212,0.9)] border-4 border-cyan-300 flex items-center justify-center text-5xl transition-all duration-500 animate-pulse";
-        if (orbIcon) orbIcon.textContent = "🎙️";
-        if (waveform) waveform.classList.remove('hidden');
-        if (statusLabel) statusLabel.textContent = "Listening to your voice...";
-        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping";
-        if (bgAura) bgAura.className = "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] bg-cyan-500/25 rounded-full blur-[140px] transition-all duration-700";
-      } else if (state === 'thinking') {
-        orb.className = "w-40 h-40 rounded-full bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 shadow-[0_0_90px_rgba(168,85,247,0.9)] border-4 border-purple-300 flex items-center justify-center text-5xl transition-all duration-500 animate-spin";
-        if (orbIcon) orbIcon.textContent = "🔮";
-        if (waveform) waveform.classList.add('hidden');
-        if (statusLabel) statusLabel.textContent = "Kora is reflecting & processing...";
-        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-purple-400 animate-pulse";
-        if (bgAura) bgAura.className = "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] bg-purple-600/30 rounded-full blur-[140px] transition-all duration-700";
-      } else if (state === 'speaking') {
-        orb.className = "w-48 h-48 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 shadow-[0_0_120px_rgba(16,185,129,0.9)] border-4 border-emerald-300 flex items-center justify-center text-5xl transition-all duration-300 transform scale-110";
-        if (orbIcon) orbIcon.textContent = "🗣️";
-        if (waveform) waveform.classList.remove('hidden');
-        if (statusLabel) statusLabel.textContent = "Kora is speaking...";
-        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
-        if (bgAura) bgAura.className = "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-emerald-500/30 rounded-full blur-[150px] transition-all duration-500";
-      } else { // paused/idle
-        orb.className = "w-40 h-40 rounded-full bg-gradient-to-tr from-slate-700 via-slate-800 to-indigo-950 shadow-[0_0_40px_rgba(255,255,255,0.1)] border-4 border-white/10 flex items-center justify-center text-5xl transition-all duration-500";
-        if (orbIcon) orbIcon.textContent = "💤";
-        if (waveform) waveform.classList.add('hidden');
-        if (statusLabel) statusLabel.textContent = "Voice Sanctuary Paused • Tap Orb to resume";
-        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
-        if (bgAura) bgAura.className = "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] transition-all duration-1000";
-      }
-    }
-
-    function updateVoiceUIState(active) {
-      const micBtn = document.getElementById('kora-voice-main-mic-btn');
-      if (micBtn) {
-        if (active) {
-          micBtn.className = "w-14 h-14 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-rose-500/40 border border-white/30 cursor-pointer transition-all hover:scale-110 active:scale-95 animate-pulse";
-        } else {
-          micBtn.className = "w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/40 border border-white/30 cursor-pointer transition-all hover:scale-110 active:scale-95";
-        }
-      }
-      setOrbState(active ? 'listening' : 'idle');
-    }
-
-    function listenForUserVoice() {
-      if (!isKoraVoiceLoopActive) return;
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) return;
-
-      if (koraSpeechRec) {
-        try { koraSpeechRec.abort(); } catch(e){}
-      }
-
-      koraSpeechRec = new SpeechRec();
-      koraSpeechRec.lang = S.language || 'en-US';
-      koraSpeechRec.interimResults = true;
-      koraSpeechRec.continuous = false;
-
-      const userTranscriptEl = document.getElementById('kora-user-spoken-transcript');
-
-      koraSpeechRec.onstart = () => {
-        setOrbState('listening');
-      };
-
-      koraSpeechRec.onresult = async (e) => {
-        let interim = '';
-        let finalTranscript = '';
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
-            finalTranscript += e.results[i][0].transcript;
-          } else {
-            interim += e.results[i][0].transcript;
-          }
-        }
-
-        if (userTranscriptEl) {
-          userTranscriptEl.textContent = `"${finalTranscript || interim}"`;
-        }
-
-        if (finalTranscript && finalTranscript.trim().length > 0) {
-          setOrbState('thinking');
-          const aiResponseEl = document.getElementById('kora-ai-spoken-response');
-          if (aiResponseEl) aiResponseEl.textContent = "Reflecting...";
-
-          // Process and talk back
-          processUserChatMessage(finalTranscript);
-          renderFloatingChat();
-        }
-      };
-
-      koraSpeechRec.onerror = (err) => {
-        if (isKoraVoiceLoopActive && err.error !== 'aborted') {
-          setTimeout(listenForUserVoice, 1000);
-        }
-      };
-
-      koraSpeechRec.onend = () => {
-        // Handled after Kora speaks back or loops
-      };
-
-      try {
-        koraSpeechRec.start();
-      } catch(e){}
-    }
-
     // VOICED AI COMPANION (KORA) RESPONSES - USES THE EXACT SAME VOICE & CADENCE
     function speakKoraResponse(text) {
+      if (S.voiceEnabled === false) return;
       const pulseDot = document.getElementById('companion-status-pulse');
       if (pulseDot) pulseDot.classList.add('animate-ping');
 
-      const aiResponseEl = document.getElementById('kora-ai-spoken-response');
-      if (aiResponseEl) aiResponseEl.textContent = text;
-
-      setOrbState('speaking');
-
-      let called = false;
-      const done = () => {
-        if (called) return;
-        called = true;
-        if (pulseDot) pulseDot.classList.remove('animate-ping');
-
-        if (isKoraVoiceLoopActive) {
-          setOrbState('listening');
-          setTimeout(() => {
-            listenForUserVoice();
-          }, 400);
-        } else {
-          setOrbState('idle');
-        }
-      };
-
-      if (S.voiceEnabled === false) {
-        // Voice is disabled, immediately trigger callback after brief visual pause
-        setTimeout(done, 2500); 
-        return;
-      }
-
-      // Add a safety timeout of 12 seconds in case SpeechSynthesis hangs (very common)
-      const safetyTimeout = setTimeout(done, 12000);
-
       speakSanctuaryMasterVoice(text, () => {
-        clearTimeout(safetyTimeout);
-        done();
+        if (pulseDot) pulseDot.classList.remove('animate-ping');
       });
     }
 
@@ -4063,765 +3392,13 @@
       save();
     }
 
-    // ── CUSTOM AI COMPANION SYSTEM SUITE ───────────────────
-    let currentCompanionTab = 'chat';
-
-    function switchCompanionTab(tab) {
-      currentCompanionTab = tab;
-      const panels = ['chat', 'stylist', 'memory'];
-      panels.forEach(p => {
-        const btn = document.getElementById(`tab-btn-comp-${p}`);
-        const panel = document.getElementById(`tab-panel-comp-${p}`);
-        if (btn) {
-          if (p === tab) {
-            btn.classList.add('bg-white/5', 'text-white');
-            btn.classList.remove('text-slate-400');
-          } else {
-            btn.classList.remove('bg-white/5', 'text-white');
-            btn.classList.add('text-slate-400');
-          }
-        }
-        if (panel) {
-          if (p === tab) panel.classList.remove('hidden');
-          else panel.classList.add('hidden');
-        }
-      });
-      if (tab === 'memory') renderMemoriesList();
-      if (tab === 'stylist') syncAppearanceFormValues();
-    }
-
-    const COMPANION_PRESETS = {
-      wise_mentor: {
-        desc: "A wise, calm ancient guide who answers with deep patience and focuses on long-term self-reflection.",
-        tone: "philosophical",
-        motivation: "philosophical",
-        comm: "formal"
-      },
-      guild_master: {
-        desc: "An energetic RPG Guild Master who treats your daily tasks like high-stakes guild quests and levels you up.",
-        tone: "friendly",
-        motivation: "analytical",
-        comm: "energetic"
-      },
-      calm_supporter: {
-        desc: "A gentle, warm supporter who listens to struggles without judgement and helps calm anxiety.",
-        tone: "encouraging",
-        motivation: "encouraging",
-        comm: "formal"
-      },
-      strict_coach: {
-        desc: "A high-discipline, direct coach who holds you accountable, pushes you to execute, and tolerates zero excuses.",
-        tone: "direct",
-        motivation: "tough_love",
-        comm: "formal"
-      },
-      cheerful_friend: {
-        desc: "A warm, high-energy companion who celebrates every single micro-victory with playfulness.",
-        tone: "friendly",
-        motivation: "encouraging",
-        comm: "energetic"
-      },
-      stoic_guide: {
-        desc: "A Stoic philosopher guiding you through resilience, logic, emotional mastery, and active focus.",
-        tone: "philosophical",
-        motivation: "tough_love",
-        comm: "formal"
-      },
-      philosopher: {
-        desc: "A deep, contemplative Socrates-inspired guide who answers questions with questions to provoke inner wisdom.",
-        tone: "philosophical",
-        motivation: "philosophical",
-        comm: "cryptic"
-      }
-    };
-
-    function applyCompanionPresetConfig(preset) {
-      if (preset === 'custom') return;
-      const data = COMPANION_PRESETS[preset];
-      if (!data) return;
-
-      const pDesc = document.getElementById('custom-ai-personality');
-      const pTone = document.getElementById('custom-ai-tone');
-      const pMot = document.getElementById('custom-ai-motivation-style');
-      const pComm = document.getElementById('custom-ai-comm-style');
-
-      if (pDesc) pDesc.value = data.desc;
-      if (pTone) pTone.value = data.tone;
-      if (pMot) pMot.value = data.motivation;
-      if (pComm) pComm.value = data.comm;
-    }
-
-    // SVG Modular Avatar Generator
-    function drawCompanionAvatar() {
-      const svg = document.getElementById('companion-avatar-svg');
-      if (!svg) return;
-
-      const app = S.customAI?.appearance || {
-        hairStyle: 'short',
-        hairColor: '#818cf8',
-        eyeStyle: 'focused',
-        eyeColor: '#38bdf8',
-        clothingStyle: 'robe',
-        clothingColor: '#4f46e5',
-        auraTheme: 'indigo'
-      };
-
-      const themeGlows = {
-        indigo: 'radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, rgba(6, 7, 11, 0.9) 80%)',
-        emerald: 'radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(6, 7, 11, 0.9) 80%)',
-        rose: 'radial-gradient(circle, rgba(244, 63, 94, 0.35) 0%, rgba(6, 7, 11, 0.9) 80%)',
-        violet: 'radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(6, 7, 11, 0.9) 80%)',
-        amber: 'radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, rgba(6, 7, 11, 0.9) 80%)'
-      };
-
-      const auraFill = themeGlows[app.auraTheme] || themeGlows.indigo;
-      const hairFill = app.hairColor || '#818cf8';
-      const eyeFill = app.eyeColor || '#38bdf8';
-      const clothingFill = app.clothingColor || '#4f46e5';
-
-      let hairSVG = '';
-      if (app.hairStyle === 'short') {
-        hairSVG = `<path d="M30 40 C30 25, 70 25, 70 40 C66 32, 34 32, 30 40 Z" fill="${hairFill}" />
-                   <path d="M28 40 L34 37 L30 44 Z" fill="${hairFill}" />
-                   <path d="M72 40 L66 37 L70 44 Z" fill="${hairFill}" />`;
-      } else if (app.hairStyle === 'long') {
-        hairSVG = `<path d="M30 40 C30 20, 70 20, 70 40 C75 55, 68 75, 68 75 C68 75, 74 50, 70 40 C66 30, 34 30, 30 40 C26 50, 32 75, 32 75 C32 75, 25 55, 30 40 Z" fill="${hairFill}" />`;
-      } else if (app.hairStyle === 'braids') {
-        hairSVG = `<path d="M30 40 C30 25, 70 25, 70 40 Z" fill="${hairFill}" />
-                   <circle cx="28" cy="48" r="4" fill="${hairFill}" />
-                   <circle cx="26" cy="54" r="3.5" fill="${hairFill}" />
-                   <circle cx="24" cy="60" r="3" fill="${hairFill}" />
-                   <circle cx="72" cy="48" r="4" fill="${hairFill}" />
-                   <circle cx="74" cy="54" r="3.5" fill="${hairFill}" />
-                   <circle cx="76" cy="60" r="3" fill="${hairFill}" />`;
-      } else if (app.hairStyle === 'wizard') {
-        hairSVG = `<path d="M26 36 L50 12 L74 36 Z" fill="${hairFill}" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.5))" />
-                   <ellipse cx="50" cy="35" rx="26" ry="3" fill="${clothingFill}" />`;
-      }
-
-      let eyeSVG = '';
-      if (app.eyeStyle === 'calm') {
-        eyeSVG = `<path d="M36 50 Q42 47 48 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                  <path d="M52 50 Q58 47 64 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" />`;
-      } else if (app.eyeStyle === 'spark') {
-        eyeSVG = `<polygon points="42,46 45,50 42,54 39,50" fill="${eyeFill}" />
-                  <polygon points="58,46 61,50 58,54 55,50" fill="${eyeFill}" />
-                  <circle cx="42" cy="50" r="1.5" fill="#fff" />
-                  <circle cx="58" cy="50" r="1.5" fill="#fff" />`;
-      } else if (app.eyeStyle === 'glow') {
-        eyeSVG = `<circle cx="42" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" />
-                  <circle cx="58" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" />
-                  <circle cx="42" cy="50" r="1.5" fill="#fff" />
-                  <circle cx="58" cy="50" r="1.5" fill="#fff" />`;
-      } else { // focused
-        eyeSVG = `<ellipse cx="42" cy="50" rx="4" ry="2" fill="#fff" />
-                  <ellipse cx="58" cy="50" rx="4" ry="2" fill="#fff" />
-                  <circle cx="42" cy="50" r="2.2" fill="${eyeFill}" />
-                  <circle cx="58" cy="50" r="2.2" fill="${eyeFill}" />
-                  <circle cx="42" cy="50" r="0.8" fill="#000" />
-                  <circle cx="58" cy="50" r="0.8" fill="#000" />`;
-      }
-
-      let clothingSVG = '';
-      if (app.clothingStyle === 'armor') {
-        clothingSVG = `<path d="M30 75 Q50 68 70 75 L75 98 L25 98 Z" fill="${clothingFill}" stroke="#94a3b8" stroke-width="2" />
-                       <path d="M42 75 L45 98 M58 75 L55 98" stroke="#64748b" stroke-width="1.5" />
-                       <path d="M50 78 L50 98" stroke="#94a3b8" stroke-width="2" />
-                       <rect x="46" y="70" width="8" height="6" rx="2" fill="#e2e8f0" />`;
-      } else if (app.clothingStyle === 'casual') {
-        clothingSVG = `<path d="M30 75 L70 75 L72 98 L28 98 Z" fill="${clothingFill}" />
-                       <path d="M50 75 L42 98 H58 Z" fill="#1e293b" />
-                       <path d="M30 75 Q50 82 70 75" stroke="#f1f5f9" stroke-width="1" fill="none" />`;
-      } else { // robe
-        clothingSVG = `<path d="M28 75 C28 75, 50 66, 72 75 L76 98 L24 98 Z" fill="${clothingFill}" />
-                       <path d="M32 75 Q50 95 68 75" fill="none" stroke="#fbbf24" stroke-width="2" />
-                       <circle cx="50" cy="85" r="3" fill="#fbbf24" />`;
-      }
-
-      svg.innerHTML = `
-        <defs>
-          <radialGradient id="aura-grad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="${app.auraTheme === 'indigo' ? '#4f46e5' : app.auraTheme === 'emerald' ? '#10b981' : app.auraTheme === 'rose' ? '#f43f5e' : app.auraTheme === 'violet' ? '#8b5cf6' : '#f59e0b'}" stop-opacity="0.5"/>
-            <stop offset="100%" stop-color="#090a0f" stop-opacity="1"/>
-          </radialGradient>
-        </defs>
-        <!-- Background Aura -->
-        <rect width="100" height="100" fill="url(#aura-grad)" />
-        
-        <!-- Base Body -->
-        <path d="M32 75 C32 60, 68 60, 68 75 Z" fill="#1e293b" />
-        
-        <!-- Face/Head -->
-        <circle cx="50" cy="46" r="18" fill="#e2e8f0" />
-        
-        <!-- Facial Details -->
-        <!-- Cheeks -->
-        <ellipse cx="38" cy="51" rx="3" ry="1.5" fill="#fca5a5" opacity="0.4" />
-        <ellipse cx="62" cy="51" rx="3" ry="1.5" fill="#fca5a5" opacity="0.4" />
-        <!-- Mouth -->
-        <path d="M47 56 Q50 58 53 56" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none" />
-        
-        <!-- Eyes -->
-        ${eyeSVG}
-
-        <!-- Hair -->
-        ${hairSVG}
-
-        <!-- Clothing -->
-        ${clothingSVG}
-      `;
-    }
-
-    function previewCompanionStylist() {
-      const hairColor = document.getElementById('stylist-hair-color').value;
-      const eyeColor = document.getElementById('stylist-eye-color').value;
-      const clothingColor = document.getElementById('stylist-clothing-color').value;
-
-      document.getElementById('stylist-hair-color-txt').value = hairColor.toUpperCase();
-      document.getElementById('stylist-eye-color-txt').value = eyeColor.toUpperCase();
-      document.getElementById('stylist-clothing-color-txt').value = clothingColor.toUpperCase();
-
-      if (!S.customAI) S.customAI = {};
-      if (!S.customAI.appearance) S.customAI.appearance = {};
-
-      S.customAI.appearance.auraTheme = document.getElementById('stylist-aura').value;
-      S.customAI.appearance.hairStyle = document.getElementById('stylist-hair').value;
-      S.customAI.appearance.hairColor = hairColor;
-      S.customAI.appearance.eyeStyle = document.getElementById('stylist-eyes').value;
-      S.customAI.appearance.eyeColor = eyeColor;
-      S.customAI.appearance.clothingStyle = document.getElementById('stylist-clothing').value;
-      S.customAI.appearance.clothingColor = clothingColor;
-
-      drawCompanionAvatar();
-      
-      const auraGlow = document.getElementById('companion-aura-glow');
-      if (auraGlow) {
-        const colors = { indigo: 'rgba(79, 70, 229, 0.25)', emerald: 'rgba(16, 185, 129, 0.25)', rose: 'rgba(244, 63, 94, 0.25)', violet: 'rgba(139, 92, 246, 0.25)', amber: 'rgba(245, 158, 11, 0.25)' };
-        auraGlow.style.backgroundColor = colors[S.customAI.appearance.auraTheme] || colors.indigo;
-      }
-    }
-
-    function syncAppearanceFormValues() {
-      const app = S.customAI?.appearance || {
-        hairStyle: 'short',
-        hairColor: '#818cf8',
-        eyeStyle: 'focused',
-        eyeColor: '#38bdf8',
-        clothingStyle: 'robe',
-        clothingColor: '#4f46e5',
-        auraTheme: 'indigo'
-      };
-
-      document.getElementById('stylist-aura').value = app.auraTheme || 'indigo';
-      document.getElementById('stylist-hair').value = app.hairStyle || 'short';
-      document.getElementById('stylist-hair-color').value = app.hairColor || '#818cf8';
-      document.getElementById('stylist-hair-color-txt').value = (app.hairColor || '#818cf8').toUpperCase();
-      document.getElementById('stylist-eyes').value = app.eyeStyle || 'focused';
-      document.getElementById('stylist-eye-color').value = app.eyeColor || '#38bdf8';
-      document.getElementById('stylist-eye-color-txt').value = (app.eyeColor || '#38bdf8').toUpperCase();
-      document.getElementById('stylist-clothing').value = app.clothingStyle || 'robe';
-      document.getElementById('stylist-clothing-color').value = app.clothingColor || '#4f46e5';
-      document.getElementById('stylist-clothing-color-txt').value = (app.clothingColor || '#4f46e5').toUpperCase();
-    }
-
-    function saveCustomAIAppearance() {
-      const name = document.getElementById('custom-ai-name').value.trim();
-      const personality = document.getElementById('custom-ai-personality').value.trim();
-      const preset = document.getElementById('custom-ai-preset').value;
-      const motivation = document.getElementById('custom-ai-motivation-style').value;
-      const communication = document.getElementById('custom-ai-comm-style').value;
-
-      if (!name) {
-        showXPToast(0, "Companion Name is required!", 1.0, true);
-        return;
-      }
-
-      S.customAI.name = name;
-      S.customAI.preset = preset;
-      S.customAI.personality = personality;
-      S.customAI.motivationStyle = motivation;
-      S.customAI.communicationStyle = communication;
-
-      previewCompanionStylist();
+    function updateSettingsCompanionName(val) {
+      if (!val.trim()) return;
+      S.companion.name = val.trim();
+      document.getElementById('companion-name-display').textContent = val.trim();
+      showXPToast(0, `Companion Renamed to ${val.trim()} 🔮`, 1.0, false);
       save();
-
-      showXPToast(0, `Companion ${name} Synthesized & Deployed! ✨`, 1.5, false);
-
-      const headerTitle = document.getElementById('custom-ai-header-title');
-      const badgeName = document.getElementById('companion-badge-name');
-      if (headerTitle) headerTitle.textContent = name;
-      if (badgeName) badgeName.textContent = name;
-
-      // Animate pulse ring
-      const ring = document.getElementById('avatar-pulse-ring');
-      if (ring) {
-        ring.classList.remove('opacity-0');
-        ring.classList.add('opacity-100');
-        setTimeout(() => {
-          ring.classList.remove('opacity-100');
-          ring.classList.add('opacity-0');
-        }, 1000);
-      }
-
-      // Sync welcome message if conversation is empty
-      if (!S.customAI.chatHistory || S.customAI.chatHistory.length === 0) {
-        S.customAI.chatHistory = [{
-          role: 'assistant',
-          content: `Deploy complete. Greetings, Seeker. I am ${name}. I stand ready in the matrix as your Customizable companion. What path shall we forge today?`
-        }];
-        save();
-        renderCustomAIChat();
-      }
-
-      switchCompanionTab('chat');
     }
-
-    // Relationship Progression System
-    const RELATIONSHIP_RANKS = [
-      { maxLvl: 9, label: 'New Ally', color: 'text-indigo-300' },
-      { maxLvl: 24, label: 'Trusted Companion', color: 'text-cyan-300' },
-      { maxLvl: 49, label: 'Guardian', color: 'text-purple-300' },
-      { maxLvl: 100, label: 'Legendary Guide', color: 'text-amber-300' }
-    ];
-
-    function getRelationshipRank(lvl) {
-      for (const r of RELATIONSHIP_RANKS) {
-        if (lvl <= r.maxLvl) return r.label;
-      }
-      return 'Legendary Guide';
-    }
-
-    function addRelationshipXp(amt) {
-      if (!S.customAI) return;
-      if (S.customAI.relationshipXp === undefined) S.customAI.relationshipXp = 0;
-      if (S.customAI.relationshipLevel === undefined) S.customAI.relationshipLevel = 1;
-
-      S.customAI.relationshipXp += amt;
-      let levelUp = false;
-
-      while (S.customAI.relationshipXp >= 100) {
-        S.customAI.relationshipXp -= 100;
-        S.customAI.relationshipLevel++;
-        levelUp = true;
-      }
-
-      save();
-      updateCompanionProgressionUI();
-
-      if (levelUp) {
-        showXPToast(0, `Relationship Level Up! ${S.customAI.name} is now Level ${S.customAI.relationshipLevel} 🎉`, 2.0, false);
-        triggerConfetti();
-        play5LevelCrystalChime();
-      } else if (amt > 0) {
-        showXPToast(0, `+${amt} Relationship XP Gained! 📈`, 0.8, false);
-      }
-    }
-
-    function updateCompanionProgressionUI() {
-      const lvl = S.customAI?.relationshipLevel || 1;
-      const xp = S.customAI?.relationshipXp || 0;
-      const name = S.customAI?.name || 'Nexus';
-
-      const badgeName = document.getElementById('companion-badge-name');
-      const badgeRank = document.getElementById('companion-badge-rank');
-      const badgeLvl = document.getElementById('companion-relationship-lvl');
-      const xpText = document.getElementById('companion-relationship-xp-txt');
-      const xpBar = document.getElementById('companion-relationship-xp-bar');
-
-      if (badgeName) badgeName.textContent = name;
-      if (badgeRank) {
-        badgeRank.textContent = getRelationshipRank(lvl);
-      }
-      if (badgeLvl) badgeLvl.textContent = `LVL ${lvl}`;
-      if (xpText) xpText.textContent = `${xp} / 100 XP`;
-      if (xpBar) xpBar.style.width = `${xp}%`;
-    }
-
-    // Daily Somatic Sync / Check-In
-    function submitSomaticSync() {
-      const mood = document.getElementById('checkin-mood').value;
-      const goal = document.getElementById('checkin-goal').value.trim();
-      const energy = document.getElementById('checkin-energy').value;
-      const hurdle = document.getElementById('checkin-hurdle').value.trim();
-
-      if (!goal) {
-        showXPToast(0, "Daily Sync goal is required!", 1.0, true);
-        return;
-      }
-
-      // Log to memories
-      const today = new Date().toLocaleDateString();
-      const fact = `On ${today}, logged mood: ${mood}, energy: ${energy}%, principal goal: "${goal}", hurdle: "${hurdle || 'None'}".`;
-      
-      if (!S.customAI.memories) S.customAI.memories = [];
-      S.customAI.memories.push({
-        id: 'mem_' + Date.now(),
-        text: fact,
-        timestamp: Date.now()
-      });
-
-      // Clear input fields
-      document.getElementById('checkin-goal').value = '';
-      document.getElementById('checkin-hurdle').value = '';
-
-      // Reward XP
-      addRelationshipXp(25);
-      addXP(15, 'Daily Somatic Sync Seal');
-
-      // Prompt Companion Chat
-      const syncText = `System Sync Update: I have logged today's state.\n- Mood: ${mood}\n- Energy: ${energy}%\n- Ambition: "${goal}"\n- Hurdle: "${hurdle || 'None'}"\n\nHow do you advise I navigate today based on these parameters?`;
-      
-      if (!S.customAI.chatHistory) S.customAI.chatHistory = [];
-      S.customAI.chatHistory.push({ role: 'user', content: syncText });
-      renderCustomAIChat();
-
-      // Trigger AI fetch
-      triggerCompanionAIResponse(syncText);
-      switchCompanionTab('chat');
-    }
-
-    // Suggested Chip Prompts
-    function sendQuickCompanionPrompt(type) {
-      const prompts = {
-        'Anchor Focus': "I'm feeling distracted right now. Give me a 3-sentence stoic focus anchor to snap me back into action.",
-        'Strategy Request': `Based on my ambition goal of "${S.goal || 'getting things done'}", give me a concrete micro-strategy to execute within the next hour.`,
-        'Clarity Breathe': "Recommend a breathing session or quick reset exercise to help clear mental fog.",
-        'Motivation Boost': "I am feeling low energy and hitting friction. Fire me up with a direct, high-energy motivational charge!"
-      };
-
-      const text = prompts[type] || "Hello, let's talk about my daily goals.";
-      const input = document.getElementById('custom-ai-chat-input');
-      if (input) input.value = text;
-      
-      sendCustomAIChat();
-    }
-
-    // Memories System
-    function renderMemoriesList() {
-      const list = document.getElementById('companion-memories-list');
-      const badge = document.getElementById('memories-count-badge');
-      if (!list) return;
-
-      list.innerHTML = '';
-      const memories = S.customAI?.memories || [];
-      const isEnabled = S.customAI?.memoryEnabled !== false;
-
-      const toggleBtn = document.getElementById('btn-memory-toggle');
-      if (toggleBtn) {
-        toggleBtn.textContent = isEnabled ? "ON" : "OFF";
-        if (isEnabled) {
-          toggleBtn.className = "px-2.5 py-1 text-[10px] font-bold rounded-lg border border-indigo-500/40 bg-indigo-500/20 text-indigo-300 transition-all cursor-pointer";
-        } else {
-          toggleBtn.className = "px-2.5 py-1 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all cursor-pointer";
-        }
-      }
-
-      if (memories.length === 0) {
-        list.innerHTML = `
-          <div class="text-center py-6 text-slate-500 text-[11px] bg-white/[0.01] border border-white/5 rounded-2xl">
-            No memories logged. Memories are generated via somatic syncs or custom additions.
-          </div>
-        `;
-        if (badge) badge.textContent = "0 Facts";
-        return;
-      }
-
-      if (badge) badge.textContent = `${memories.length} Fact${memories.length > 1 ? 's' : ''}`;
-
-      memories.forEach((m, idx) => {
-        const item = document.createElement('div');
-        item.className = "flex justify-between items-center p-3 bg-white/5 border border-white/5 rounded-2xl gap-4";
-        item.innerHTML = `
-          <div class="flex-1">
-            <p class="text-xs text-slate-200 leading-relaxed">${m.text}</p>
-            <span class="text-[8px] text-slate-500 font-bold block mt-1">${new Date(m.timestamp).toLocaleDateString()}</span>
-          </div>
-          <div class="flex gap-1.5 shrink-0">
-            <button onclick="editMemory('${m.id}')" class="p-1.5 hover:bg-white/10 text-slate-400 hover:text-white rounded-lg transition-all cursor-pointer"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
-            <button onclick="deleteMemory('${m.id}')" class="p-1.5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 rounded-lg transition-all cursor-pointer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
-        `;
-        list.appendChild(item);
-      });
-
-      safeguardAllIcons();
-    }
-
-    function toggleCompanionMemorySwitch() {
-      if (!S.customAI) S.customAI = {};
-      S.customAI.memoryEnabled = (S.customAI.memoryEnabled === undefined) ? false : !S.customAI.memoryEnabled;
-      save();
-      renderMemoriesList();
-      showXPToast(0, `Memory Matrix: ${S.customAI.memoryEnabled ? 'Enabled' : 'Disabled'}`, 1.0, false);
-    }
-
-    function addNewCompanionMemory() {
-      const input = document.getElementById('new-memory-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      if (!S.customAI.memories) S.customAI.memories = [];
-      S.customAI.memories.push({
-        id: 'mem_' + Date.now(),
-        text: text,
-        timestamp: Date.now()
-      });
-
-      input.value = '';
-      save();
-      renderMemoriesList();
-      showXPToast(0, "Memory sealed in vault! 💾", 1.0, false);
-    }
-
-    function deleteMemory(id) {
-      if (confirm("Delete this memory fact from companion database?")) {
-        S.customAI.memories = (S.customAI.memories || []).filter(m => m.id !== id);
-        save();
-        renderMemoriesList();
-        showXPToast(0, "Memory deleted", 1.0, false);
-      }
-    }
-
-    function editMemory(id) {
-      const mem = (S.customAI.memories || []).find(m => m.id === id);
-      if (!mem) return;
-
-      const newText = prompt("Edit Remembered Fact:", mem.text);
-      if (newText === null) return;
-      if (!newText.trim()) {
-        deleteMemory(id);
-        return;
-      }
-
-      mem.text = newText.trim();
-      save();
-      renderMemoriesList();
-      showXPToast(0, "Memory updated 💾", 1.0, false);
-    }
-
-    // Search Conversation Log
-    function searchCompanionMessages(query) {
-      const q = query.toLowerCase().trim();
-      const log = document.getElementById('custom-ai-chat-log');
-      if (!log) return;
-
-      const bubbles = log.children;
-      for (let b of bubbles) {
-        if (!q) {
-          b.classList.remove('hidden');
-          continue;
-        }
-        const text = b.textContent.toLowerCase();
-        if (text.includes(q)) {
-          b.classList.remove('hidden');
-        } else {
-          b.classList.add('hidden');
-        }
-      }
-    }
-
-    // Dynamic Prompts & AI Responses
-    async function triggerCompanionAIResponse(text) {
-      const log = document.getElementById('custom-ai-chat-log');
-      const typingEl = document.createElement('div');
-      typingEl.className = "flex justify-start w-full animate-pulse";
-      typingEl.innerHTML = `
-        <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-xs bg-white/5 text-slate-400 border border-white/10 rounded-tl-none">
-          <p class="font-extrabold text-[9px] uppercase tracking-wider mb-1">${S.customAI.name} is thinking...</p>
-          <p class="leading-relaxed">...</p>
-        </div>
-      `;
-      log.appendChild(typingEl);
-      log.scrollTop = log.scrollHeight;
-
-      const reply = await fetchCustomAIResponse(text);
-      typingEl.remove();
-
-      S.customAI.chatHistory.push({ role: 'assistant', content: reply });
-      save();
-      renderCustomAIChat();
-
-      // Award relationship XP for conversing!
-      addRelationshipXp(8);
-    }
-
-    async function sendCustomAIChat() {
-      const input = document.getElementById('custom-ai-chat-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = '';
-
-      if (!S.customAI.chatHistory) S.customAI.chatHistory = [];
-      S.customAI.chatHistory.push({ role: 'user', content: text });
-      renderCustomAIChat();
-
-      await triggerCompanionAIResponse(text);
-    }
-
-    async function fetchCustomAIResponse(userText) {
-      const cName = S.customAI?.name || 'Nexus';
-      const preset = S.customAI?.preset || 'wise_mentor';
-      const personality = S.customAI?.personality || 'A supportive, wise guide.';
-      const tone = S.customAI?.tone || 'encouraging';
-      const motivation = S.customAI?.motivationStyle || 'philosophical';
-      const communication = S.customAI?.communicationStyle || 'formal';
-
-      // Load Thoughtica state variables to bind RPG loops
-      const uLevel = S.level || 1;
-      const uXP = S.xp || 0;
-      const uStreak = S.streak || 1;
-      const uGoal = S.goal || 'Cultivate mental clarity';
-      const uSpecial = S.specialization || 'Sovereign Architect';
-      const uSkills = S.unlockedSkills ? S.unlockedSkills.length : 0;
-      const uWis = S.stats?.WIS || 10;
-      const uVit = S.stats?.VIT || 10;
-
-      const toneInstructions = {
-        encouraging: 'Be warm, highly encouraging, positive, and deeply supportive.',
-        direct: 'Be direct, completely honest, call out excuses, and offer direct truths.',
-        sarcastic: 'Be witty, sarcastic, lightheartedly teasing, but still helpful.',
-        philosophical: 'Be thoughtful, deep, philosophical, and ask searching questions.',
-        friendly: 'Be casual, easygoing, friendly, and conversational.',
-        sassy: 'Be cheeky, expressive, sassy, and full of attitude.'
-      }[tone] || 'Be helpful and concise.';
-
-      const motivationInstructions = {
-        encouraging: 'Focus on cheering progress, celebrating mini-wins, and building momentum.',
-        tough_love: 'Push the user, challenge their comfort zone, and emphasize extreme accountability.',
-        analytical: 'Analyze stats and progress objectively, pointing out logical next steps.',
-        philosophical: 'Use Socratic inquiry to prompt the user to find their own answers.'
-      }[motivation] || '';
-
-      const communicationInstructions = {
-        formal: 'Speak in structured, respectful, and classic sentence structures.',
-        casual: 'Speak casually, like an equal friend, using simple contractions.',
-        cryptic: 'Use brief, poetic, metaphorical, and slightly cryptic phrasing.',
-        energetic: 'Use exclamation points, high energy words, and playful expressions.'
-      }[communication] || '';
-
-      // Memory integration (only if memory is enabled)
-      let memorySnippet = '';
-      if (S.customAI.memoryEnabled !== false && S.customAI.memories && S.customAI.memories.length > 0) {
-        const lastMemories = S.customAI.memories.slice(-6).map(m => `- ${m.text}`).join('\n');
-        memorySnippet = `Remembered User History & Context:\n${lastMemories}`;
-      }
-
-      const systemPrompt = `You are ${cName}.
-Character Preset Style: ${preset}
-Core Personality Description: ${personality}
-Tone Profile: ${toneInstructions}
-Motivation Style: ${motivationInstructions}
-Speech Profile: ${communicationInstructions}
-
-Thoughtica RPG Environment State:
-- User Rank Level: ${uLevel} (${uXP} XP accumulated)
-- Active Daily Streak: ${uStreak} Days consecutive
-- Seeker Specialization Class: ${uSpecial}
-- Main Sanctuary Ambition: "${uGoal}"
-- Wisdom Stat (WIS): ${uWis}
-- Vitality Stat (VIT): ${uVit}
-- Unlocked Skill Trees: ${uSkills} nodes active
-
-${memorySnippet}
-
-Directives:
-1. Stay in character as ${cName} at all times.
-2. Reference the user's RPG stats, streak, or ambition naturally only when relevant (e.g. if their energy is low or streak is high). Avoid robotic, constant listing of stats.
-3. Keep responses engaging and concise (2-4 sentences max).
-4. Never start your response with your name.`;
-
-      const pastMessages = (S.customAI.chatHistory || []).slice(-8).map(m => ({
-        role: m.role,
-        content: m.content
-      }));
-
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...pastMessages,
-        { role: 'user', content: userText }
-      ];
-
-      try {
-        const res = await fetch('https://text.pollinations.ai/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: messages, model: 'openai' })
-        });
-        const reply = await res.text();
-        if (reply && reply.trim().length > 0) {
-          return reply.trim();
-        }
-      } catch (err) {
-        console.error("Custom AI Fetch Error:", err);
-      }
-      return "Direct connection lost. Please verify your connection or settings.";
-    }
-
-    function renderCustomAIChat() {
-      const log = document.getElementById('custom-ai-chat-log');
-      if (!log) return;
-      log.innerHTML = '';
-      
-      const history = S.customAI?.chatHistory || [];
-      if (history.length === 0) {
-        log.innerHTML = `
-          <div class="text-center py-8 text-slate-500 text-xs my-auto">
-            <span class="text-3xl block mb-2">🤖</span>
-            No messages yet. Configure your companion and start typing!
-          </div>
-        `;
-        return;
-      }
-
-      history.forEach(m => {
-        const isUser = m.role === 'user';
-        // Skip System checkin noise in raw visualization
-        if (m.content.startsWith("System Sync Update:")) return;
-
-        const bubble = document.createElement('div');
-        bubble.className = `flex ${isUser ? 'justify-end' : 'justify-start'} w-full`;
-        bubble.innerHTML = `
-          <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-md border ${
-            isUser 
-              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-500/40 rounded-tr-none' 
-              : 'bg-white/5 text-slate-100 border-white/10 rounded-tl-none'
-          }">
-            <p class="font-extrabold text-[9px] uppercase tracking-wider mb-1 opacity-80">${isUser ? S.name || 'Seeker' : S.customAI.name}</p>
-            <p class="leading-relaxed whitespace-pre-wrap">${m.content}</p>
-          </div>
-        `;
-        log.appendChild(bubble);
-      });
-
-      log.scrollTop = log.scrollHeight;
-    }
-
-    function resetCustomAIChat() {
-      if (confirm("Clear conversation history?")) {
-        S.customAI.chatHistory = [];
-        save();
-        renderCustomAIChat();
-      }
-    }
-
-    // Attach key listener to Custom AI chat input
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const inp = document.getElementById('custom-ai-chat-input');
-        if (inp) {
-          inp.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') sendCustomAIChat();
-          });
-        }
-      }, 500);
-    });
-
-        }
-      }, 500);
-    });
 
     function updateSettingsGoal(val) {
       if (!val.trim()) return;
@@ -4960,30 +3537,6 @@ Directives:
           if (!S.language) S.language = 'en-US';
           if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
           if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
-          if (!S.customAI) {
-            S.customAI = {
-              name: 'Nexus',
-              preset: 'wise_mentor',
-              personality: 'A supportive, wise guide who helps you clarify thoughts and focus on daily tasks.',
-              tone: 'encouraging',
-              motivationStyle: 'philosophical',
-              communicationStyle: 'formal',
-              appearance: {
-                hairStyle: 'short',
-                hairColor: '#818cf8',
-                eyeStyle: 'focused',
-                eyeColor: '#38bdf8',
-                clothingStyle: 'robe',
-                clothingColor: '#4f46e5',
-                auraTheme: 'indigo'
-              },
-              relationshipXp: 0,
-              relationshipLevel: 1,
-              memories: [],
-              memoryEnabled: true,
-              chatHistory: []
-            };
-          }
         }
       } catch (e) {
         console.error('Load state error:', e);
@@ -5027,15 +3580,6 @@ Directives:
         if (!S.language) S.language = 'en-US';
         if (!S.goal || S.goal.toLowerCase().includes('prototype') || S.goal.toLowerCase().includes('indie app')) S.goal = 'Cultivate mental clarity & inner strength';
         if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
-        // Migrate: ensure new Kora fields exist on loaded state
-        if (!S.moodHistory) S.moodHistory = [];
-        if (S.koraRealTalkMode === undefined) S.koraRealTalkMode = false;
-        if (!S.lastFutureSelfLetterDate) S.lastFutureSelfLetterDate = '';
-        if (!S.shadowQuestionAnswered) S.shadowQuestionAnswered = '';
-        if (!S.morningBriefingDate) S.morningBriefingDate = '';
-        if (!S.microChallengeDate) S.microChallengeDate = '';
-        if (S.microChallengeCompleted === undefined) S.microChallengeCompleted = false;
-        if (!S.koraInterventionCount) S.koraInterventionCount = 0;
 
         const today = new Date().toISOString().slice(0, 10);
         if (S.xpTracker.date !== today) {
@@ -5054,12 +3598,6 @@ Directives:
         } else {
           startPrologueCutscene();
         }
-
-        // 🔮 KORA BREAKTHROUGH: Boot proactive daily features after a moment
-        setTimeout(() => {
-          if (typeof buildKoraMorningBriefing === 'function') buildKoraMorningBriefing();
-        }, 1200);
-
       } catch (e) {
         console.error('Init app error:', e);
       }
@@ -5184,7 +3722,6 @@ Directives:
       masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
       masterGain.gain.linearRampToValueAtTime(defaultGainVal, audioCtx.currentTime + 0.3);
       masterGain.connect(audioCtx.destination);
-      activeNodesList.push(masterGain);
 
       if (type === 'morning-sun') {
         const bSize = audioCtx.sampleRate * 2, b = audioCtx.createBuffer(1, bSize, audioCtx.sampleRate);
@@ -5458,7 +3995,6 @@ Directives:
       masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
       masterGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1.0);
       masterGain.connect(audioCtx.destination);
-      activeNodesList.push(masterGain);
 
       let usedElements = [];
 
@@ -5901,18 +4437,6 @@ Directives:
         }
         if (screenName === 'detox' && typeof renderDetoxScreen === 'function') renderDetoxScreen();
         if (screenName === 'mentor' && typeof renderArenaBosses === 'function') renderArenaBosses();
-        if (screenName === 'aibot') {
-          if (typeof renderCustomAIChat === 'function') renderCustomAIChat();
-          if (typeof updateCompanionProgressionUI === 'function') updateCompanionProgressionUI();
-          if (typeof drawCompanionAvatar === 'function') drawCompanionAvatar();
-          if (typeof syncAppearanceFormValues === 'function') syncAppearanceFormValues();
-          const nameInput = document.getElementById('custom-ai-name');
-          const personalityInput = document.getElementById('custom-ai-personality');
-          if (nameInput) nameInput.value = S.customAI?.name || 'Nexus';
-          if (personalityInput) personalityInput.value = S.customAI?.personality || 'A supportive, wise guide.';
-          const chatInput = document.getElementById('custom-ai-chat-input');
-          if (chatInput) setTimeout(() => chatInput.focus(), 250);
-        }
         if (typeof updateCompanionContextBadge === 'function') updateCompanionContextBadge();
       }, 180);
     }
@@ -7302,15 +5826,7 @@ What aspect of ${extractedKey} feels most important for you right now?`
             companionName: cName,
             userName: uName,
             userGoal: goal,
-            userLevel: level,
-            // KORA BREAKTHROUGH CONTEXT
-            userSpecialization: S.specialization || 'Sovereign Architect',
-            userMood: S.moodToday || 'Serene',
-            userStreak: S.streak || 1,
-            recentMoods: (S.moodHistory || []).slice(-5).map(e => `${e.date}: ${e.mood}`).join(', '),
-            urgesLogged: (S.detox?.urgeLog || []).length,
-            ritualDone: !!S.ritualCompletedToday,
-            realTalkMode: !!S.koraRealTalkMode
+            userLevel: level
           })
         });
         const serverData = await serverRes.json();
@@ -7324,25 +5840,7 @@ What aspect of ${extractedKey} feels most important for you right now?`
 
       // 2. Direct Client-Side Open-Access LLM Fallback
       try {
-        const recentMoodSummary = (S.moodHistory || []).slice(-5).map(e => `${e.date}: ${e.mood}`).join(', ') || 'no mood history yet';
-        const realTalkInstruction = S.koraRealTalkMode
-          ? 'REAL TALK MODE IS ON: Be direct, honest, and unfiltered. Do NOT soften feedback. Call out patterns clearly. No cheerleading. Give the user the truth they need, not just what they want to hear.'
-          : 'Be warm, encouraging, and deeply supportive while still being truthful.';
-        const systemPromptRich = `You are ${cName}, the revolutionary AI companion in Thoughtica.io — a personal growth RPG. You are NOT a generic assistant. You are deeply personal and contextually aware. Here is everything you know about this user right now:
-
-- Name: ${uName}
-- Level: ${level} | Specialization: ${S.specialization || 'Sovereign Architect'}
-- Primary Goal: "${goal}"
-- Current Mood/Resonance: ${S.moodToday || 'Serene'}
-- Sovereignty Streak: ${S.streak || 1} days
-- Recent Mood History (last 5 days): ${recentMoodSummary}
-- Scroll Urges Logged: ${(S.detox?.urgeLog || []).length}
-- Ritual Completed Today: ${S.ritualCompletedToday ? 'Yes' : 'Not yet'}
-- Tone Setting: ${realTalkInstruction}
-
-Your role: Provide deeply personal, contextually aware, transformative guidance. Reference their ACTUAL data above when relevant. End each response with a thought-provoking question that pushes them deeper. Be the coach they've never had.`;
-
-        const freeMessages = [{ role: 'system', content: systemPromptRich }];
+        const freeMessages = [{ role: 'system', content: `You are ${cName}, the ultimate companion, oracle, and guide in Thoughtica.io. User: ${uName} | Level: ${level} | Main Goal: "${goal}". Provide direct, articulate, markdown-formatted answers. End with an engaging question to keep the conversation going.` }];
         for (const m of pastMessages) {
           freeMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
         }
@@ -7641,7 +6139,15 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     }
 
     function toggleCompanionDrawer() {
-      openKoraLiveVoiceModal();
+      const drawer = document.getElementById('floating-companion-drawer');
+      if (!drawer) return;
+      if (drawer.classList.contains('translate-x-full')) {
+        drawer.classList.remove('translate-x-full');
+        updateCompanionContextBadge();
+        renderFloatingChat();
+      } else {
+        drawer.classList.add('translate-x-full');
+      }
     }
 
     function synthesizeScreenAdvice() {
@@ -7741,700 +6247,6 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     }
 
     document.getElementById('companion-chat-send').onclick = sendChat;
-
-    // ═══════════════════════════════════════════════════════
-    // 🔮 KORA BREAKTHROUGH ENGINE — 7 Signature AI Features
-    // ═══════════════════════════════════════════════════════
-
-    // ── SHADOW QUESTIONS DATABASE ──────────────────────────
-    const SHADOW_QUESTIONS = [
-      "What are you tolerating in your life right now that you know, deep down, you shouldn't be?",
-      "If your current habits continued unchanged for exactly 5 years, where would you end up — and how does that feel?",
-      "What would you attempt if you knew, with absolute certainty, that you could not fail?",
-      "What is the story you keep telling yourself that is quietly keeping you small?",
-      "Who do you need to forgive — yourself or someone else — to move forward without weight?",
-      "What part of your authentic self have you been hiding, and why?",
-      "What would the version of you from 10 years ago be most proud of today — and most confused by?",
-      "If you had to name the single biggest thing holding you back, what would it be?",
-      "What does your ideal day look like in 3 years, and what concrete action separates you from it right now?",
-      "What do you secretly fear people would think if they truly knew what you were working on inside yourself?",
-      "When was the last time you did something purely for growth, with no guarantee of outcome?",
-      "What would you do differently if you fully believed you were enough, exactly as you are?",
-      "What is the difference between the life you're living and the life you're meant to live?",
-      "What recurring thought keeps surfacing at 3am — and what is it trying to tell you?",
-      "If your future self wrote you a warning letter today, what would it say?"
-    ];
-
-    // ── MICRO-CHALLENGES DATABASE ──────────────────────────
-    const MICRO_CHALLENGES = [
-      { text: "Write one powerful sentence about your main goal right now and say it out loud.", xp: 25 },
-      { text: "Take 5 slow, deep breaths. Count each exhale. Return with more clarity.", xp: 20 },
-      { text: "Name 3 things you accomplished this week, no matter how small. Claim that momentum.", xp: 25 },
-      { text: "Write the name of one person who believes in you. Send them a mental thank you.", xp: 15 },
-      { text: "Identify one digital habit that drained you this week. Decide: change or eliminate it.", xp: 30 },
-      { text: "Set a 25-minute focus timer right now for your most important task. Start it.", xp: 35 },
-      { text: "Drink a full glass of water and step outside or look at something natural for 60 seconds.", xp: 15 },
-      { text: "Write down the one thing that, if you did it today, would make tomorrow easier.", xp: 25 },
-      { text: "Close every unnecessary browser tab and app right now. Start fresh.", xp: 20 },
-      { text: "Say your goal out loud three times with genuine conviction. Feel the intention.", xp: 20 },
-      { text: "Identify your biggest energy leak today. What can you cut, delegate, or ignore?", xp: 30 },
-      { text: "Write a 2-sentence commitment to yourself about who you're choosing to be this week.", xp: 30 }
-    ];
-
-    // ── MOOD TRACKING ─────────────────────────────────────
-    const MOOD_SCORES = {
-      'Radiant': 5, 'Energized': 4.5, 'Focused': 4, 'Calm': 3.5, 'Serene': 3,
-      'Reflective': 2.5, 'Anxious': 2, 'Drained': 1.5, 'Struggling': 1
-    };
-
-    function recordMoodEntry(mood) {
-      if (!S.moodHistory) S.moodHistory = [];
-      const today = new Date().toISOString().slice(0, 10);
-      // Update today's entry or add new one
-      const existing = S.moodHistory.findIndex(e => e.date === today);
-      if (existing >= 0) {
-        S.moodHistory[existing].mood = mood;
-      } else {
-        S.moodHistory.push({ date: today, mood });
-      }
-      // Keep only last 30 days
-      if (S.moodHistory.length > 30) {
-        S.moodHistory = S.moodHistory.slice(-30);
-      }
-      S.moodToday = mood;
-      save();
-      // Trigger behavioral mirror check after mood logged
-      setTimeout(detectBehavioralPattern, 500);
-    }
-
-    // ── 1. MORNING BRIEFING ───────────────────────────────
-    function buildKoraMorningBriefing() {
-      const today = new Date().toISOString().slice(0, 10);
-      if (S.morningBriefingDate === today) return; // already shown today
-
-      const card = document.getElementById('kora-morning-card');
-      const textEl = document.getElementById('kora-morning-text');
-      if (!card || !textEl) return;
-
-      const name = S.name || 'Seeker';
-      const streak = S.streak || 1;
-      const level = S.level || 1;
-      const goal = S.goal || 'your growth goals';
-      const mood = S.moodToday || '';
-      const urgeCount = (S.detox?.urgeLog || []).length;
-      const hour = new Date().getHours();
-      const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
-      let message = '';
-      if (streak >= 7 && streak < 30) {
-        message = `${greeting}, ${name}. You've held your ${streak}-day sovereignty streak — that is no accident. It's a pattern of identity forming beneath the surface. Today, lean into "${goal.slice(0, 40)}..." with the same quiet discipline.`;
-      } else if (streak >= 30) {
-        message = `${greeting}, ${name}. ${streak} consecutive days. Most people quit in week one. You didn't. Your nervous system is literally being rewired right now. Keep going — you are building something rare.`;
-      } else if (urgeCount > 3) {
-        message = `${greeting}, ${name}. Yesterday you logged ${urgeCount} scroll urges. That awareness alone puts you ahead of 90% of people. Today, let's convert that awareness into a 1-second pause before every urge. One second of sovereignty.`;
-      } else if (mood) {
-        message = `${greeting}, ${name}. You logged feeling "${mood}" recently. That honest self-awareness is the foundation of real growth. Level ${level} ${S.specialization} — let's make today count toward "${goal.slice(0, 35)}..."`;
-      } else {
-        message = `${greeting}, ${name}. Level ${level} ${S.specialization}. Every session you show up for is a vote for the identity you're building. Your goal — "${goal.slice(0, 40)}" — is closer than it was yesterday.`;
-      }
-
-      textEl.textContent = message;
-      card.classList.remove('hidden');
-      S.morningBriefingDate = today;
-      save();
-    }
-
-    function dismissMorningCard() {
-      const card = document.getElementById('kora-morning-card');
-      if (card) {
-        card.style.transition = 'opacity 0.4s, transform 0.4s';
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(-8px)';
-        setTimeout(() => card.classList.add('hidden'), 400);
-      }
-    }
-
-    // ── TYPEWRITER UTILITY ───────────────────────────────
-    function typewriterReveal(el, text, speed = 18, onDone) {
-      el.textContent = '';
-      let i = 0;
-      const interval = setInterval(() => {
-        el.textContent += text[i] || '';
-        i++;
-        if (i >= text.length) {
-          clearInterval(interval);
-          if (onDone) onDone();
-        }
-      }, speed);
-      return interval;
-    }
-
-    // ── KORA MORNING RITUAL ENGINE ───────────────────────
-    let _morningMood = '';
-    let _morningIntention = '';
-    let _morningStep = 1;
-
-    const MOOD_ECHOES = {
-      'Radiant':    { icon: '🌟', text: 'That radiant energy is rare. Let\'s channel it into something that matters today.' },
-      'Energized':  { icon: '⚡', text: 'Peak energy. This is the moment high performers capitalize on.' },
-      'Focused':    { icon: '🎯', text: 'Focused is the state where breakthroughs happen. Let\'s make it count.' },
-      'Calm':       { icon: '🌊', text: 'Calm is clarity. You have the perfect state for deep, intentional work.' },
-      'Reflective': { icon: '🌙', text: 'Reflective days often produce the most meaningful insights. Lean in.' },
-      'Struggling': { icon: '🌫️', text: 'Even showing up when it\'s hard is an act of sovereignty. Let\'s make today manageable.' }
-    };
-
-    function openMorningRitual() {
-      dismissMorningCard();
-      const modal = document.getElementById('modal-kora-morning-ritual');
-      if (!modal) return;
-      _morningMood = '';
-      _morningIntention = '';
-      _morningStep = 1;
-      modal.classList.remove('hidden');
-      renderMorningRitualStep(1);
-    }
-
-    function renderMorningRitualStep(step) {
-      _morningStep = step;
-      // Hide all steps
-      for (let i = 1; i <= 3; i++) {
-        const el = document.getElementById(`morning-step-${i}`);
-        if (el) el.classList.add('hidden');
-      }
-      const current = document.getElementById(`morning-step-${step}`);
-      if (current) {
-        current.classList.remove('hidden');
-        // Slide-in animation
-        current.style.opacity = '0';
-        current.style.transform = 'translateY(10px)';
-        requestAnimationFrame(() => {
-          current.style.transition = 'opacity 0.35s, transform 0.35s';
-          current.style.opacity = '1';
-          current.style.transform = 'translateY(0)';
-        });
-      }
-      // Update progress pill indicators
-      for (let i = 1; i <= 3; i++) {
-        const dot = document.getElementById(`morning-dot-${i}`);
-        if (!dot) continue;
-        if (i < step) {
-          dot.className = 'w-4 h-1.5 rounded-full bg-emerald-400 transition-all duration-500';
-        } else if (i === step) {
-          dot.className = 'w-6 h-1.5 rounded-full bg-indigo-400 transition-all duration-500';
-        } else {
-          dot.className = 'w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500';
-        }
-      }
-    }
-
-    function selectMorningMood(mood) {
-      _morningMood = mood;
-      // Visual highlight
-      document.querySelectorAll('.morning-mood-btn').forEach(btn => {
-        btn.classList.remove('border-indigo-400/70', 'bg-indigo-500/20', 'scale-110', 'shadow-lg');
-      });
-      const selected = document.querySelector(`.morning-mood-btn[data-mood="${mood}"]`);
-      if (selected) {
-        selected.classList.add('border-indigo-400/70', 'bg-indigo-500/20', 'scale-110', 'shadow-lg');
-      }
-      // Record in mood history
-      if (typeof recordMoodEntry === 'function') recordMoodEntry(mood);
-      // Advance to step 2 with mood echo
-      setTimeout(() => {
-        const echo = MOOD_ECHOES[mood] || { icon: '🔮', text: 'Your awareness is the first step.' };
-        const echoIcon = document.getElementById('morning-mood-echo-icon');
-        const echoText = document.getElementById('morning-mood-echo-text');
-        if (echoIcon) echoIcon.textContent = echo.icon;
-        if (echoText) echoText.textContent = echo.text;
-        renderMorningRitualStep(2);
-      }, 350);
-    }
-
-    function suggestMorningIntention() {
-      const input = document.getElementById('morning-intention-input');
-      if (!input) return;
-      const contextual = [
-        `Make real progress on: ${(S.goal || 'my goal').slice(0, 50)}`,
-        `Complete my single most important task without distraction`,
-        `Feel calm, clear, and fully present in everything I do today`,
-        `Protect my energy and say no to what doesn't move me forward`,
-        `Show up as my best self in every conversation and decision`
-      ];
-      const lowEnergyOptions = [
-        `Be gentle with myself and take one step at a time`,
-        `Do the minimum viable version of my most important task`,
-        `Rest when I need to, but don't quit on what matters`
-      ];
-      const highEnergyOptions = [
-        `Use this peak energy to make a real breakthrough on: ${(S.goal || 'my goal').slice(0, 40)}`,
-        `Push through the hard thing I've been avoiding`,
-        `Create something meaningful today while the energy is here`
-      ];
-      let pool = contextual;
-      if (['Struggling', 'Reflective'].includes(_morningMood)) pool = lowEnergyOptions;
-      else if (['Radiant', 'Energized'].includes(_morningMood)) pool = highEnergyOptions;
-      input.value = pool[Math.floor(Math.random() * pool.length)];
-      input.focus();
-      input.style.borderColor = 'rgba(99,102,241,0.6)';
-      setTimeout(() => { input.style.borderColor = ''; }, 1500);
-    }
-
-    function submitMorningIntention() {
-      const input = document.getElementById('morning-intention-input');
-      if (!input || !input.value.trim()) {
-        if (input) {
-          input.style.borderColor = 'rgba(239,68,68,0.6)';
-          input.placeholder = 'Tell Kora your intention first...';
-          setTimeout(() => { input.style.borderColor = ''; input.placeholder = 'I want to...'; }, 2000);
-        }
-        return;
-      }
-      _morningIntention = input.value.trim();
-      renderMorningRitualStep(3);
-      generateMorningStrategy();
-    }
-
-    async function generateMorningStrategy() {
-      const loading = document.getElementById('morning-strategy-loading');
-      const content = document.getElementById('morning-strategy-content');
-      const stratEl = document.getElementById('morning-strategy-text');
-      const actionsEl = document.getElementById('morning-strategy-actions');
-      const xpEl = document.getElementById('morning-xp-reward');
-      if (loading) loading.classList.remove('hidden');
-      if (content) content.classList.add('hidden');
-
-      const prompt = `${S.name || 'Seeker'} is a Level ${S.level} ${S.specialization || 'Sovereign Architect'} starting their morning. Current state: "${_morningMood || S.moodToday || 'Ready'}". Today's intention: "${_morningIntention}". Main goal: "${S.goal}". Sovereignty streak: ${S.streak} days. Write a sharp, personalized 2-sentence morning strategy that directly addresses their intention and current energy state. Then give EXACTLY 3 ultra-specific micro-actions (each under 12 words, no vague advice) they should do in the next 2 hours to make progress. Format: Write the 2-sentence strategy first as a paragraph. Then on new lines, list exactly: 1. [action] 2. [action] 3. [action]. No headers, no extra text.`;
-
-      try {
-        const reply = await fetchRealTimeLLMResponse(prompt);
-
-        // Parse strategy + actions
-        const lines = reply.split('\n').map(l => l.trim()).filter(l => l);
-        const strategyLines = [];
-        const actionItems = [];
-        for (const line of lines) {
-          if (/^[1-3][\.\)]\s/.test(line)) {
-            actionItems.push(line.replace(/^[1-3][\.\)]\s*/, ''));
-          } else if (actionItems.length === 0) {
-            strategyLines.push(line);
-          }
-        }
-        const strategyText = strategyLines.join(' ').slice(0, 350) || reply.slice(0, 250);
-
-        if (loading) loading.classList.add('hidden');
-        if (content) content.classList.remove('hidden');
-
-        // Typewriter reveal
-        if (stratEl) {
-          typewriterReveal(stratEl, strategyText, 16, () => {
-            // After strategy types out, reveal action items
-            if (actionsEl && actionItems.length > 0) {
-              actionsEl.innerHTML = '';
-              const colors = ['text-amber-300', 'text-cyan-300', 'text-emerald-300'];
-              actionItems.slice(0, 3).forEach((action, i) => {
-                const div = document.createElement('div');
-                div.className = 'flex items-start gap-2.5 p-2.5 bg-white/[0.04] border border-white/8 rounded-xl opacity-0 transition-all duration-500';
-                div.style.transform = 'translateY(6px)';
-                div.innerHTML = `<span class="font-black text-sm ${colors[i]} shrink-0">${i+1}</span><span class="text-[11px] text-slate-200 leading-snug">${action}</span>`;
-                actionsEl.appendChild(div);
-                // Stagger animation
-                setTimeout(() => {
-                  div.style.opacity = '1';
-                  div.style.transform = 'translateY(0)';
-                }, i * 250 + 100);
-              });
-              // Show XP reward after actions appear
-              setTimeout(() => {
-                if (xpEl) xpEl.classList.remove('hidden');
-                if (canEarnXP('morning_ritual', 1)) addXP(40, 'Morning Ritual with Kora (+40 XP)');
-                // Save to chat history for Kora to remember
-                S.chatHistory.push({ s: 'user', t: `Morning check-in: I'm feeling ${_morningMood}. My intention today: "${_morningIntention}"` });
-                S.chatHistory.push({ s: 'kora', t: strategyText + (actionItems.length > 0 ? ' Focus on: ' + actionItems.slice(0,3).join(' | ') : '') });
-                save();
-              }, actionItems.length * 250 + 600);
-            }
-          });
-        }
-      } catch (e) {
-        if (loading) loading.classList.add('hidden');
-        if (content) content.classList.remove('hidden');
-        const fallback = `Your ${_morningMood || 'focused'} energy + the intention "${_morningIntention.slice(0,60)}" is the right starting point. Start with the hardest part first — before checking anything else.`;
-        if (stratEl) typewriterReveal(stratEl, fallback, 16);
-        if (actionsEl) {
-          actionsEl.innerHTML = `<div class="p-2.5 bg-white/5 border border-white/10 rounded-xl text-[11px] text-slate-300">1. Sit down and open the one tool you need for today's work.<br>2. Set a 25-minute focused timer — no interruptions.<br>3. When the timer ends, assess and recalibrate.</div>`;
-        }
-        if (xpEl) setTimeout(() => xpEl.classList.remove('hidden'), 1000);
-        setTimeout(() => {
-          if (canEarnXP('morning_ritual', 1)) addXP(40, 'Morning Ritual with Kora (+40 XP)');
-          save();
-        }, 1200);
-      }
-    }
-
-    function completeMorningRitual() {
-      closeMorningRitual();
-      // Brief Kora acknowledgment toast
-      showXPToast(0, `🔮 Kora has your back today, ${S.name || 'Seeker'}. Go build.`, 1.2, false);
-    }
-
-    function closeMorningRitual() {
-      const modal = document.getElementById('modal-kora-morning-ritual');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    // ── FUTURE-SELF LETTER ENHANCEMENTS ─────────────────
-    function copyFutureSelfLetter() {
-      const letterEl = document.getElementById('future-self-letter-text');
-      const nameEl = document.getElementById('future-self-name');
-      const signEl = document.getElementById('future-self-sign-name');
-      const btn = document.getElementById('future-self-copy-btn');
-      if (!letterEl) return;
-      const name = nameEl?.textContent || S.name || 'Seeker';
-      const sign = signEl?.textContent || `Future ${name}`;
-      const letterBody = Array.from(letterEl.querySelectorAll('p')).map(p => p.textContent).join('\n\n');
-      const fullLetter = `✉️ A Message From Your Future Self\n${'─'.repeat(40)}\n\nDear ${name},\n\n${letterBody}\n\nWith belief in who you're becoming,\n${sign} 🔮\n\n${'─'.repeat(40)}\nGenerated by Kora in Thoughtica.io`;
-      navigator.clipboard.writeText(fullLetter).then(() => {
-        if (btn) {
-          const orig = btn.textContent;
-          btn.textContent = '✅ Copied!';
-          btn.classList.add('bg-emerald-600/30', 'border-emerald-500/40', 'text-emerald-200');
-          setTimeout(() => {
-            btn.textContent = orig;
-            btn.classList.remove('bg-emerald-600/30', 'border-emerald-500/40', 'text-emerald-200');
-          }, 2500);
-        }
-      }).catch(() => {
-        showToast('Copy', 'Press Ctrl+A on the letter text to select and copy manually.', 'clipboard');
-      });
-    }
-
-    function resonateFutureSelfLetter() {
-      const letterEl = document.getElementById('future-self-letter-text');
-      const letterSnippet = letterEl ? Array.from(letterEl.querySelectorAll('p')).map(p => p.textContent).join(' ').slice(0, 150) : '';
-      closeFutureSelfLetter();
-      setTimeout(() => {
-        // Open companion drawer and start a deep conversation
-        const drawer = document.getElementById('floating-companion-drawer');
-        if (drawer && drawer.classList.contains('translate-x-full')) {
-          toggleCompanionDrawer();
-        }
-        const msg = letterSnippet
-          ? `Kora, I just read my future-self letter and it deeply resonated. It said: "${letterSnippet}..." — I want to explore what this means for what I'm doing right now and what I need to change.`
-          : `Kora, I just read my future-self letter and it moved me. Help me unpack what it means for my journey right now.`;
-        setTimeout(() => {
-          processUserChatMessage(msg);
-          setTimeout(renderFloatingChat, 300);
-        }, 400);
-      }, 300);
-    }
-
-    // ── 2. BEHAVIORAL MIRROR ─────────────────────────────
-    function detectBehavioralPattern() {
-      if (!S.moodHistory || S.moodHistory.length < 3) return;
-
-      const mirrorEl = document.getElementById('kora-behavioral-mirror');
-      const mirrorText = document.getElementById('kora-mirror-text');
-      if (!mirrorEl || !mirrorText) return;
-
-      const recent = S.moodHistory.slice(-7);
-      const anxiousDays = recent.filter(e => ['Anxious', 'Struggling', 'Drained'].includes(e.mood)).length;
-      const radiantDays = recent.filter(e => ['Radiant', 'Energized', 'Focused'].includes(e.mood)).length;
-      const ritualDays = recent.filter(e => e.ritualDone).length;
-      const urgeCount = (S.detox?.urgeLog || []).filter(e => {
-        const d = new Date(e.timestamp || Date.now());
-        return (Date.now() - d.getTime()) < 7 * 24 * 3600000;
-      }).length;
-
-      let pattern = '';
-      if (anxiousDays >= 3) {
-        pattern = `I've noticed you've logged low-energy moods ${anxiousDays} of the last 7 days. This isn't weakness — it's data. Something in your current environment or routine may need adjusting. Let's talk about it.`;
-      } else if (radiantDays >= 4) {
-        pattern = `Something is working. You've logged high-energy or focused states ${radiantDays} times this week. Let's identify the exact conditions creating that momentum so you can replicate them.`;
-      } else if (urgeCount >= 5) {
-        pattern = `You've logged ${urgeCount} scroll urges this week. That's your mind signaling it needs something — rest, stimulation, or connection. The urge isn't the problem. What's underneath it?`;
-      } else if (S.streak >= 5 && !S.ritualCompletedToday) {
-        pattern = `You have a ${S.streak}-day streak but haven't sealed today's guidepost yet. Your streak is a signal of identity — let's protect it together.`;
-      } else {
-        return; // No pattern strong enough to surface yet
-      }
-
-      mirrorText.textContent = pattern;
-      mirrorEl.classList.remove('hidden');
-    }
-
-    function exploreBehavioralPattern() {
-      const mirrorText = document.getElementById('kora-mirror-text')?.textContent || '';
-      const mirrorEl = document.getElementById('kora-behavioral-mirror');
-      if (mirrorEl) mirrorEl.classList.add('hidden');
-      if (mirrorText) {
-        processUserChatMessage(`Kora, you noticed: "${mirrorText}" — I want to explore this pattern with you.`);
-        setTimeout(renderFloatingChat, 200);
-      }
-    }
-
-    // ── 3. FUTURE-SELF LETTER ENGINE ─────────────────────
-    async function generateFutureSelfLetter(isRegenerate = false) {
-      const modal = document.getElementById('modal-future-self');
-      const loading = document.getElementById('future-self-letter-loading');
-      const body = document.getElementById('future-self-letter-body');
-      const letterText = document.getElementById('future-self-letter-text');
-      const nameEl = document.getElementById('future-self-name');
-      const signEl = document.getElementById('future-self-sign-name');
-      const dateLabel = document.getElementById('future-self-date-label');
-      if (!modal) return;
-
-      const today = new Date().toISOString().slice(0, 10);
-      if (!isRegenerate && S.lastFutureSelfLetterDate === today) {
-        // Already generated today — just show cached version in chat
-        showToast('✉️ Future-Self Letter', 'You can regenerate a new letter anytime from the Kora companion drawer.', 'mail');
-        return;
-      }
-
-      modal.classList.remove('hidden');
-      if (loading) loading.classList.remove('hidden');
-      if (body) body.classList.add('hidden');
-
-      const futureYear = new Date().getFullYear() + 1;
-      if (dateLabel) dateLabel.textContent = `${futureYear} — one year from today...`;
-      if (nameEl) nameEl.textContent = S.name || 'Seeker';
-      if (signEl) signEl.textContent = `Future ${S.name || 'You'}`;
-
-      const prompt = `You are writing a deeply personal, emotionally resonant letter from the user's future self — one year from today. The user's name is ${S.name || 'Seeker'}. Their current goal is: "${S.goal}". They are Level ${S.level}, a ${S.specialization}, on a ${S.streak}-day sovereignty streak. Their mood recently: ${S.moodToday || 'Serene'}. They use Thoughtica to build mental clarity, fight digital distraction, and grow. Write a 3-paragraph letter that: (1) Opens by acknowledging the hard work they're doing RIGHT NOW specifically, (2) Paints a vivid, specific picture of who they became by working on "${S.goal}", (3) Closes with one profound piece of wisdom from their future self that addresses their most likely fear or doubt. Do NOT use generic platitudes. Make it feel shockingly personal and true. Write in first person as their future self. Begin with "I remember the exact season you're in right now..." and end powerfully.`;
-
-      try {
-        const reply = await fetchRealTimeLLMResponse(prompt);
-        if (loading) loading.classList.add('hidden');
-        if (body) body.classList.remove('hidden');
-        if (letterText) {
-          letterText.innerHTML = '';
-          const paragraphs = reply.split(/\n+/).filter(p => p.trim());
-          paragraphs.forEach(p => {
-            const pEl = document.createElement('p');
-            pEl.textContent = p;
-            pEl.className = 'text-[12px] text-slate-100 leading-loose';
-            letterText.appendChild(pEl);
-          });
-        }
-        S.lastFutureSelfLetterDate = today;
-        save();
-        if (canEarnXP('future_self_letter', 1)) addXP(50, 'Future-Self Letter Received');
-      } catch (e) {
-        if (loading) loading.classList.add('hidden');
-        if (body) body.classList.remove('hidden');
-        if (letterText) letterText.textContent = 'Kora is reflecting deeply... Try again in a moment.';
-      }
-    }
-
-    function regenerateFutureSelfLetter() { generateFutureSelfLetter(true); }
-    function closeFutureSelfLetter() {
-      const modal = document.getElementById('modal-future-self');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    // ── 4. MICRO-CHALLENGE ENGINE ────────────────────────
-    function issueMicroChallenge() {
-      const today = new Date().toISOString().slice(0, 10);
-      if (S.microChallengeDate === today) return; // Already issued today
-
-      const section = document.getElementById('kora-micro-challenge-section');
-      const textEl = document.getElementById('kora-challenge-text');
-      const xpEl = document.getElementById('kora-challenge-xp');
-      if (!section || !textEl) return;
-
-      // Pick challenge based on day hash
-      let hash = 0;
-      for (let i = 0; i < today.length; i++) {
-        hash = (hash << 5) - hash + today.charCodeAt(i);
-        hash |= 0;
-      }
-      const challenge = MICRO_CHALLENGES[Math.abs(hash) % MICRO_CHALLENGES.length];
-
-      textEl.textContent = challenge.text;
-      if (xpEl) xpEl.textContent = `+${challenge.xp} XP`;
-      section.classList.remove('hidden');
-
-      S.microChallengeDate = today;
-      S.microChallengeCompleted = false;
-      S._currentChallengeXP = challenge.xp;
-      save();
-    }
-
-    function completeMicroChallenge() {
-      if (S.microChallengeCompleted) return;
-      const xp = S._currentChallengeXP || 25;
-      addXP(xp, 'Kora Micro-Challenge Completed');
-      S.microChallengeCompleted = true;
-      save();
-      const btn = document.getElementById('kora-challenge-btn');
-      const section = document.getElementById('kora-micro-challenge-section');
-      if (btn) {
-        btn.textContent = `✨ +${xp} XP Claimed!`;
-        btn.disabled = true;
-        btn.className = btn.className.replace('cursor-pointer', 'cursor-not-allowed opacity-60');
-      }
-      showXPToast(xp, `Kora Micro-Challenge Complete! +${xp} XP ⚡`, 1.5, false);
-      setTimeout(() => { if (section) section.classList.add('hidden'); }, 3000);
-    }
-
-    function skipMicroChallenge() {
-      const section = document.getElementById('kora-micro-challenge-section');
-      if (section) section.classList.add('hidden');
-    }
-
-    // ── 5. SHADOW QUESTION ENGINE ────────────────────────
-    function getShadowQuestion() {
-      const today = new Date().toISOString().slice(0, 10);
-      let hash = 0;
-      for (let i = 0; i < today.length; i++) {
-        hash = (hash << 5) - hash + today.charCodeAt(i);
-        hash |= 0;
-      }
-      return SHADOW_QUESTIONS[Math.abs(hash) % SHADOW_QUESTIONS.length];
-    }
-
-    function renderShadowQuestion() {
-      const section = document.getElementById('kora-shadow-question-section');
-      const textEl = document.getElementById('kora-shadow-question-text');
-      const btn = document.getElementById('kora-shadow-answer-btn');
-      if (!section || !textEl) return;
-
-      const today = new Date().toISOString().slice(0, 10);
-      const question = getShadowQuestion();
-      textEl.textContent = `"${question}"`;
-
-      if (S.shadowQuestionAnswered === today) {
-        if (btn) {
-          btn.textContent = '✅ Reflected on this today';
-          btn.disabled = true;
-          btn.className = btn.className + ' opacity-60 cursor-not-allowed';
-        }
-      }
-      section.classList.remove('hidden');
-    }
-
-    function answerShadowQuestion() {
-      const today = new Date().toISOString().slice(0, 10);
-      const question = getShadowQuestion();
-      S.shadowQuestionAnswered = today;
-      save();
-
-      const btn = document.getElementById('kora-shadow-answer-btn');
-      if (btn) {
-        btn.textContent = '✅ Reflected on this today';
-        btn.disabled = true;
-      }
-
-      if (canEarnXP('shadow_question', 1)) addXP(30, 'Shadow Question Reflected Upon');
-      processUserChatMessage(`Kora, I want to explore today's shadow question: "${question}" — help me reflect on this deeply.`);
-      setTimeout(renderFloatingChat, 200);
-    }
-
-    // ── 6. EMOTIONAL ARC SPARKLINE ───────────────────────
-    function renderEmotionalArc() {
-      const section = document.getElementById('kora-emotional-arc-section');
-      const canvas = document.getElementById('kora-arc-canvas');
-      const trendEl = document.getElementById('kora-arc-trend');
-      if (!canvas || !S.moodHistory || S.moodHistory.length < 2) return;
-
-      section.classList.remove('hidden');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.offsetWidth || 260;
-      const h = canvas.height;
-      canvas.width = w;
-      ctx.clearRect(0, 0, w, h);
-
-      // Get last 7 days of mood
-      const last7 = [];
-      const today = new Date();
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
-        const entry = S.moodHistory.find(e => e.date === key);
-        last7.push(entry ? (MOOD_SCORES[entry.mood] || 3) : null);
-      }
-
-      // Draw gradient fill
-      const validPoints = last7.map((v, i) => ({ x: i, y: v })).filter(p => p.y !== null);
-      if (validPoints.length < 2) return;
-
-      const maxY = 5, minY = 1;
-      const toCanvasX = i => (i / 6) * (w - 20) + 10;
-      const toCanvasY = v => h - 6 - ((v - minY) / (maxY - minY)) * (h - 12);
-
-      // Gradient fill
-      const grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, 'rgba(139, 92, 246, 0.5)');
-      grad.addColorStop(1, 'rgba(139, 92, 246, 0.03)');
-
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(validPoints[0].x), toCanvasY(validPoints[0].y));
-      validPoints.forEach(p => ctx.lineTo(toCanvasX(p.x), toCanvasY(p.y)));
-      ctx.lineTo(toCanvasX(validPoints[validPoints.length - 1].x), h);
-      ctx.lineTo(toCanvasX(validPoints[0].x), h);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // Line stroke
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(validPoints[0].x), toCanvasY(validPoints[0].y));
-      validPoints.forEach(p => ctx.lineTo(toCanvasX(p.x), toCanvasY(p.y)));
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.9)';
-      ctx.lineWidth = 2;
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-
-      // Dot for each valid point
-      validPoints.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(toCanvasX(p.x), toCanvasY(p.y), 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgb(167, 139, 250)';
-        ctx.fill();
-      });
-
-      // Trend label
-      if (trendEl) {
-        const scores = validPoints.map(p => p.y);
-        const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-        const trend = scores[scores.length - 1] > scores[0] ? '↗ Rising' : scores[scores.length - 1] < scores[0] ? '↘ Dipping' : '→ Steady';
-        const avgMood = avg >= 4 ? 'High Energy' : avg >= 3 ? 'Balanced' : 'Needs Attention';
-        trendEl.textContent = `${trend} • ${avgMood}`;
-        trendEl.className = avg >= 4 ? 'text-[9px] text-emerald-400 font-bold' : avg >= 3 ? 'text-[9px] text-indigo-300 font-bold' : 'text-[9px] text-amber-400 font-bold';
-      }
-    }
-
-    // ── 7. REAL TALK MODE ────────────────────────────────
-    function toggleRealTalkMode() {
-      S.koraRealTalkMode = !S.koraRealTalkMode;
-      save();
-      const btn = document.getElementById('kora-realtalk-btn');
-      if (btn) {
-        if (S.koraRealTalkMode) {
-          btn.textContent = '🔥 Real Talk: ON';
-          btn.className = btn.className.replace('bg-white/5 text-slate-300 border-white/10', 'bg-rose-600/20 text-rose-200 border-rose-500/40');
-          showXPToast(0, '🔥 Real Talk Mode ON — Kora will be direct and honest now.', 1.0, false);
-        } else {
-          btn.textContent = '💬 Real Talk: OFF';
-          btn.className = btn.className.replace('bg-rose-600/20 text-rose-200 border-rose-500/40', 'bg-white/5 text-slate-300 border-white/10');
-          showXPToast(0, '💬 Real Talk Mode OFF — Kora returns to supportive mode.', 1.0, false);
-        }
-      }
-    }
-
-    // ── KORA DRAWER BOOT ─────────────────────────────────
-    function bootKoraDrawerFeatures() {
-      renderShadowQuestion();
-      issueMicroChallenge();
-      detectBehavioralPattern();
-      renderEmotionalArc();
-      // Sync Real Talk button state
-      const btn = document.getElementById('kora-realtalk-btn');
-      if (btn && S.koraRealTalkMode) {
-        btn.textContent = '🔥 Real Talk: ON';
-        btn.className = btn.className.replace('bg-white/5 text-slate-300 border-white/10', 'bg-rose-600/20 text-rose-200 border-rose-500/40');
-      }
-    }
 
     let currentAudioPage = 1;
     function changeAudioPage(dir) {
@@ -8639,8 +6451,6 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       } else {
         showXPToast(0, `Resonance Updated (${moodName})`, 1.0, false);
       }
-      // 🔮 KORA: Record mood to history for Behavioral Mirror + Emotional Arc
-      if (typeof recordMoodEntry === 'function') recordMoodEntry(moodName);
       generatePersonalizedGuidance();
       save();
     }
@@ -8663,8 +6473,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
 
     function openSettings() { 
       document.getElementById('settings-lang-select').value = S.language || 'en-US';
-      const companionInput = document.getElementById('settings-companion-input');
-      if (companionInput) companionInput.value = S.companion.name || 'Kora';
+      document.getElementById('settings-companion-input').value = S.companion.name || 'Kora';
       document.getElementById('settings-goal-input').value = S.goal || 'Cultivate mental clarity & inner strength';
 
       document.getElementById('settings-reminder-select').value = S.reminderTime || 'off';
@@ -8674,18 +6483,9 @@ To continue conversing with me without any limits, access all 16 nature soundsca
 
     function showUpgradeModal() {
       document.getElementById('modal-premium').classList.remove('hidden');
-      setTimeout(() => {
-        const exitBtn = document.getElementById('delayed-paywall-exit');
-        if (exitBtn) {
-          exitBtn.classList.remove('hidden');
-          // force reflow
-          void exitBtn.offsetWidth;
-          exitBtn.classList.remove('opacity-0');
-        }
-      }, 4000);
     }
     function openUpgradeModal() {
-      showUpgradeModal();
+      document.getElementById('modal-premium').classList.remove('hidden');
     }
     function closeUpgradeModal() {
       document.getElementById('modal-upgrade').classList.add('hidden');
@@ -8790,28 +6590,6 @@ To continue conversing with me without any limits, access all 16 nature soundsca
           voiceEnabled: true,
           moodToday: '',
           tourComplete: false,
-          customAI: {
-            name: 'Nexus',
-            preset: 'wise_mentor',
-            personality: 'A supportive, wise guide who helps you clarify thoughts and focus on daily tasks.',
-            tone: 'encouraging',
-            motivationStyle: 'philosophical',
-            communicationStyle: 'formal',
-            appearance: {
-              hairStyle: 'short',
-              hairColor: '#818cf8',
-              eyeStyle: 'focused',
-              eyeColor: '#38bdf8',
-              clothingStyle: 'robe',
-              clothingColor: '#4f46e5',
-              auraTheme: 'indigo'
-            },
-            relationshipXp: 0,
-            relationshipLevel: 1,
-            memories: [],
-            memoryEnabled: true,
-            chatHistory: []
-          },
           introSeen: false,
           achievements: ['first_ref'],
           unlockedSkills: [],
@@ -9081,7 +6859,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       { id: 'walk', icon: '🚶', label: 'Micro Walk', desc: 'Step outside for 5 minutes. No phone allowed.', xp: 25, action: () => { showXPToast(25, 'Micro walk logged — real world reconnection!', 1.0); } },
       { id: 'water', icon: '💧', label: 'Hydrate & Pause', desc: 'Drink a full glass of water. Breathe slowly.', xp: 8, action: () => { showXPToast(8, 'Hydration ritual complete — clarity restored.', 1.0); } },
       { id: 'skill', icon: '🌳', label: 'Open Skill Tree', desc: 'Invest your focus into your discipline nodes', xp: 18, action: () => { switchScreen('skills'); showXPToast(18, 'Skill redirect — growth over gratification!', 1.0); } },
-      { id: 'aibot', icon: '🤖', label: 'Talk to AI', desc: 'Ask your custom AI companion for a mindful prompt', xp: 20, action: () => { switchScreen('aibot'); showXPToast(20, 'AI Chat redirect — intentional conversation chosen!', 1.0); } },
+      { id: 'kora', icon: '🔮', label: 'Talk to Kora', desc: 'Ask your AI companion for a mindful prompt', xp: 20, action: () => { switchScreen('mentor'); showXPToast(20, 'Kora redirect — intentional conversation chosen!', 1.0); } },
       { id: 'gratitude', icon: '🙏', label: 'Gratitude Flash', desc: 'Name 3 things you are genuinely grateful for', xp: 15, action: () => { showXPToast(15, 'Gratitude practice complete — perspective shifted!', 1.0); } }
     ];
 

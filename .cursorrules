@@ -1,0 +1,18 @@
+# AI INVARIANT RULES FOR THOUGHTICA.IO
+
+**CRITICAL SAFEGUARDS: DO NOT VIOLATE UNDER ANY CIRCUMSTANCES.**
+
+1. **Branding is Permanent**:
+   - The brand name is strictly **thoughtica.io** (formerly Thoughtica Life RPG). Do not revert this.
+   - The logo is the "Star-Book" icon. DO NOT replace or overwrite `public/favicon.png`, `public/icon-192.png`, `public/icon-512.png`, or `public/apple-touch-icon.png` with any old "lotus" icons or SVGs.
+   - The `index.html` file uses cache-busting `?v=2` on the favicons. Do not remove this.
+
+2. **UI Integrity & Z-Index Stack**:
+   - The interactive tutorial ("Spotlight Tour") must ALWAYS sit above all other elements. Its `z-index` is `99999` with `position: fixed`. Do not change this, or the app will become unclickable during the tour.
+   - The navigation header contains a "Help / Guide" button. Do not remove this.
+
+3. **Deployment Shielding (Vercel)**:
+   - The `vercel.json` file dictates that `npm run build` outputs to `dist`. Do not change the framework mapping.
+   - Do NOT bundle Vercel Analytics inside Vite. `index.html` handles them via `<script defer>` pointing to Edge functions (`/_vercel/...`). Trying to bundle them will crash the deployment.
+
+**By reading this file, the AI acknowledges these boundaries and commits to NEVER breaking the core functionality, branding, or deployment pipeline of thoughtica.io.**

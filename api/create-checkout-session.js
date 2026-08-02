@@ -1,9 +1,15 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    console.error('STRIPE_SECRET_KEY is missing.');
+    return res.status(500).json({ error: 'Stripe gateway key missing. Please ensure STRIPE_SECRET_KEY is set in Vercel settings.' });
+  }
+
+  const stripe = require('stripe')(secretKey);
 
   const { tier, uid } = req.body;
 
@@ -20,55 +26,73 @@ module.exports = async (req, res) => {
       metadata: { tier: tier }
     };
 
-    if (tier === 'kindred') {
-      // Tier 1: Kindred ($2.99/mo)
+    if (tier === 'plus' || tier === 'kindred') {
+      // Plus Tier: $9.99/mo
       sessionConfig.line_items = [
         {
           price_data: {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'thoughtica.io - Kindred',
-              description: 'Increased daily interactions and expanded memory.',
+              name: 'Thoughtica - Sanctuary Plus',
+              description: 'Unlocks 12 Premium Soundscapes, Full AI Voice Resonance & Unlimited AI Memory.',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 299, // $2.99
+            unit_amount: 999, // $9.99/mo
           },
           quantity: 1,
         },
       ];
       sessionConfig.mode = 'subscription';
-    } else if (tier === 'soulbound') {
-      // Tier 2: Soulbound ($9.99/mo)
+    } else if (tier === 'plus_annual') {
+      // Plus Annual: $79.99/yr
       sessionConfig.line_items = [
         {
           price_data: {
             currency: 'usd',
-            recurring: { interval: 'month' },
+            recurring: { interval: 'year' },
             product_data: {
-              name: 'thoughtica.io - Soulbound',
-              description: 'Voice conversations, long-term memory, and companion evolution.',
+              name: 'Thoughtica - Sanctuary Plus (Annual)',
+              description: '1 Year of Sanctuary Plus (Save 33%).',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 999, // $9.99
+            unit_amount: 7999, // $79.99/yr
           },
           quantity: 1,
         },
       ];
       sessionConfig.mode = 'subscription';
-    } else if (tier === 'transcendence') {
-      // Tier 3: Transcendence ($19.99/mo)
+    } else if (tier === 'infinite' || tier === 'soulbound' || tier === 'transcendence') {
+      // Sovereign Infinite: $19.99/mo
       sessionConfig.line_items = [
         {
           price_data: {
             currency: 'usd',
             recurring: { interval: 'month' },
             product_data: {
-              name: 'thoughtica.io - Transcendence',
-              description: 'Multiple companions, max memory, and exclusive options.',
+              name: 'Thoughtica - Sovereign Infinite',
+              description: 'All Specialized AI Guides, Custom RPG Aura Wheel, Goal Architect & Supporter Seal Badge.',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 1999, // $19.99
+            unit_amount: 1999, // $19.99/mo
+          },
+          quantity: 1,
+        },
+      ];
+      sessionConfig.mode = 'subscription';
+    } else if (tier === 'infinite_annual') {
+      // Sovereign Infinite Annual: $149.99/yr
+      sessionConfig.line_items = [
+        {
+          price_data: {
+            currency: 'usd',
+            recurring: { interval: 'year' },
+            product_data: {
+              name: 'Thoughtica - Sovereign Infinite (Annual)',
+              description: '1 Year of Sovereign Infinite (Save 37%).',
+              images: ['https://thoughtica.io/logo-book.jpg'],
+            },
+            unit_amount: 14999, // $149.99/yr
           },
           quantity: 1,
         },
@@ -104,6 +128,6 @@ module.exports = async (req, res) => {
     res.status(200).json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error('Stripe Checkout Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message || 'Stripe payment initialization error.' });
   }
 };
