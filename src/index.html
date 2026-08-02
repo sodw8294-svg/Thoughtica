@@ -146,6 +146,49 @@
       justify-content: space-around;
     }
     .nav-scroll::-webkit-scrollbar { display: none; }
+
+    /* =============================================
+       MODERN NAV ITEM ACTIVE STATE
+       ============================================= */
+    .nav-item {
+      position: relative;
+      border-radius: 12px;
+      min-width: 44px;
+      flex: 1 1 0;
+      min-height: 52px;
+      color: #cbd5e1 !important;
+    }
+    .nav-item span {
+      color: inherit !important;
+      opacity: 0.95;
+    }
+    .nav-item i {
+      color: inherit !important;
+      opacity: 0.95;
+    }
+    .nav-item.active {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818cf8 !important;
+    }
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* =============================================
+       FOCUS RING ACCESSIBLE IMPROVEMENTS
+       ============================================= */
+    button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid rgba(168, 85, 247, 0.6) !important;
+      outline-offset: 2px !important;
+    }
     @keyframes pulse-glow {
       0%, 100% { opacity: 0.18; transform: scale(1); }
       50% { opacity: 0.35; transform: scale(1.18); }
@@ -502,31 +545,20 @@
     </div>
   </div>
 
-  <!-- LEGAL MODALS -->
-  <div id="modal-privacy" class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
-    <div class="premium-glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 rounded-3xl relative text-left space-y-4">
-      <button onclick="this.closest('#modal-privacy').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
-      <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Privacy Policy</h2>
-      <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
-        <p><strong>1. Absolute Local Privacy:</strong> thoughtica.io is built on local-first principles. Your goals, journal entries, and RPG stats are saved entirely on your device's local storage.</p>
-        <p><strong>2. No Tracking:</strong> We do not use third-party analytics trackers, cookies, or doomscrolling engagement algorithms.</p>
-        <p><strong>3. AI Processing:</strong> All interactions with your AI companion are processed instantly and safely. We do not store your chat logs on external databases.</p>
-        <p>Your sanctuary is your own.</p>
-      </div>
-    </div>
-  </div>
+  <!-- =============================================
+       SANCTUARY APP ROOT
+       Shown after user clicks "Enter Your Sanctuary"
+       ============================================= -->
+  <div id="app-sanctuary-root" class="hidden flex flex-col min-h-screen min-h-[100dvh]">
 
-  <div id="modal-tos" class="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
-    <div class="premium-glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 rounded-3xl relative text-left space-y-4">
-      <button onclick="this.closest('#modal-tos').classList.add('hidden')" class="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x"></i></button>
-      <h2 class="text-2xl font-extrabold premium-text-gradient font-heading">Terms of Service</h2>
-      <div class="text-sm text-slate-300 space-y-4 leading-relaxed font-medium">
-        <p><strong>1. Acceptance:</strong> By entering the Sanctuary, you agree to use thoughtica.io for personal mindfulness and self-improvement.</p>
-        <p><strong>2. Health Disclaimer:</strong> thoughtica.io is a gamified tool, not a replacement for professional medical or mental health advice.</p>
-        <p><strong>3. Modification:</strong> We reserve the right to update or modify the service. Your continued use implies acceptance.</p>
-      </div>
-    </div>
-  </div>
+    <!-- AUTH GATE: shown when not signed in -->
+    <div id="auth-gate" class="fixed inset-0 z-[9000] bg-[#090A0F] flex flex-col items-center justify-center p-6 hidden">
+      <div class="w-full max-w-sm space-y-6">
+        <div class="text-center space-y-2 mb-8">
+          <div class="text-5xl mb-4">🔮</div>
+          <h2 class="text-3xl font-extrabold premium-text-gradient font-heading">Your Sanctuary</h2>
+          <p class="text-slate-400 text-sm">Sign in to continue your journey.</p>
+        </div>
 
 
   <!-- AUTH MODAL -->
@@ -686,10 +718,90 @@
                 <button onclick="toggleSoundscape('rain'); showXPToast(0, '🌧️ Mountain Rain Soundscape Preview Playing...', 1.0, false);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Listen Preview</button>
                 <button onclick="startCheckout('aura_rain')" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-cyan-500/30">$1.99</button>
               </div>
+              <ul class="text-xs text-slate-400 space-y-1 mt-3">
+                <li>✓ Unlimited companion interactions</li>
+                <li>✓ 30-day deep memory</li>
+                <li>✓ Companion evolution &amp; personality</li>
+                <li>✓ Voice conversations</li>
+              </ul>
+              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Soulbound</button>
+            </div>
+
+            <!-- Transcendence -->
+            <div class="glass-card hover-tilt cursor-pointer border-amber-700/30" onclick="purchaseTier('transcendence')">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <p class="font-extrabold text-lg text-amber-300 font-heading">Transcendence</p>
+                  <p class="text-xs text-slate-400">Multi-companion · Max memory · Exclusive</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xl font-extrabold text-white">$19.99</p>
+                  <p class="text-[10px] text-slate-500">/month</p>
+                </div>
+              </div>
+              <ul class="text-xs text-slate-400 space-y-1 mt-3">
+                <li>✓ Up to 3 AI companions</li>
+                <li>✓ Permanent memory vault</li>
+                <li>✓ Exclusive auras &amp; themes</li>
+                <li>✓ Early access to new features</li>
+              </ul>
+              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Transcendence</button>
             </div>
           </div>
+
+          <!-- Cosmetics Section -->
+          <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Cosmetics · $1.99 each</p>
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <button onclick="purchaseTier('theme_midnight')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🌑</div>
+              <p class="text-[11px] font-bold text-slate-200">Midnight Void</p>
+            </button>
+            <button onclick="purchaseTier('theme_zen')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🍃</div>
+              <p class="text-[11px] font-bold text-slate-200">Zen Garden</p>
+            </button>
+            <button onclick="purchaseTier('aura_rain')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+              <div class="text-2xl mb-1">🌧️</div>
+              <p class="text-[11px] font-bold text-slate-200">Mountain Rain</p>
+            </button>
+          </div>
+
+          <!-- Auth nudge for guests -->
+          <div id="store-auth-nudge" class="glass-card border-indigo-700/30 text-center hidden">
+            <p class="text-sm text-slate-300 mb-3">Sign in to purchase and preserve your upgrades across devices.</p>
+            <button onclick="showAuthGate()" class="py-2 px-6 premium-button text-white text-sm font-bold rounded-xl">Sign In</button>
+          </div>
+        </div> <!-- /screen-store -->
+
+      </main> <!-- /screen-container -->
+
+      <!-- ==============================
+           BOTTOM NAVIGATION
+           ============================== -->
+      <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-50 bg-[#0c0e18]/90 border-t border-slate-800/60 pb-safe backdrop-blur-xl" aria-label="Main navigation">
+        <div class="nav-scroll px-2 py-1">
+          <button class="nav-item active flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-home" onclick="navigateTo('home')" aria-label="Home" aria-current="page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="text-[10px] font-semibold">Home</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-chat" onclick="navigateTo('chat')" aria-label="Chat with Kora">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="text-[10px] font-semibold">Kora</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-journal" onclick="navigateTo('journal')" aria-label="Journal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span class="text-[10px] font-semibold">Journal</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-profile" onclick="navigateTo('profile')" aria-label="Profile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="text-[10px] font-semibold">Profile</span>
+          </button>
+          <button class="nav-item flex flex-col items-center justify-center gap-0.5 py-2 px-2" id="nav-store" onclick="navigateTo('store')" aria-label="Upgrade store">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span class="text-[10px] font-semibold">Store</span>
+          </button>
         </div>
-      </div>
+      </nav>
 
       <div id="delayed-paywall-exit" class="mt-8 text-center hidden opacity-0 transition-opacity duration-1000 pb-4">
         <button onclick="document.getElementById('modal-premium').classList.add('hidden')" class="px-6 py-3 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-full font-bold text-sm border border-white/10 transition-all cursor-pointer">
@@ -700,40 +812,32 @@
     </div>
   </div>
 
+  </div> <!-- /app-sanctuary-root -->
+
+  <!-- =============================================
+       FIREBASE CONFIGURATION
+       ============================================= -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCojO1W_wEMV1aW--PmX2_DMKcM9ZVJjbI",
-      authDomain: "studio-2629260445-586a8.firebaseapp.com",
-      projectId: "studio-2629260445-586a8",
-      storageBucket: "studio-2629260445-586a8.firebasestorage.app",
-      messagingSenderId: "973325606603",
-      appId: "1:973325606603:web:eb2b316520ef5bc9cf054e"
+    // Replace these values with your Firebase project configuration.
+    // Find them in the Firebase console: Project Settings > General > Your apps > Web app.
+    const firebaseConfig = window.__FIREBASE_CONFIG__ || {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    function loginWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).then((result) => {
-        document.getElementById('modal-auth').classList.add('hidden');
-        if (window.pendingCheckoutTier) {
-          startCheckout(window.pendingCheckoutTier);
-          window.pendingCheckoutTier = null;
-        }
-      }).catch((error) => {
-        console.error("Login failed:", error);
-        alert("Login failed. Please try again.");
-      });
-    }
+    // Only initialize if config has a real API key
+    let _db = null;
+    let _auth = null;
+    let _currentUser = null;
 
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        S.uid = user.uid;
-        if (window.pendingCheckoutTier) {
-          const pending = window.pendingCheckoutTier;
-          window.pendingCheckoutTier = null;
-          startCheckout(pending);
+    try {
+      if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
+        if (!firebase.apps || !firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
         }
         // Listen for premium status changes
         db.collection('users').doc(user.uid).onSnapshot((doc) => {
@@ -775,6 +879,8 @@
       } catch (e) {
         console.warn('Payment check error:', e);
       }
+    } catch (e) {
+      console.warn('[thoughtica] Firebase init skipped:', e.message);
     }
 
 
@@ -2886,23 +2992,7 @@
 
   <!-- JS CLIENT LOGIC -->
   <script>
-    // 5:00 AM DAILY WORD & ANCIENT WISDOM ROTATION DATABASE
-    const DAILY_WORDS_DATABASE = [
-      { word: "Kairos", pos: "(n.) The opportune, decisive moment for quiet discovery", desc: "Stop waiting for conditions to be perfect. The opportune moment is created by your decision to step onto the path now." },
-      { word: "Eudaimonia", pos: "(n.) Living in alignment with one's highest nature and flourishing", desc: "True fulfillment is not passive happiness, but the active expression of your highest character and purpose." },
-      { word: "Ataraxia", pos: "(n.) Untroubled, tranquil peace of mind amidst life's storms", desc: "Cultivate inner composure. When the storm rages outside, your sanctuary remains undisturbed within." },
-      { word: "Sophrosyne", pos: "(n.) A harmonious state of mind characterized by self-control and wisdom", desc: "Mastery over oneself is the ultimate victory. Balance desire with purpose, and noise with quiet clarity." },
-      { word: "Aretē", pos: "(n.) Moral excellence and realizing your fullest potential", desc: "Strive for excellence in every small action. Your daily habits compound into your ultimate destiny." },
-      { word: "Kenshō", pos: "(n.) A sudden awakening into one's true, quiet inner essence", desc: "Strip away the illusion of external noise. Your true nature is already tranquil, powerful, and whole." },
-      { word: "Sisu", pos: "(n.) Extraordinary courage, grit, and quiet resolve in adversity", desc: "When options are exhausted, sisu begins. Keep stepping forward with quiet, unyielding momentum." },
-      { word: "Meraki", pos: "(n.) Putting your soul, passion, and devotion into what you create", desc: "Leave a piece of your heart in every creation. Quality is the signature of your inner character." },
-      { word: "Ikigai", pos: "(n.) A reason for being; the intersection of passion, talent, and purpose", desc: "Align what you love with what the world needs. Every sunrise brings a new opportunity to honor your ikigai." },
-      { word: "Equanimity", pos: "(n.) Mental calmness, composure, and evenness of temper", desc: "Remain anchored through victory and defeat alike. Serenity is the fruit of an unshakeable mind." },
-      { word: "Apotheosis", pos: "(n.) The highest point of personal growth and elevation", desc: "You are constantly evolving. Trust the process as your daily effort elevates you to new heights." },
-      { word: "Sovereign", pos: "(adj.) Possessing supreme inner autonomy, agency, and self-mastery", desc: "Reclaim governance over your attention and mind. You are the architect of your reality." },
-      { word: "Wabi-Sabi", pos: "(n.) Finding beauty in imperfection, simplicity, and natural evolution", desc: "Embrace the beauty of unfinished paths. Growth is a continuous, organic journey, not a static destination." },
-      { word: "Serendipity", pos: "(n.) Finding valuable discoveries while walking the path with open eyes", desc: "Stay curious and observant. The most profound opportunities reveal themselves to those who walk with awareness." }
-    ];
+    let _stripe = null;
 
     function get5AMDateKey() {
       const now = new Date();
@@ -3313,109 +3403,12 @@
           ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
           ctx.fill();
         });
-
-        const sphereR = Math.min(canvas.width, canvas.height) * 0.28;
-
-        // Atmosphere Radial Glow Rings
-        for (let i = 4; i >= 1; i--) {
-          const auraR = sphereR + i * 22;
-          const auraGlow = ctx.createRadialGradient(cx, cy, sphereR, cx, cy, auraR);
-          auraGlow.addColorStop(0, 'rgba(99, 102, 241, 0.25)');
-          auraGlow.addColorStop(0.5, 'rgba(168, 85, 247, 0.15)');
-          auraGlow.addColorStop(1, 'transparent');
-
-          ctx.fillStyle = auraGlow;
-          ctx.beginPath();
-          ctx.arc(cx, cy, auraR, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // 3D Shaded Celestial Sphere Surface
-        const sphereGrad = ctx.createRadialGradient(cx - sphereR * 0.35, cy - sphereR * 0.35, sphereR * 0.1, cx, cy, sphereR);
-        sphereGrad.addColorStop(0, '#fef08a');
-        sphereGrad.addColorStop(0.3, '#38bdf8');
-        sphereGrad.addColorStop(0.75, '#6366f1');
-        sphereGrad.addColorStop(1, '#090a0f');
-
-        ctx.fillStyle = sphereGrad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, sphereR, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        // EXPLORATORY PHASE 2: CONSTELLATION RPG MATRIX LINES ON SPHERE
-        ctx.beginPath();
-        const nodeCoords = constellationNodes.map((n, idx) => {
-          const a = n.angle + spaceTime * 0.1;
-          const r = sphereR * n.distRatio;
-          const x = cx + Math.cos(a) * r;
-          const y = cy + Math.sin(a) * r;
-          if (idx === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-          return { x, y, label: n.label };
-        });
-        ctx.closePath();
-        ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // Constellation RPG Nodes
-        nodeCoords.forEach(nc => {
-          ctx.fillStyle = 'rgba(251, 191, 36, 0.8)';
-          ctx.beginPath();
-          ctx.arc(nc.x, nc.y, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        // SUBTLE GLITTER REFLECTIONS ACROSS SPHERE SURFACE
-        glitterParticles.forEach(p => {
-          p.angle += p.speed;
-          p.alpha += p.alphaSpeed;
-          if (p.alpha > 1 || p.alpha < 0.1) p.alphaSpeed = -p.alphaSpeed;
-
-          const r = sphereR * p.distRatio;
-          const x = cx + Math.cos(p.angle) * r;
-          const y = cy + Math.sin(p.angle) * r;
-
-          ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, p.alpha * 0.85)})`;
-          ctx.beginPath();
-          ctx.arc(x, y, p.r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        spaceAnimId = requestAnimationFrame(draw);
       }
-
-      if (spaceAnimId) cancelAnimationFrame(spaceAnimId);
-      draw();
-    }
-
-    // STEP-BY-STEP PERSONALIZED VOICED ONBOARDING ENGINE
-    let currentIntroPhase = 1;
-    const TOTAL_INTRO_PHASES = 4;
-
-    function startVoicedIntro() {
-      const root = document.getElementById('app-sanctuary-root');
-      if (root) root.classList.remove('hidden');
-      closeSettings();
-      currentIntroPhase = 1;
-      
-      document.getElementById('intro-step-1').classList.add('active');
-      document.getElementById('intro-step-2').classList.remove('active');
-      document.getElementById('intro-step-3').classList.remove('active');
-      document.getElementById('intro-step-4').classList.remove('active');
-      document.getElementById('intro-phase-badge').textContent = "STEP 1: CHOOSE LANGUAGE";
-
-      const modal = document.getElementById('voiced-intro-modal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        void modal.offsetWidth;
-        modal.classList.remove('opacity-0');
-        modal.classList.add('opacity-100');
+      _stripe = Stripe(window.__STRIPE_PK__ || '');
+      if (!window.__STRIPE_PK__) {
+        console.warn('[thoughtica] Stripe public key not configured. Set window.__STRIPE_PK__ before loading.');
       }
+      return _stripe;
     }
 
     function selectLanguage(langCode, label) {
@@ -4921,9 +4914,11 @@ Directives:
         const res = await fetch('/api/create-checkout-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tier, uid: S.uid })
+          body: JSON.stringify({ tier, uid })
         });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Checkout failed');
+
         if (data.url) {
           // 100% cross-platform window redirection (PC, Mobile Safari & Chrome)
           window.location.assign(data.url);
@@ -4945,10 +4940,24 @@ Directives:
         }
       }
     }
+  </script>
 
-    function save() { try { localStorage.setItem('kora_state', JSON.stringify(S)); } catch (e) {} }
+  <!-- =============================================
+       APP STATE & LOGIC
+       ============================================= -->
+  <script>
+    'use strict';
 
-    function load() {
+    // ── State ──────────────────────────────────────
+    let _guestMode = false;
+    let _currentScreen = 'home';
+    let _chatMessages = [];
+    let _chatConversationId = null;
+    let _chatIsTyping = false;
+
+    const _defaultStats = { level: 1, xp: 0, mind: 10, soul: 10, drive: 10, checkInStreak: 0, lastCheckIn: null };
+
+    function loadStats() {
       try {
         const d = localStorage.getItem('kora_state');
         if (d) {
@@ -5097,28 +5106,58 @@ Directives:
     // 100% PURE NATURE & TIME-OF-DAY PROCEDURAL SOUNDSCAPES
     let audioCtx = null, activeNodesList = [], currentPlayingTrack = null;
 
-    const ALL_TRACK_KEYS = [
-      'morning-sun', 'afternoon-forest', 'golden-valley', 'daylight-rain', // Page 1: Daytime Nature
-      'midnight-sanctuary', 'starlit-lake', 'twilight-forest', 'night-storm', // Page 2: Nighttime Nature
-      'ocean-tides', 'waterfall', 'forest-stream', 'rainforest', // Page 3: Water & Streams
-      'pine-wind', 'autumn-breeze', 'winter-blizzard', 'desert-dunes' // Page 4: Wind & Earth
+    // ── XP & Levelling ─────────────────────────────
+    function xpForLevel(level) { return level * 100; }
+
+    function addXP(amount) {
+      const stats = loadStats();
+      stats.xp += amount;
+      while (stats.xp >= xpForLevel(stats.level)) {
+        stats.xp -= xpForLevel(stats.level);
+        stats.level += 1;
+        showXPToast(`⬆️ Level Up! You are now Level ${stats.level}`);
+      }
+      saveStats(stats);
+      refreshStatsUI();
+      showXPToast(`+${amount} XP`);
+    }
+
+    function showXPToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'xp-toast fixed bottom-24 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-indigo-600/90 text-white text-xs font-bold z-[9999] whitespace-nowrap';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    function refreshStatsUI() {
+      const s = loadStats();
+      const maxXP = xpForLevel(s.level);
+      const pct = Math.min(100, Math.round((s.xp / maxXP) * 100));
+      document.getElementById('home-level').textContent = s.level;
+      document.getElementById('home-xp').textContent = s.xp;
+      document.getElementById('xp-bar').style.width = pct + '%';
+      document.getElementById('xp-to-next').textContent = `${s.xp} / ${maxXP} XP to Level ${s.level + 1}`;
+      document.getElementById('stat-mind').textContent = s.mind;
+      document.getElementById('stat-soul').textContent = s.soul;
+      document.getElementById('stat-drive').textContent = s.drive;
+      document.getElementById('p-stat-mind').textContent = s.mind;
+      document.getElementById('p-stat-soul').textContent = s.soul;
+      document.getElementById('p-stat-drive').textContent = s.drive;
+      document.getElementById('bar-mind').style.width = Math.min(100, s.mind) + '%';
+      document.getElementById('bar-soul').style.width = Math.min(100, s.soul) + '%';
+      document.getElementById('bar-drive').style.width = Math.min(100, s.drive) + '%';
+    }
+
+    // ── Daily Quests ───────────────────────────────
+    const DAILY_QUESTS = [
+      { id: 'q1', label: 'Chat with Kora today', xp: 10 },
+      { id: 'q2', label: 'Write a journal entry', xp: 5 },
+      { id: 'q3', label: 'Complete your daily check-in', xp: 15 },
     ];
 
-    function stopActiveAudioNodes() {
-      activeNodesList.forEach(n => {
-        try {
-          if (n.stop && typeof n.stop === 'function') n.stop();
-          if (n.disconnect && typeof n.disconnect === 'function') n.disconnect();
-        } catch(e){}
-      });
-      activeNodesList = [];
-      
-      ALL_TRACK_KEYS.forEach(k => {
-        const btnText = document.getElementById(`btn-text-${k}`);
-        const btn = document.getElementById(`btn-track-${k}`);
-        if (btnText) btnText.textContent = "Play (+5 XP)";
-        if (btn) btn.classList.remove('bg-rose-600', 'text-white');
-      });
+    function getDailyKey() {
+      return 'tq_' + new Date().toISOString().slice(0, 10);
     }
 
     async function play10SecSoundscapePreview(type) {
@@ -9179,136 +9218,375 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       }).join('');
     }
 
-    function performDetoxRedirect(redirect) {
-      if (!S.detox) S.detox = {};
-      S.detox.redirectsCompleted = (S.detox.redirectsCompleted || 0) + 1;
-      addXP(redirect.xp, 'Mindful Redirect');
-      save();
-      redirect.action();
-      updateDetoxStats();
-      checkAndUnlockAchievements();
-    }
+    // ── Daily Check-In ─────────────────────────────
+    function doCheckIn() {
+      const today = new Date().toISOString().slice(0, 10);
+      const stats = loadStats();
+      if (stats.lastCheckIn === today) {
+        showXPToast('✅ Already checked in today!');
+        return;
+      }
+      stats.lastCheckIn = today;
+      stats.checkInStreak = (stats.checkInStreak || 0) + 1;
+      stats.mind = Math.min(100, stats.mind + 1);
+      stats.soul = Math.min(100, stats.soul + 1);
+      stats.drive = Math.min(100, stats.drive + 1);
+      saveStats(stats);
+      markQuestDone('q3');
+      refreshStatsUI();
+      showXPToast(`🔥 Streak: ${stats.checkInStreak} days! +3 Stats`);
 
-    function startDetoxTimer(minutes) {
-      clearDetoxTimer();
-      detoxTimerTotalSeconds = minutes * 60;
-      detoxTimerSecondsLeft = detoxTimerTotalSeconds;
-      S.detox.timerDuration = minutes;
-      S.detox.timerStart = Date.now();
-      runDetoxTimer();
-      const lbl = document.getElementById('detox-timer-label');
-      if (lbl) lbl.textContent = `🛡️ ${minutes} min focus lock — You’ve got this!`;
-      showXPToast(0, `Focus Lock activated: ${minutes} minutes. No scrolling!`, 0.9);
-    }
-
-    function startDetoxTimerCustom() {
-      const inp = document.getElementById('detox-custom-mins');
-      const mins = parseInt(inp ? inp.value : 0);
-      if (mins > 0 && mins <= 480) startDetoxTimer(mins);
-    }
-
-    function runDetoxTimer() {
-      detoxTimerInterval = setInterval(() => {
-        detoxTimerSecondsLeft--;
-        updateDetoxTimerUI();
-        if (detoxTimerSecondsLeft <= 0) {
-          clearDetoxTimer();
-          completeDetoxSession();
-        }
-      }, 1000);
-    }
-
-    function updateDetoxTimerUI() {
-      const mins = Math.floor(detoxTimerSecondsLeft / 60);
-      const secs = detoxTimerSecondsLeft % 60;
-      const display = document.getElementById('detox-timer-display');
-      const arc = document.getElementById('detox-timer-arc');
-      if (display) display.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-      if (arc) {
-        const circumference = 327;
-        const progress = 1 - (detoxTimerSecondsLeft / detoxTimerTotalSeconds);
-        arc.style.strokeDashoffset = circumference * (1 - progress);
-        // Color shifts from green -> amber as timer completes
-        arc.style.stroke = progress > 0.8 ? '#34d399' : progress > 0.5 ? '#fbbf24' : '#34d399';
+      const btn = document.getElementById('checkin-btn');
+      if (btn) {
+        btn.textContent = '✅ Checked In Today';
+        btn.disabled = true;
+        btn.classList.add('opacity-60');
       }
     }
 
-    function stopDetoxTimer() {
-      clearDetoxTimer();
-      const display = document.getElementById('detox-timer-display');
-      const lbl = document.getElementById('detox-timer-label');
-      const arc = document.getElementById('detox-timer-arc');
-      if (display) display.textContent = '00:00';
-      if (lbl) lbl.textContent = 'Session stopped. Try again whenever you’re ready.';
-      if (arc) { arc.style.strokeDashoffset = 327; }
+    function refreshCheckInBtn() {
+      const today = new Date().toISOString().slice(0, 10);
+      const stats = loadStats();
+      const btn = document.getElementById('checkin-btn');
+      if (!btn) return;
+      if (stats.lastCheckIn === today) {
+        btn.textContent = '✅ Checked In Today';
+        btn.disabled = true;
+        btn.classList.add('opacity-60');
+      } else {
+        btn.textContent = '✨ Daily Check-In';
+        btn.disabled = false;
+        btn.classList.remove('opacity-60');
+      }
     }
 
-    function clearDetoxTimer() {
-      if (detoxTimerInterval) { clearInterval(detoxTimerInterval); detoxTimerInterval = null; }
+    // ── Journal ────────────────────────────────────
+    function openNewEntry() {
+      document.getElementById('journal-composer').classList.remove('hidden');
+      document.getElementById('journal-text').focus();
     }
 
-    function completeDetoxSession() {
-      const minsDone = S.detox.timerDuration || Math.round((Date.now() - (S.detox.timerStart || Date.now())) / 60000);
-      S.detox.sessionsCompleted = (S.detox.sessionsCompleted || 0) + 1;
-      S.detox.totalMinutesAvoided = (S.detox.totalMinutesAvoided || 0) + minsDone;
+    function closeComposer() {
+      document.getElementById('journal-composer').classList.add('hidden');
+      document.getElementById('journal-text').value = '';
+    }
 
-      // Check & update streak
-      const today = new Date().toISOString().slice(0,10);
-      if (S.detox.lastDetoxDate !== today) {
-        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
-        if (S.detox.lastDetoxDate === yesterday) {
-          S.detox.streak = (S.detox.streak || 0) + 1;
-        } else if (!S.detox.lastDetoxDate) {
-          S.detox.streak = 1;
+    function saveJournalEntry() {
+      const text = document.getElementById('journal-text').value.trim();
+      if (!text) return;
+      const entries = loadJournal();
+      entries.unshift({ id: Date.now(), text, date: new Date().toISOString() });
+      saveJournal(entries);
+      closeComposer();
+      renderJournal();
+      markQuestDone('q2');
+    }
+
+    function renderJournal() {
+      const entries = loadJournal();
+      const container = document.getElementById('journal-entries');
+      if (!container) return;
+      if (!entries.length) {
+        container.innerHTML = '<p class="text-slate-500 text-sm text-center py-8">No entries yet. Tap + to start writing.</p>';
+        return;
+      }
+      container.innerHTML = '';
+      entries.forEach(e => {
+        const d = new Date(e.date);
+        const label = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        const card = document.createElement('div');
+        card.className = 'glass-card !mb-0';
+        const dateEl = document.createElement('p');
+        dateEl.className = 'text-[10px] text-slate-500 mb-2 font-semibold uppercase tracking-wider';
+        dateEl.textContent = label;
+        const textEl = document.createElement('p');
+        textEl.className = 'text-sm text-slate-200 leading-relaxed whitespace-pre-wrap';
+        textEl.textContent = e.text;
+        card.appendChild(dateEl);
+        card.appendChild(textEl);
+        container.appendChild(card);
+      });
+    }
+
+    // ── Navigation ─────────────────────────────────
+    function navigateTo(screen) {
+      const screens = ['home', 'chat', 'journal', 'profile', 'store'];
+      screens.forEach(s => {
+        const el = document.getElementById('screen-' + s);
+        const nav = document.getElementById('nav-' + s);
+        if (el) el.classList.toggle('active', s === screen);
+        if (nav) {
+          nav.classList.toggle('active', s === screen);
+          nav.setAttribute('aria-current', s === screen ? 'page' : 'false');
+        }
+      });
+      _currentScreen = screen;
+
+      if (screen === 'home') { renderQuests(); refreshCheckInBtn(); }
+      if (screen === 'journal') renderJournal();
+      if (screen === 'profile') refreshProfileUI();
+      if (screen === 'store') refreshStoreAuthNudge();
+    }
+
+    function refreshProfileUI() {
+      const name = _currentUser ? (_currentUser.displayName || _currentUser.email || 'Seeker') : (_guestMode ? 'Guest Seeker' : 'Seeker');
+      document.getElementById('profile-name').textContent = name;
+      document.getElementById('sign-out-btn').classList.toggle('hidden', !_currentUser);
+    }
+
+    function refreshStoreAuthNudge() {
+      const nudge = document.getElementById('store-auth-nudge');
+      if (nudge) nudge.classList.toggle('hidden', !!_currentUser || !_guestMode);
+    }
+
+    // ── AI Chat: Companion Failure Helper ──────────
+    /**
+     * Builds a user-facing failure message when the AI provider is unavailable.
+     * Uses the structured error envelope from /api/chat when available.
+     * Your conversation context is still safe and will be preserved for the next attempt.
+     */
+    function buildCompanionFailureMessage(errOrEnvelope) {
+      const code = errOrEnvelope?.error?.code || errOrEnvelope?.code || 'PROVIDER_UNAVAILABLE';
+      if (code === 'PROVIDER_NOT_CONFIGURED') {
+        return 'My connection to the AI is not set up yet. Your conversation context is still safe — please ask the sanctuary admin to configure an AI provider key.';
+      }
+      const retryable = errOrEnvelope?.error?.retryable !== false;
+      const base = retryable
+        ? 'I\'m having a little trouble reaching my thoughts right now. Your conversation context is still safe — please try again in a moment.'
+        : 'Something unexpected happened. Your conversation context is still safe. Please refresh and try again.';
+      return base;
+    }
+
+    // ── AI Chat ────────────────────────────────────
+    function appendChatBubble(role, text) {
+      const container = document.getElementById('chat-messages');
+      if (!container) return;
+
+      const isUser = role === 'user';
+      const wrapper = document.createElement('div');
+      wrapper.className = isUser ? 'flex justify-end' : 'flex gap-3';
+
+      if (!isUser) {
+        const avatar = document.createElement('div');
+        avatar.className = 'w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0';
+        avatar.textContent = '🤖';
+        wrapper.appendChild(avatar);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = isUser
+        ? 'bg-indigo-600/80 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%]'
+        : 'bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]';
+      const p = document.createElement('p');
+      p.className = 'text-sm text-slate-200 whitespace-pre-wrap';
+      p.textContent = text;
+      bubble.appendChild(p);
+      wrapper.appendChild(bubble);
+
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+      return wrapper;
+    }
+
+    function appendTypingIndicator() {
+      const container = document.getElementById('chat-messages');
+      if (!container) return null;
+      const wrapper = document.createElement('div');
+      wrapper.id = 'typing-indicator';
+      wrapper.className = 'flex gap-3';
+      wrapper.innerHTML = `<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+        <div class="bg-slate-800/70 rounded-2xl rounded-tl-sm px-4 py-3"><div class="flex gap-1 items-center h-4"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:0ms"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:150ms"></span><span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style="animation-delay:300ms"></span></div></div>`;
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+      return wrapper;
+    }
+
+    async function sendChatMessage() {
+      if (_chatIsTyping) return;
+      const input = document.getElementById('chat-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      appendChatBubble('user', text);
+      _chatMessages.push({ role: 'user', content: text });
+
+      _chatIsTyping = true;
+      const indicator = appendTypingIndicator();
+
+      const stats = loadStats();
+      const userName = _currentUser ? (_currentUser.displayName || 'Seeker') : 'Seeker';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userText: text,
+            messages: _chatMessages.slice(-24),
+            conversationId: _chatConversationId,
+            companionName: 'Kora',
+            userName,
+            userGoal: 'personal growth and mindful living',
+            userLevel: stats.level
+          })
+        });
+
+        const data = await res.json();
+        if (indicator) indicator.remove();
+        _chatIsTyping = false;
+
+        if (!res.ok || !data.reply) {
+          const msg = buildCompanionFailureMessage(data);
+          appendChatBubble('assistant', msg);
         } else {
-          S.detox.streak = 1; // streak broken, restart
+          _chatConversationId = data.conversationId || _chatConversationId;
+          _chatMessages.push({ role: 'assistant', content: data.reply });
+          appendChatBubble('assistant', data.reply);
+          markQuestDone('q1');
         }
-        S.detox.lastDetoxDate = today;
+      } catch (err) {
+        if (indicator) indicator.remove();
+        _chatIsTyping = false;
+        appendChatBubble('assistant', buildCompanionFailureMessage(err));
+      }
+    }
+
+    // ── Auth ───────────────────────────────────────
+    function showAuthTab(tab) {
+      document.getElementById('auth-signin').classList.toggle('hidden', tab !== 'signin');
+      document.getElementById('auth-signup').classList.toggle('hidden', tab !== 'signup');
+      document.getElementById('tab-signin').classList.toggle('bg-indigo-600', tab === 'signin');
+      document.getElementById('tab-signin').classList.toggle('text-white', tab === 'signin');
+      document.getElementById('tab-signin').classList.toggle('text-slate-400', tab !== 'signin');
+      document.getElementById('tab-signup').classList.toggle('bg-indigo-600', tab === 'signup');
+      document.getElementById('tab-signup').classList.toggle('text-white', tab === 'signup');
+      document.getElementById('tab-signup').classList.toggle('text-slate-400', tab !== 'signup');
+    }
+
+    function showAuthGate() {
+      document.getElementById('auth-gate').classList.remove('hidden');
+    }
+
+    function hideAuthGate() {
+      document.getElementById('auth-gate').classList.add('hidden');
+    }
+
+    function continueAsGuest() {
+      _guestMode = true;
+      hideAuthGate();
+      launchApp();
+    }
+
+    async function doSignIn() {
+      if (!_auth) { continueAsGuest(); return; }
+      const email = document.getElementById('si-email').value.trim();
+      const password = document.getElementById('si-password').value;
+      const errEl = document.getElementById('auth-error-si');
+      errEl.classList.add('hidden');
+      try {
+        await _auth.signInWithEmailAndPassword(email, password);
+      } catch (e) {
+        errEl.textContent = e.message || 'Sign in failed. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function doSignUp() {
+      if (!_auth) { continueAsGuest(); return; }
+      const name = document.getElementById('su-name').value.trim();
+      const email = document.getElementById('su-email').value.trim();
+      const password = document.getElementById('su-password').value;
+      const errEl = document.getElementById('auth-error-su');
+      errEl.classList.add('hidden');
+      try {
+        const cred = await _auth.createUserWithEmailAndPassword(email, password);
+        if (name && cred.user) {
+          await cred.user.updateProfile({ displayName: name });
+        }
+      } catch (e) {
+        errEl.textContent = e.message || 'Sign up failed. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    async function doGoogleSignIn() {
+      if (!_auth) { continueAsGuest(); return; }
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await _auth.signInWithPopup(provider);
+      } catch (e) {
+        console.warn('[thoughtica] Google sign-in:', e.message);
+        const errSi = document.getElementById('auth-error-si');
+        const errSu = document.getElementById('auth-error-su');
+        [errSi, errSu].forEach(el => { el.textContent = e.message; el.classList.remove('hidden'); });
+      }
+    }
+
+    async function doSignOut() {
+      if (_auth) {
+        try { await _auth.signOut(); } catch {}
+      }
+      _currentUser = null;
+      _guestMode = false;
+      showAuthGate();
+    }
+
+    // ── Sanctuary Entry ────────────────────────────
+    function enterSanctuary() {
+      const root = document.getElementById('app-sanctuary-root');
+      if (root) root.classList.remove('hidden');
+      const ov = document.getElementById('landing-page-overlay');
+      if (ov) ov.remove();
+
+      // Check URL params for payment result
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('payment_success')) {
+        const tier = params.get('tier') || 'premium';
+        const toast = document.getElementById('payment-toast');
+        const msg = document.getElementById('payment-toast-msg');
+        if (toast && msg) {
+          msg.textContent = `✨ ${tier.charAt(0).toUpperCase() + tier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
+          toast.classList.remove('hidden');
+          setTimeout(() => toast.classList.add('hidden'), 8000);
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (params.get('payment_cancelled')) {
+        window.history.replaceState({}, '', window.location.pathname);
       }
 
-      addXP(minsDone * 2, 'Digital Detox Focus Session');
-      save();
-      updateDetoxStats();
-      checkAndUnlockAchievements();
-
-      const display = document.getElementById('detox-timer-display');
-      const lbl = document.getElementById('detox-timer-label');
-      if (display) display.textContent = '00:00';
-      if (lbl) lbl.textContent = `✨ Session complete! ${minsDone} mins of real presence earned.`;
-
-      showXPToast(minsDone * 2, `Detox session complete! ${minsDone} minutes reclaimed. 🌟`, 1.2, true);
+      // Firebase auth gate
+      if (_auth) {
+        _auth.onAuthStateChanged(user => {
+          _currentUser = user;
+          if (user) {
+            hideAuthGate();
+            launchApp();
+          } else if (!_guestMode) {
+            showAuthGate();
+            document.getElementById('main-app').classList.add('hidden');
+          }
+        });
+      } else {
+        // No Firebase — offer guest mode directly
+        showAuthGate();
+      }
     }
 
-    function updateDetoxStats() {
-      const sd = document.getElementById('detox-streak-display');
-      const ud = document.getElementById('detox-urges-display');
-      const md = document.getElementById('detox-minutes-display');
-      if (sd) sd.textContent = S.detox ? (S.detox.streak || 0) : 0;
-      if (ud) ud.textContent = S.detox && S.detox.urgeLog ? S.detox.urgeLog.length : 0;
-      if (md) md.textContent = S.detox ? (S.detox.totalMinutesAvoided || 0) : 0;
-    }
+    function launchApp() {
+      document.getElementById('main-app').classList.remove('hidden');
+      refreshStatsUI();
+      renderQuests();
+      refreshCheckInBtn();
+      navigateTo('home');
 
-    function renderDetoxInsights() {
-      const container = document.getElementById('detox-insight-log');
-      if (!container || !S.detox) return;
-      const d = S.detox;
-      const rows = [
-        { label: 'Sessions Completed', value: d.sessionsCompleted || 0, icon: '✅', color: 'text-emerald-400' },
-        { label: 'Total Minutes Freed', value: `${d.totalMinutesAvoided || 0} min`, icon: '⏳', color: 'text-cyan-400' },
-        { label: 'Urges Intercepted', value: d.urgeLog ? d.urgeLog.length : 0, icon: '🔭', color: 'text-amber-400' },
-        { label: 'Mindful Redirects', value: d.redirectsCompleted || 0, icon: '🧠', color: 'text-purple-400' },
-        { label: 'Detox Streak', value: `${d.streak || 0} days`, icon: '🔥', color: 'text-rose-400' },
-        { label: 'Platforms Tracked', value: Object.values(d.platforms || {}).filter(Boolean).length, icon: '🛡️', color: 'text-slate-300' }
-      ];
-      container.innerHTML = rows.map(r => `
-        <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-          <div class="flex items-center gap-2 text-xs text-slate-400">
-            <span>${r.icon}</span> ${r.label}
-          </div>
-          <span class="text-xs font-extrabold ${r.color}">${r.value}</span>
-        </div>
-      `).join('');
+      // Greet the user by name
+      const name = _currentUser ? (_currentUser.displayName || _currentUser.email?.split('@')[0] || 'Seeker') : 'Seeker';
+      const greeting = document.getElementById('home-greeting');
+      if (greeting) greeting.textContent = `Welcome back, ${name}`;
     }
   </script>
+
 </body>
 </html>
