@@ -2655,17 +2655,13 @@
           <span class="text-base leading-none">🍃</span>
           <span class="text-[9px] font-extrabold tracking-tight">Nature</span>
         </button>
-        <button onclick="switchScreen('mentor')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="mentor">
-          <span class="text-base leading-none">⚔️</span>
-          <span class="text-[9px] font-extrabold tracking-tight">Arena</span>
-        </button>
         <button onclick="switchScreen('quests')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="quests">
           <span class="text-base leading-none">🏆</span>
           <span class="text-[9px] font-extrabold tracking-tight">Badges</span>
         </button>
-        <button onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="aibot">
-          <span class="text-base leading-none">🤖</span>
-          <span class="text-[9px] font-extrabold tracking-tight">AI Chat</span>
+        <button id="tour-target-aibot" onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="aibot">
+          <span class="text-base leading-none">🔮</span>
+          <span class="text-[9px] font-extrabold tracking-tight">Kora</span>
         </button>
         <button onclick="switchScreen('detox')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="detox">
           <span class="text-base leading-none">🛡️</span>
@@ -5966,7 +5962,7 @@ Directives:
       { screen: 'navigation', targetId: 'tour-target-navigation', title: 'Wayfinder 🧭', desc: 'Navigate your personalized multi-step journey map to track progress toward your life ambitions.' },
       { screen: 'skills', targetId: 'tour-target-skills', title: 'Constellation RPG Skill Tree 🧠', desc: 'Invest Sanctuary Points (SP) into traits like Wisdom and Charisma, visualizing your personal growth.' },
       { screen: 'sanctuary', targetId: 'tour-target-sanctuary', title: '100% Pure Nature Sanctuary 🌳', desc: 'Calm your mind with 4-7-8 breathing (+50 XP) and explore 4 pages of pure daytime, nighttime, and water nature soundscapes.' },
-      { screen: 'mentor', targetId: 'tour-target-mentor', title: 'Personal AI Companion 🤖', desc: 'Converse with your dedicated companion offering unique perspectives and wisdom to support your path.' },
+      { screen: 'aibot', targetId: 'tour-target-aibot', title: 'Personal AI Companion 🤖', desc: 'Converse with your dedicated companion offering unique perspectives and wisdom to support your path.' },
       { screen: 'quests', targetId: 'tour-target-quests', title: 'Sacred Badges Suite 🏆', desc: 'Unlock milestone honors as you level up your Seeker Rank. Keep building your daily streak!' },
       { screen: 'detox', targetId: 'tour-target-detox', title: 'Digital Detox Shield 🛡️', desc: 'Reclaim your attention with customizable timers. Start a focused session without digital distractions. Complete the tour to claim +100 Starter XP!' }
     ];
