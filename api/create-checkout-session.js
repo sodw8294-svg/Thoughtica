@@ -25,14 +25,14 @@ module.exports = async (req, res) => {
         mode: 'subscription',
         name: 'thoughtica.io - Kindred',
         description: 'Increased daily interactions and expanded memory.',
-        amount: 299,
+        amount: 699,
         recurring: { interval: 'month' },
       },
       soulbound: {
         mode: 'subscription',
         name: 'thoughtica.io - Soulbound',
         description: 'Voice conversations, long-term memory, and companion evolution.',
-        amount: 999,
+        amount: 1499,
         recurring: { interval: 'month' },
       },
       transcendence: {
@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
               description: 'Unlocks 12 Premium Soundscapes, Full AI Voice Resonance & Unlimited AI Memory.',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 999, // $9.99/mo
+            unit_amount: 1499, // $9.99/mo
           },
           quantity: 1,
         },
@@ -92,7 +92,7 @@ module.exports = async (req, res) => {
               description: '1 Year of Sanctuary Plus (Save 33%).',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 7999, // $79.99/yr
+            unit_amount: 5999, // $79.99/yr
           },
           quantity: 1,
         },
@@ -110,7 +110,7 @@ module.exports = async (req, res) => {
               description: 'All Specialized AI Guides, Custom RPG Aura Wheel, Goal Architect & Supporter Seal Badge.',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 1999, // $19.99/mo
+            unit_amount: 1499, // $19.99/mo
           },
           quantity: 1,
         },
@@ -128,7 +128,7 @@ module.exports = async (req, res) => {
               description: '1 Year of Sovereign Infinite (Save 37%).',
               images: ['https://thoughtica.io/logo-book.jpg'],
             },
-            unit_amount: 14999, // $149.99/yr
+            unit_amount: 11999, // $149.99/yr
           },
           quantity: 1,
         },
