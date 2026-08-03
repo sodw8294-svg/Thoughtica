@@ -23,6 +23,10 @@ const SRC = '.vite-out/client'
 const DEST = 'dist'
 
 if (!existsSync(SRC)) {
+  if (existsSync(join(DEST, 'index.html'))) {
+    console.log('[finalize] ✓ dist/index.html already present from vite build')
+    process.exit(0)
+  }
   console.error(`[finalize] build output missing: ${SRC} — did "vite build" run?`)
   process.exit(1)
 }
