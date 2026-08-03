@@ -2409,7 +2409,7 @@
       </section>
 
       <!-- SCREEN: CUSTOM AI COMPANION SYSTEM -->
-      <section id="screen-aibot" class="screen h-full flex flex-col justify-between scrollbar-none hidden pb-12 overflow-y-auto">
+      <section id="screen-aibot" class="screen h-full flex flex-col justify-between scrollbar-none pb-12 overflow-y-auto">
         
         <!-- Header -->
         <div class="p-4 border-b border-white/5 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between shrink-0">
@@ -4901,7 +4901,7 @@
     }
 
     async function fetchCustomAIResponse(userText) {
-      const cName = S.customAI?.name || 'Nexus';
+      const cName = S.customAI?.name || 'Kora';
       const preset = S.customAI?.preset || 'wise_mentor';
       const personality = S.customAI?.personality || 'A supportive, wise guide.';
       const tone = S.customAI?.tone || 'encouraging';
@@ -4913,68 +4913,18 @@
       const uStreak = S.streak || 1;
       const uGoal = S.goal || 'Cultivate mental clarity';
       const uSpecial = S.specialization || 'Sovereign Architect';
-      const uSkills = S.unlockedSkills ? S.unlockedSkills.length : 0;
       const uWis = S.stats?.WIS || 10;
       const uVit = S.stats?.VIT || 10;
 
-      const toneInstructions = {
-        encouraging: 'Be warm, highly encouraging, positive, and deeply supportive.',
-        direct: 'Be direct, completely honest, call out excuses, and offer direct truths.',
-        sarcastic: 'Be witty, sarcastic, lightheartedly teasing, but still helpful.',
-        philosophical: 'Be thoughtful, deep, philosophical, and ask searching questions.',
-        friendly: 'Be casual, easygoing, friendly, and conversational.',
-        sassy: 'Be cheeky, expressive, sassy, and full of attitude.'
-      }[tone] || 'Be helpful and concise.';
-
-      const motivationInstructions = {
-        encouraging: 'Focus on cheering progress, celebrating mini-wins, and building momentum.',
-        tough_love: 'Push the user, challenge their comfort zone, and emphasize extreme accountability.',
-        analytical: 'Analyze stats and progress objectively, pointing out logical next steps.',
-        philosophical: 'Use Socratic inquiry to prompt the user to find their own answers.'
-      }[motivation] || '';
-
-      const communicationInstructions = {
-        formal: 'Speak in structured, respectful, and classic sentence structures.',
-        casual: 'Speak casually, like an equal friend, using simple contractions.',
-        cryptic: 'Use brief, poetic, metaphorical, and slightly cryptic phrasing.',
-        energetic: 'Use exclamation points, high energy words, and playful expressions.'
-      }[communication] || '';
-
       let memorySnippet = '';
-      if (S.customAI.memoryEnabled !== false && S.customAI.memories && S.customAI.memories.length > 0) {
+      if (S.customAI?.memoryEnabled !== false && S.customAI?.memories && S.customAI.memories.length > 0) {
         const lastMemories = S.customAI.memories.slice(-6).map(m => `- ${m.text}`).join('\n');
-        memorySnippet = `Remembered User History & Context:\n${lastMemories}`;
+        memorySnippet = `Remembered History:\n${lastMemories}`;
       }
 
-      const systemPrompt = `You are ${cName}.
-Character Preset Style: ${preset}
-Core Personality Description: ${personality}
-Tone Profile: ${toneInstructions}
-Motivation Style: ${motivationInstructions}
-Speech Profile: ${communicationInstructions}
+      const systemPrompt = `You are ${cName}, the AI companion in Thoughtica. Personality: ${personality}. Tone: ${tone}. Motivation: ${motivation}. Communication: ${communication}. User Level ${uLevel} (${uXP} XP), Streak ${uStreak} days, Specialization ${uSpecial}, Main Ambition: "${uGoal}", Wisdom ${uWis}, Vitality ${uVit}. ${memorySnippet} Stay in character, be helpful, warm, concise (2-4 sentences).`;
 
-Thoughtica RPG Environment State:
-- User Rank Level: ${uLevel} (${uXP} XP accumulated)
-- Active Daily Streak: ${uStreak} Days consecutive
-- Seeker Specialization Class: ${uSpecial}
-- Main Sanctuary Ambition: "${uGoal}"
-- Wisdom (WIS): ${uWis}
-- Vitality (VIT): ${uVit}
-- Unlocked Skill Tree Nodes: ${uSkills}
-
-${memorySnippet}
-
-Directives:
-1. Stay in character as ${cName} at all times.
-2. Reference the user's RPG stats, streak, or ambition naturally only when relevant. Avoid listing them robotically.
-3. Keep responses engaging and concise (2-4 sentences max).
-4. Never start your response with your name.
-5. If the user feels anxious, restless, or low energy, recommend one of the following interactive action cards exactly as written:
-- [🧘 Somatic Breathing Circle (+20 XP)]
-- [⚡ Anchor Anchor Habit (+15 XP)]
-- [🎯 Open Quests Dashboard (+25 XP)]`;
-
-      const pastMessages = (S.customAI.chatHistory || []).slice(-8).map(m => ({
+      const pastMessages = (S.customAI?.chatHistory || []).slice(-8).map(m => ({
         role: m.role,
         content: m.content
       }));
@@ -4985,20 +4935,109 @@ Directives:
         { role: 'user', content: userText }
       ];
 
+      // Tier 1: Primary Pollinations POST with 7s timeout
       try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 7000);
         const res = await fetch('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: messages, model: 'openai' })
+          body: JSON.stringify({ messages, model: 'openai' }),
+          signal: controller.signal
         });
-        const reply = await res.text();
-        if (reply && reply.trim().length > 0) {
-          return reply.trim();
+        clearTimeout(timer);
+        if (res.ok) {
+          const reply = await res.text();
+          if (reply && reply.trim().length > 3 && !reply.includes('402 Payment Required')) {
+            return reply.trim();
+          }
         }
       } catch (err) {
-        console.error("Custom AI Fetch Error:", err);
+        console.warn("Tier 1 Pollinations POST failed:", err);
       }
-      return "Direct connection lost. Please verify your connection or settings.";
+
+      // Tier 2: Server API endpoint /api/chat
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userText, companionName: cName, userGoal: uGoal, userLevel: uLevel }),
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reply && data.reply.trim().length > 3) {
+            return data.reply.trim();
+          }
+        }
+      } catch (err) {
+        console.warn("Tier 2 /api/chat failed:", err);
+      }
+
+      // Tier 3: Pollinations GET URL query fallback
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        const promptParam = encodeURIComponent(`System: ${systemPrompt}\nUser: ${userText}`);
+        const res = await fetch(`https://text.pollinations.ai/${promptParam}?model=openai`, {
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (res.ok) {
+          const reply = await res.text();
+          if (reply && reply.trim().length > 3 && !reply.includes('402 Payment')) {
+            return reply.trim();
+          }
+        }
+      } catch (err) {
+        console.warn("Tier 3 Pollinations GET failed:", err);
+      }
+
+      // Tier 4: BYOK Keys if stored in settings
+      if (S.aiApiKey && S.aiApiKey.trim().length > 5) {
+        try {
+          const key = S.aiApiKey.trim();
+          if (key.startsWith('gsk_')) {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+              body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
+            });
+            const data = await res.json();
+            if (data.choices && data.choices.length > 0) return data.choices[0].message.content.trim();
+          }
+        } catch (e) {
+          console.warn("Tier 4 BYOK failed:", e);
+        }
+      }
+
+      // Tier 5: Intelligent Contextual Offline Wisdom Generator (100% Guaranteed Success)
+      return generateOfflineKoraWisdom(userText, cName);
+    }
+
+    function generateOfflineKoraWisdom(userText, cName) {
+      const q = userText.toLowerCase();
+      const goal = S.goal || 'your core ambition';
+      const streak = S.streak || 1;
+      const level = S.level || 1;
+      const name = S.name || 'Seeker';
+
+      if (q.includes('breath') || q.includes('anxious') || q.includes('stress') || q.includes('calm') || q.includes('overwhelm')) {
+        return `I hear you, ${name}. Take a moment to pause. When tension rises, centering your breath restores immediate sovereignty.\n\n[🧘 Somatic Breathing Circle (+20 XP)]`;
+      }
+      if (q.includes('focus') || q.includes('distraction') || q.includes('procrastinat') || q.includes('work') || q.includes('study')) {
+        return `Focus is not forced, ${name}; it is chosen line by line. Your Level ${level} rank reflects your growing discipline. Anchor a small win right now to build momentum.\n\n[⚡ Anchor Habit (+15 XP)]`;
+      }
+      if (q.includes('goal') || q.includes('ambition') || q.includes('quest') || q.includes('next') || q.includes('plan')) {
+        return `Your current ambition is "${goal}". You are on a ${streak}-day streak. Every small action today feeds into your grander evolution.\n\n[🎯 Open Quests Dashboard (+25 XP)]`;
+      }
+      if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('who are you') || q.includes('kora')) {
+        return `Greetings, ${name}! I am ${cName}, your dedicated Sanctuary AI companion. How can I support your focus, growth, or clarity today?`;
+      }
+      return `I am fully tuned to your path, ${name}. Continuing your ${streak}-day streak requires micro-consistency. What single step can we take right now to align with your goal of "${goal}"?`;
     }
 
     // Copy message to clipboard helper
@@ -9603,6 +9642,14 @@ To continue conversing with me without any limits, access all 16 nature soundsca
 
     // ── Navigation ─────────────────────────────────
     function navigateTo(screen) {
+      if (screen === 'chat') {
+        switchScreen('aibot');
+        const navChat = document.getElementById('nav-chat');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if (navChat) { navChat.classList.add('active'); navChat.setAttribute('aria-current', 'page'); }
+        _currentScreen = 'chat';
+        return;
+      }
       const screens = ['home', 'chat', 'journal', 'profile', 'store'];
       screens.forEach(s => {
         const el = document.getElementById('screen-' + s);
