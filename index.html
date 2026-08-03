@@ -601,7 +601,7 @@
         
         <!-- Big CTA Button -->
         <div class="pt-8 w-full max-w-sm">
-          <button onclick="unlockAudio(); if (!S.introSeen) { startPrologueCutscene(); } else if (!S.tourComplete) { startInteractiveTour(); } else { showDashboard(); }" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
+          <button onclick="unlockAudio(); showDashboard();" class="w-full premium-button px-8 py-5 rounded-2xl text-white font-extrabold text-xl shadow-[0_0_50px_rgba(168,85,247,0.5)] cursor-pointer hover:scale-[1.03] transition-transform">
             Enter Sanctuary
           </button>
           <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-4">Secure, Private, and Transformative.</p>
@@ -2777,45 +2777,48 @@
 
     <!-- ATMOSPHERIC NAVIGATION BAR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-[#090A0F]/95 backdrop-blur-2xl border-t border-white/10 z-[250]" style="padding: 8px 0 12px;">
-      <div class="nav-scroll px-2 flex items-center justify-around overflow-x-auto scrollbar-none">
+      <div class="nav-scroll px-2 flex items-center justify-around overflow-x-auto scrollbar-none max-w-4xl mx-auto">
         <button onclick="switchScreen('dashboard')" class="nav-item active flex flex-col items-center gap-1 text-indigo-400 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="dashboard">
           <span class="text-base leading-none">🧭</span>
           <span class="text-[9px] font-extrabold tracking-tight">Sanctuary</span>
         </button>
+
+        <button id="tour-target-aibot" onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-xl" data-screen="aibot">
+          <span class="text-base leading-none">🔮</span>
+          <span class="text-[9px] font-extrabold tracking-tight text-indigo-300">Kora AI</span>
+        </button>
+
         <button onclick="switchScreen('self')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="self">
           <span class="text-base leading-none">🪞</span>
           <span class="text-[9px] font-extrabold tracking-tight">Inner Self</span>
         </button>
+
         <button onclick="switchScreen('navigation')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="navigation">
           <span class="text-base leading-none">🗺️</span>
           <span class="text-[9px] font-extrabold tracking-tight">Wayfinder</span>
         </button>
+
         <button onclick="switchScreen('skills')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="skills">
           <span class="text-base leading-none">🌳</span>
           <span class="text-[9px] font-extrabold tracking-tight">Skills</span>
         </button>
+
         <button onclick="switchScreen('sanctuary')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="sanctuary">
           <span class="text-base leading-none">🍃</span>
           <span class="text-[9px] font-extrabold tracking-tight">Nature</span>
         </button>
+
         <button onclick="switchScreen('quests')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="quests">
           <span class="text-base leading-none">🏆</span>
           <span class="text-[9px] font-extrabold tracking-tight">Badges</span>
         </button>
-        <button id="tour-target-aibot" onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="aibot">
-          <span class="text-base leading-none">🔮</span>
-          <span class="text-[9px] font-extrabold tracking-tight">Kora</span>
-        </button>
+
         <button onclick="switchScreen('detox')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="detox">
           <span class="text-base leading-none">🛡️</span>
           <span class="text-[9px] font-extrabold tracking-tight">Detox</span>
         </button>
       </div>
-          <span id="floating-xp-counter" class="text-indigo-400 font-bold">+15 XP per message</span>
-        </div>
-      </div>
-    </div>
-  </div>
+    </nav>
 
   <!-- FUTURE-SELF LETTER MODAL -->
   <div id="modal-future-self" class="fixed inset-0 bg-[#090A0F]/95 backdrop-blur-2xl z-[400] flex items-center justify-center p-4 hidden">
@@ -5340,14 +5343,22 @@
     }
 
     function showDashboard() {
-      const root = document.getElementById('app-sanctuary-root');
-      if (root) root.classList.remove('hidden');
-      const overlay = document.getElementById('landing-page-overlay');
-      if (overlay) overlay.classList.add('hidden');
-      const prologue = document.getElementById('cinematic-prologue-cutscene');
-      if (prologue) prologue.classList.add('hidden');
-      switchScreen('dashboard');
-      document.body.classList.remove('overflow-hidden');
+      try {
+        const root = document.getElementById('app-sanctuary-root');
+        if (root) root.classList.remove('hidden');
+        const overlay = document.getElementById('landing-page-overlay');
+        if (overlay) overlay.classList.add('hidden');
+        const prologue = document.getElementById('cinematic-prologue-cutscene');
+        if (prologue) prologue.classList.add('hidden');
+        const tour = document.getElementById('tour-spotlight-modal');
+        if (tour) tour.classList.add('hidden');
+        const voiced = document.getElementById('voiced-intro-modal');
+        if (voiced) voiced.classList.add('hidden');
+        switchScreen('dashboard');
+        document.body.classList.remove('overflow-hidden');
+      } catch (e) {
+        console.error("showDashboard error:", e);
+      }
     }
 
     function safeguardAllIcons() {
