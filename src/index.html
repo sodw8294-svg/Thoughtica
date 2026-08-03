@@ -3140,6 +3140,24 @@
 
   <!-- JS CLIENT LOGIC -->
   <script>
+    // 5:00 AM DAILY WORD & ANCIENT WISDOM ROTATION DATABASE
+    const DAILY_WORDS_DATABASE = [
+      { word: "Kairos", pos: "(n.) The opportune, decisive moment for quiet discovery", desc: "Stop waiting for conditions to be perfect. The opportune moment is created by your decision to step onto the path now." },
+      { word: "Eudaimonia", pos: "(n.) Living in alignment with one's highest nature and flourishing", desc: "True fulfillment is not passive happiness, but the active expression of your highest character and purpose." },
+      { word: "Ataraxia", pos: "(n.) Untroubled, tranquil peace of mind amidst life's storms", desc: "Cultivate inner composure. When the storm rages outside, your sanctuary remains undisturbed within." },
+      { word: "Sophrosyne", pos: "(n.) A harmonious state of mind characterized by self-control and wisdom", desc: "Mastery over oneself is the ultimate victory. Balance desire with purpose, and noise with quiet clarity." },
+      { word: "Aretē", pos: "(n.) Moral excellence and realizing your fullest potential", desc: "Strive for excellence in every small action. Your daily habits compound into your ultimate destiny." },
+      { word: "Kenshō", pos: "(n.) A sudden awakening into one's true, quiet inner essence", desc: "Strip away the illusion of external noise. Your true nature is already tranquil, powerful, and whole." },
+      { word: "Sisu", pos: "(n.) Extraordinary courage, grit, and quiet resolve in adversity", desc: "When options are exhausted, sisu begins. Keep stepping forward with quiet, unyielding momentum." },
+      { word: "Meraki", pos: "(n.) Putting your soul, passion, and devotion into what you create", desc: "Leave a piece of your heart in every creation. Quality is the signature of your inner character." },
+      { word: "Ikigai", pos: "(adj.) A reason for being; the intersection of passion, talent, and purpose", desc: "Align what you love with what the world needs. Every sunrise brings a new opportunity to honor your ikigai." },
+      { word: "Equanimity", pos: "(n.) Mental calmness, composure, and evenness of temper", desc: "Remain anchored through victory and defeat alike. Serenity is the fruit of an unshakeable mind." },
+      { word: "Apotheosis", pos: "(n.) The highest point of personal growth and elevation", desc: "You are constantly evolving. Trust the process as your daily effort elevates you to new heights." },
+      { word: "Sovereign", pos: "(adj.) Possessing supreme inner autonomy, agency, and self-mastery", desc: "Reclaim governance over your attention and mind. You are the architect of your reality." },
+      { word: "Wabi-Sabi", pos: "(n.) Finding beauty in imperfection, simplicity, and natural evolution", desc: "Embrace the beauty of unfinished paths. Growth is a continuous, organic journey, not a static destination." },
+      { word: "Serendipity", pos: "(n.) Finding valuable discoveries while walking the path with open eyes", desc: "Stay curious and observant. The most profound opportunities reveal themselves to those who walk with awareness." }
+    ];
+
     let _stripe = null;
 
     function get5AMDateKey() {
@@ -5521,6 +5539,13 @@
     let _chatConversationId = null;
     let _chatIsTyping = false;
 
+    const ALL_TRACK_KEYS = [
+      'morning-sun', 'afternoon-forest', 'golden-valley', 'daylight-rain',
+      'midnight-sanctuary', 'starlit-lake', 'twilight-forest', 'night-storm',
+      'ocean-tides', 'waterfall', 'forest-stream', 'rainforest',
+      'pine-wind', 'autumn-breeze', 'winter-blizzard', 'desert-dunes'
+    ];
+
     const _defaultStats = { level: 1, xp: 0, mind: 10, soul: 10, drive: 10, checkInStreak: 0, lastCheckIn: null };
 
     function loadStats() {
@@ -5563,6 +5588,16 @@
       } catch (e) {
         console.error('Load state error:', e);
       }
+      return S;
+    }
+
+    function load() {
+      return loadStats();
+    }
+
+    function saveStats(stats) {
+      S = stats;
+      save();
     }
         
     function showLandingPageOverlay() {
@@ -8157,6 +8192,22 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       rec.start();
     }
 
+    function sendChat() {
+      const inp = document.getElementById('companion-chat-input');
+      if (!inp) return;
+      const val = inp.value.trim();
+      if (!val) return;
+      inp.value = '';
+      processUserChatMessage(val);
+    }
+
+    const companionChatInput = document.getElementById('companion-chat-input');
+    if (companionChatInput) {
+      companionChatInput.onkeydown = (e) => {
+        if (e.key === 'Enter') sendChat();
+      };
+    }
+
     const floatingChatInput = document.getElementById('floating-chat-input');
     if (floatingChatInput) {
       floatingChatInput.onkeydown = (e) => {
@@ -8164,7 +8215,8 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       };
     }
 
-    document.getElementById('companion-chat-send').onclick = sendChat;
+    const compSend = document.getElementById('companion-chat-send');
+    if (compSend) compSend.onclick = sendChat;
 
     // ═══════════════════════════════════════════════════════
     // 🔮 KORA BREAKTHROUGH ENGINE — 7 Signature AI Features
@@ -9458,14 +9510,33 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       lucide.createIcons();
       setAtmosphere(S.companion.aura || 'twilight');
       initIntroCanvasParticles();
-      document.getElementById('btn-settings').onclick = openSettings;
-      document.getElementById('btn-close-settings').onclick = closeSettings;
+      const btnSet = document.getElementById('btn-settings');
+      if (btnSet) btnSet.onclick = openSettings;
+      
+      const btnCloseSet = document.getElementById('btn-close-settings');
+      if (btnCloseSet) btnCloseSet.onclick = closeSettings;
+
       if (S.companion && S.companion.name) {
-        document.getElementById('companion-name-display').textContent = S.companion.name;
-        document.getElementById('custom-quantum-goal').value = S.goal || '';
-        document.getElementById('custom-goal-val').textContent = S.goal || 'Cultivate mental clarity & inner strength';
-        document.getElementById('dashboard-story-title').textContent = `${S.goal || 'Sovereign Awakening'} — Step into Quiet Discovery`;
-        renderChat(); renderRitual(); updateLevelUI(); renderRadar(); renderAchievements(); renderSkillTree(); renderJournalEntries(); selectGPSRoadmap('founder');
+        const compDisplay = document.getElementById('companion-name-display');
+        if (compDisplay) compDisplay.textContent = S.companion.name;
+
+        const cqGoal = document.getElementById('custom-quantum-goal');
+        if (cqGoal) cqGoal.value = S.goal || '';
+
+        const cgVal = document.getElementById('custom-goal-val');
+        if (cgVal) cgVal.textContent = S.goal || 'Cultivate mental clarity & inner strength';
+
+        const dsTitle = document.getElementById('dashboard-story-title');
+        if (dsTitle) dsTitle.textContent = `${S.goal || 'Sovereign Awakening'} — Step into Quiet Discovery`;
+
+        renderChat();
+        renderRitual();
+        updateLevelUI();
+        renderRadar();
+        renderAchievements();
+        renderSkillTree();
+        renderJournalEntries();
+        selectGPSRoadmap('founder');
       }
     });
     // ---------- STATE PERSISTENCE ----------
