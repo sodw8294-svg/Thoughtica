@@ -644,7 +644,7 @@
        SANCTUARY APP ROOT
        Shown after user clicks "Enter Your Sanctuary"
        ============================================= -->
-  <div id="app-sanctuary-root" class="hidden flex flex-col min-h-screen min-h-[100dvh]">
+  <div id="app-sanctuary-auth-container" class="flex flex-col">
 
     <!-- AUTH GATE: shown when not signed in -->
     <div id="auth-gate" class="fixed inset-0 z-[9000] bg-[#090A0F] flex flex-col items-center justify-center p-6 hidden">
@@ -4797,7 +4797,7 @@
     // Auto-extract candidate memories from user text (conservative — only clear preference/goal signals)
     const MEMORY_EXTRACT_PATTERNS = [
       { re: /\bi\s+(love|really\s+like|enjoy|prefer|adore)\s+(.{3,60})/i,         category: 'preference',    tmpl: m => `Likes/enjoys: ${m[2].trim()}` },
-      { re: /\bi\s+(hate|dislike|can\'t\s+stand|avoid)\s+(.{3,60})/i,              category: 'preference',    tmpl: m => `Dislikes/avoids: ${m[2].trim()}` },
+      { re: /\bi\s+(hate|dislike|cant|avoid)\s+(.{3,60})/i,              category: 'preference',    tmpl: m => `Dislikes/avoids: ${m[2].trim()}` },
       { re: /\bmy\s+goal\s+is\s+(.{5,120})/i,                                     category: 'goal',          tmpl: m => `Goal: ${m[1].trim()}` },
       { re: /\bi\s+want\s+to\s+(be|become|achieve|build|create|learn)\s+(.{5,100})/i, category: 'goal',      tmpl: m => `Wants to ${m[1].trim()} ${m[2].trim()}` },
       { re: /\bevery\s+(morning|evening|day|week)\s+i\s+(.{5,80})/i,              category: 'routine',       tmpl: m => `Routine: every ${m[1].trim()} ${m[2].trim()}` },
@@ -5241,7 +5241,7 @@
           if (key.startsWith('gsk_')) {
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `****** },
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
               body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
             });
             const data = await res.json();
@@ -5585,7 +5585,8 @@
         if (tour) tour.classList.add('hidden');
         const voiced = document.getElementById('voiced-intro-modal');
         if (voiced) voiced.classList.add('hidden');
-        switchScreen('dashboard');
+        _switchLock = false;
+        switchScreen('dashboard', true);
         document.body.classList.remove('overflow-hidden');
       } catch (e) {
         console.error("showDashboard error:", e);
@@ -6476,13 +6477,14 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // SCREEN SWITCHER — smooth cross-fade slide-up transition
+    // SCREEN SWITCHER — instant responsive tab transition
     let _switchLock = false;
-    function switchScreen(screenName) {
-      if (_switchLock) return;
+    function switchScreen(screenName, force = false) {
       const allScreens = document.querySelectorAll('.screen');
       const targetScreen = document.getElementById(`screen-${screenName}`);
       if (!targetScreen) return;
+
+      if (_switchLock && !force) return;
 
       // Update nav highlights immediately
       document.querySelectorAll('.nav-item').forEach(x => {
@@ -6495,39 +6497,34 @@
         }
       });
 
-      // If same screen, skip
-      if (targetScreen.classList.contains('active')) return;
-
       _switchLock = true;
-      // Fade out current active screen
-      const currentActive = document.querySelector('.screen.active');
-      if (currentActive) currentActive.classList.remove('active');
-
-      // Small delay so CSS opacity transition can start before switching (smooth cross-fade)
-      setTimeout(() => {
-        allScreens.forEach(s => s.classList.remove('active'));
-        targetScreen.classList.add('active');
-        _switchLock = false;
-
-        if (canEarnXP(`explore_tab_${screenName}`, 1)) {
-          addXP(5, `Sanctuary Waypoint Discovered (${screenName})`);
+      allScreens.forEach(s => {
+        if (s === targetScreen) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
         }
-        if (screenName === 'detox' && typeof renderDetoxScreen === 'function') renderDetoxScreen();
-        if (screenName === 'mentor' && typeof renderArenaBosses === 'function') renderArenaBosses();
-        if (screenName === 'aibot') {
-          if (typeof renderCustomAIChat === 'function') renderCustomAIChat();
-          if (typeof updateCompanionProgressionUI === 'function') updateCompanionProgressionUI();
-          if (typeof drawCompanionAvatar === 'function') drawCompanionAvatar();
-          if (typeof syncAppearanceFormValues === 'function') syncAppearanceFormValues();
-          const nameInput = document.getElementById('custom-ai-name');
-          const personalityInput = document.getElementById('custom-ai-personality');
-          if (nameInput) nameInput.value = S.customAI?.name || 'Nexus';
-          if (personalityInput) personalityInput.value = S.customAI?.personality || 'A supportive, wise guide.';
-          const chatInput = document.getElementById('custom-ai-chat-input');
-          if (chatInput) setTimeout(() => chatInput.focus(), 250);
-        }
-        if (typeof updateCompanionContextBadge === 'function') updateCompanionContextBadge();
-      }, 180);
+      });
+      _switchLock = false;
+
+      if (canEarnXP(`explore_tab_${screenName}`, 1)) {
+        addXP(5, `Sanctuary Waypoint Discovered (${screenName})`);
+      }
+      if (screenName === 'detox' && typeof renderDetoxScreen === 'function') renderDetoxScreen();
+      if (screenName === 'mentor' && typeof renderArenaBosses === 'function') renderArenaBosses();
+      if (screenName === 'aibot') {
+        if (typeof renderCustomAIChat === 'function') renderCustomAIChat();
+        if (typeof updateCompanionProgressionUI === 'function') updateCompanionProgressionUI();
+        if (typeof drawCompanionAvatar === 'function') drawCompanionAvatar();
+        if (typeof syncAppearanceFormValues === 'function') syncAppearanceFormValues();
+        const nameInput = document.getElementById('custom-ai-name');
+        const personalityInput = document.getElementById('custom-ai-personality');
+        if (nameInput) nameInput.value = S.customAI?.name || 'Nexus';
+        if (personalityInput) personalityInput.value = S.customAI?.personality || 'A supportive, wise guide.';
+        const chatInput = document.getElementById('custom-ai-chat-input');
+        if (chatInput) setTimeout(() => chatInput.focus(), 250);
+      }
+      if (typeof updateCompanionContextBadge === 'function') updateCompanionContextBadge();
     }
 
     // INTERACTIVE SPOTLIGHT TOUR ENGINE
