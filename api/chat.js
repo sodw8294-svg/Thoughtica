@@ -5,27 +5,9 @@ const DEFAULT_TIMEOUT_MS = 15000;
 const MIN_TIMEOUT_MS = 3000;
 const MAX_TIMEOUT_MS = 30000;
 
-const SUPPORT_MODE_INSTRUCTIONS = {
-  emotional: `SUPPORT MODE — EMOTIONAL:
-You are in active-listening, reflective mode. Prioritize empathy, validation, and warmth above all.
-Reflect back what the user shares. Ask gentle, open-ended follow-up questions. Do not rush to solutions unless asked.
-Use phrases like "That sounds really hard", "I hear you", "It makes sense you'd feel that way".`,
-
-  coaching: `SUPPORT MODE — COACHING/ACCOUNTABILITY:
-You are in structured accountability mode. Focus on goals, progress, and planning.
-Celebrate small wins. Gently challenge avoidance. Offer concrete next steps and check-in prompts.
-Ask questions like "What's one step you can take today?" and "What got in the way last time?"`,
-
-  practical: `SUPPORT MODE — PRACTICAL ASSISTANCE:
-You are in solution-focused, task-breakdown mode. Be concise, structured, and actionable.
-Use numbered lists, clear steps, and decision frameworks. Minimize emotional preamble unless distress signals appear.`,
-
-  crisis: `SUPPORT MODE — CRISIS AWARENESS:
-The user may be experiencing significant distress. Respond with calm, unconditional warmth.
-Acknowledge their feelings without minimizing. Do NOT offer unsolicited advice.
-Always include: "I'm here with you. If things feel overwhelming, please reach out to a trusted person or a professional helpline."
-You are a supportive companion, not a licensed professional — be honest about this boundary while staying caring.`
-};
+// System-prompt config lives in a dedicated module so personality, safety
+// constraints, and speaking style can be iterated without touching request logic.
+const { buildSystemPrompt: _buildSystemPromptFromConfig, SUPPORT_MODE_INSTRUCTIONS } = require('./system-prompt');
 
 function clampTimeout(value) {
   const parsed = Number.parseInt(value, 10);
@@ -123,40 +105,217 @@ async function fetchWithTimeout(url, options, timeoutMs) {
   }
 }
 
+// Delegate to the config module so tests importing chat.js still get the same
+// system prompt without duplication.
 function buildSystemPrompt(cName, uName, goal, level, memoryItems, supportMode) {
-  const supportInstruction = SUPPORT_MODE_INSTRUCTIONS[supportMode] || '';
+  return _buildSystemPromptFromConfig(cName, uName, goal, level, memoryItems, supportMode);
+}
 
-  let memorySectionText = '';
-  if (memoryItems.length > 0) {
-    const lines = memoryItems
-      .filter(m => m.confidence >= 0.5)
-      .map(m => `  [${m.category}] ${m.text}`)
-      .join('\n');
-    if (lines) {
-      memorySectionText = `\nPERSISTENT MEMORY (facts you know about ${uName} — reference naturally when relevant, never repeat all at once):\n${lines}\n`;
+/* ─────────────────────────────────────────────────────────────────────────
+   STREAMING HELPERS
+   Token-by-token SSE streaming for OpenAI-compatible and Gemini providers.
+   Only activated when the client sends { stream: true } in the request body.
+   All existing non-streaming tests remain unaffected.
+───────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Parse and forward an OpenAI/Groq SSE stream, calling `onToken` for each
+ * content delta.  Resolves when the stream ends cleanly.
+ * @param {ReadableStream} body - Response body from the upstream SSE endpoint
+ * @param {(token: string) => void} onToken
+ */
+async function consumeOpenAIStream(body, onToken) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || ''; // keep incomplete trailing line
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6).trim();
+      if (data === '[DONE]') return;
+
+      try {
+        const parsed = JSON.parse(data);
+        const token = parsed.choices?.[0]?.delta?.content;
+        if (token) onToken(token);
+      } catch {
+        // Ignore parse errors for malformed chunks
+      }
+    }
+  }
+}
+
+/**
+ * Parse and forward a Gemini SSE stream (`alt=sse`), calling `onToken` for
+ * each text part received.
+ * @param {ReadableStream} body
+ * @param {(token: string) => void} onToken
+ */
+async function consumeGeminiStream(body, onToken) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6).trim();
+
+      try {
+        const parsed = JSON.parse(data);
+        const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) onToken(text);
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  }
+}
+
+/**
+ * Handle a request where `req.body.stream === true`.  Writes SSE events to
+ * `res` as tokens arrive and ends the response when done or on error.
+ *
+ * SSE event shapes emitted:
+ *   { token: "..." }           – a streamed content token
+ *   { done: true, conversationId, provider } – stream finished
+ *   { error: { code, message } }             – unrecoverable error
+ * Followed by the sentinel:    data: [DONE]
+ *
+ * @returns {Promise<void>}
+ */
+async function handleStreamingRequest(req, res, { conversationId, messages, userText, systemPrompt, timeoutMs, geminiKey, groqKey, openaiKey, cName }) {
+  // SSE response headers — disable all buffering so tokens arrive immediately.
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx/Vercel edge buffering
+
+  /** Write a single SSE data line. */
+  const emit = (payload) => {
+    res.write(`data: ${JSON.stringify(payload)}\n\n`);
+  };
+
+  const providerFailures = [];
+
+  // ── Gemini (streamGenerateContent) ─────────────────────────────────────
+  if (geminiKey) {
+    try {
+      const contents = [
+        { role: 'user', parts: [{ text: `SYSTEM DIRECTIVE: ${systemPrompt}` }] },
+        { role: 'model', parts: [{ text: `Understood. I am ${cName}, your AI companion.` }] },
+        ...messages.map(msg => ({ role: msg.role === 'user' ? 'user' : 'model', parts: [{ text: msg.content }] })),
+        { role: 'user', parts: [{ text: userText }] }
+      ];
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-1.5-flash'}:streamGenerateContent?key=${geminiKey}&alt=sse`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents }),
+          signal: controller.signal
+        }
+      );
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error(`Gemini HTTP ${response.status}`);
+      await consumeGeminiStream(response.body, (token) => emit({ token }));
+      emit({ done: true, conversationId, provider: 'gemini' });
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    } catch (err) {
+      providerFailures.push({ provider: 'gemini', error: err.message });
     }
   }
 
-  return `You are ${cName}, a genuine, persistent AI companion in Thoughtica.io (a gamified Life RPG and Sanctuary).
-Your user is ${uName}, Level ${level}, working towards: "${goal}".
+  // ── Groq (OpenAI-compatible SSE) ────────────────────────────────────────
+  if (groqKey) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', groqKey].join(' ') },
+        body: JSON.stringify({
+          model: process.env.GROQ_MODEL || 'llama3-8b-8192',
+          messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }],
+          stream: true
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
 
-YOUR CHARACTER:
-- Warm, clear, intelligent, and deeply mindful — like an ancient sage and trusted friend combined.
-- You remember and reference what you know about ${uName} naturally (not robotically).
-- You can handle any request: coding, philosophy, emotional support, planning, creativity.
-- You are supportive but honest — you are a companion, not a licensed professional.
-- Never use manipulative, dependency-forming, or flattery-heavy language.
-${memorySectionText}
-${supportInstruction ? supportInstruction + '\n' : ''}
-SAFETY: If the user expresses thoughts of self-harm or crisis, respond with warmth, validate their feelings, and gently encourage them to reach out to a trusted person or professional helpline. Do not minimize or dismiss.
+      if (!response.ok) throw new Error(`Groq HTTP ${response.status}`);
+      await consumeOpenAIStream(response.body, (token) => emit({ token }));
+      emit({ done: true, conversationId, provider: 'groq' });
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    } catch (err) {
+      providerFailures.push({ provider: 'groq', error: err.message });
+    }
+  }
 
-FORMATTING:
-- Use GitHub Markdown (bold, lists, headers, code blocks) for rich responses.
-- Embed XP action cards when a task or habit is proposed:
-  * [⚡ Anchor Habit (+15 XP)]
-  * [🧘 3-Min Breathing Session (+20 XP)]
-  * [🎯 Add Goal Quest (+25 XP)]
-- Do NOT prefix your response with your name or "Assistant:".`;
+  // ── OpenAI (SSE) ────────────────────────────────────────────────────────
+  if (openaiKey) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: ['Bearer', openaiKey].join(' ') },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          messages: [{ role: 'system', content: systemPrompt }, ...messages, { role: 'user', content: userText }],
+          stream: true
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error(`OpenAI HTTP ${response.status}`);
+      await consumeOpenAIStream(response.body, (token) => emit({ token }));
+      emit({ done: true, conversationId, provider: 'openai' });
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    } catch (err) {
+      providerFailures.push({ provider: 'openai', error: err.message });
+    }
+  }
+
+  // ── All providers failed ────────────────────────────────────────────────
+  emit({
+    error: {
+      code: 'PROVIDER_UNAVAILABLE',
+      message: 'Unable to reach any AI provider. Your conversation context is safe — please try again in a moment.',
+      retryable: true,
+      details: { providersTried: providerFailures }
+    }
+  });
+  res.write('data: [DONE]\n\n');
+  res.end();
 }
 
 module.exports = async (req, res) => {
@@ -191,10 +350,33 @@ module.exports = async (req, res) => {
 
   const systemPrompt = buildSystemPrompt(cName, uName, goal, level, memoryItems, supportMode);
 
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const groqKey = process.env.GROQ_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
+
+  // ── Streaming mode (SSE, opt-in) ──────────────────────────────────────────
+  // Activated when the client sends { stream: true }.  Returns SSE events
+  // { token }, { done }, or { error } without breaking the non-streaming path
+  // used by all existing tests and callers that omit stream.
+  if (req.body.stream === true) {
+    if (!geminiKey && !groqKey && !openaiKey) {
+      // Can't use streaming JSON error here — send as SSE
+      res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
+      res.write(`data: ${JSON.stringify({ error: { code: 'PROVIDER_NOT_CONFIGURED', message: 'No AI provider is configured. Your conversation context is still safe.' } })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    }
+    return handleStreamingRequest(req, res, {
+      conversationId, messages, userText, systemPrompt, timeoutMs,
+      geminiKey, groqKey, openaiKey, cName
+    });
+  }
+
   const providerCalls = [];
   const providerFailures = [];
 
-  const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {
     providerCalls.push({
       name: 'gemini',
@@ -224,7 +406,6 @@ module.exports = async (req, res) => {
     });
   }
 
-  const groqKey = process.env.GROQ_API_KEY;
   if (groqKey) {
     providerCalls.push({
       name: 'groq',
@@ -250,7 +431,6 @@ module.exports = async (req, res) => {
     });
   }
 
-  const openaiKey = process.env.OPENAI_API_KEY;
   if (openaiKey) {
     providerCalls.push({
       name: 'openai',

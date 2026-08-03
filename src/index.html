@@ -2612,6 +2612,10 @@
                 <!-- Messaging Input Block -->
                 <div class="p-3 border-t border-white/10 bg-slate-950/90 flex items-center gap-2">
                   <input type="text" id="custom-ai-chat-input" placeholder="Type a message to your custom companion..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all select-text">
+                  <!-- Stop button: visible only while a stream is in progress -->
+                  <button id="custom-ai-stop-btn" onclick="stopCompanionStream()" title="Stop generating" style="display:none" class="p-3 bg-slate-700 hover:bg-rose-600 text-white rounded-xl shadow transition-all flex items-center justify-center shrink-0 cursor-pointer">
+                    <i data-lucide="square" class="w-4 h-4"></i>
+                  </button>
                   <button onclick="sendCustomAIChat()" class="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg transition-all flex items-center justify-center shrink-0 cursor-pointer">
                     <i data-lucide="send" class="w-4 h-4"></i>
                   </button>
@@ -5024,18 +5028,136 @@
     }
 
     // Dynamic Prompts & AI Responses
+
+    /**
+     * Read an SSE stream from `/api/chat` (with `stream: true`) and call
+     * `onToken(token, accumulated)` for each arriving content token.
+     *
+     * Returns the full assembled text on success, or `null` if streaming is
+     * unavailable / fails (caller should fall back to non-streaming path).
+     *
+     * @param {string} userText
+     * @param {object} payload  - Additional fields forwarded to /api/chat
+     * @param {(token: string, accumulated: string) => void} onToken
+     * @param {AbortSignal} signal
+     * @returns {Promise<{text: string, conversationId: string|null}|null>}
+     */
+    async function streamAPIResponse(userText, payload, onToken, signal) {
+      try {
+        const controller = new AbortController();
+        // Combine caller's signal with our timeout
+        const timeoutId = setTimeout(() => controller.abort(), 9000);
+        if (signal) {
+          signal.addEventListener('abort', () => controller.abort(), { once: true });
+        }
+
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, userText, stream: true }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) return null;
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('text/event-stream')) return null;
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let accumulated = '';
+        let conversationId = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('data: ')) continue;
+            const data = trimmed.slice(6).trim();
+            if (data === '[DONE]') break;
+
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.token) {
+                accumulated += parsed.token;
+                onToken(parsed.token, accumulated);
+              } else if (parsed.done) {
+                conversationId = parsed.conversationId || null;
+              } else if (parsed.error) {
+                // Provider error inside the stream — treat as stream failure
+                return null;
+              }
+            } catch {
+              // Ignore JSON parse errors for individual SSE chunks
+            }
+          }
+        }
+
+        return accumulated.trim() ? { text: accumulated.trim(), conversationId } : null;
+      } catch {
+        return null; // Network error or AbortError — caller falls back
+      }
+    }
+
     async function triggerCompanionAIResponse(text) {
       const log = document.getElementById('custom-ai-chat-log');
       const statusLabel = document.getElementById('custom-ai-status-label');
-      
+
       if (statusLabel) statusLabel.textContent = "Synthesizing Wisdom...";
-      
+
+      // Abort any previous in-flight stream so we don't have two competing
+      // responses updating the same log.
+      if (_activeStreamController) {
+        _activeStreamController.abort();
+      }
+      _activeStreamController = new AbortController();
+      const abortSignal = _activeStreamController.signal;
+
+      // ── Build streaming payload (mirrors fetchCustomAIResponse context) ──
+      const cName = S.customAI?.name || 'Kora';
+      const uName = S.name || 'Seeker';
+      const uGoal = S.goal || 'Cultivate mental clarity';
+      const uLevel = S.level || 1;
+      const activeSupportMode = S.customAI?.supportMode || detectSupportMode(text);
+      const memoryContext = (S.customAI?.memoryEnabled !== false && S.customAI?.memories)
+        ? S.customAI.memories.slice(-20).map(m => ({
+            text: m.text,
+            category: m.category || 'general',
+            confidence: m.confidence !== undefined ? m.confidence : 1
+          }))
+        : [];
+      const rawHistory = (S.customAI?.chatHistory || []).filter(
+        m => m && typeof m.content === 'string' && !m.content.startsWith('System Sync Update:')
+      );
+      const pastMessages = rawHistory.slice(-16).map(m => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content
+      }));
+
+      const streamPayload = {
+        messages: pastMessages,
+        companionName: cName,
+        userName: uName,
+        userGoal: uGoal,
+        userLevel: uLevel,
+        memoryContext,
+        supportMode: activeSupportMode
+      };
+
+      // Show typing indicator while waiting for the first token
       const typingEl = document.createElement('div');
-      typingEl.className = "flex justify-start w-full";
+      typingEl.className = 'flex justify-start w-full';
       typingEl.innerHTML = `
         <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs bg-slate-900 border border-white/5 rounded-tl-none shadow-xl flex flex-col gap-1.5">
           <p class="font-extrabold text-[9px] text-slate-400 uppercase tracking-widest flex items-center gap-1">
-            <span>${S.customAI.name}</span>
+            <span>${cName}</span>
             <span class="w-1 h-1 rounded-full bg-slate-500"></span>
             <span>Synthesizing...</span>
           </p>
@@ -5049,39 +5171,113 @@
       log.appendChild(typingEl);
       log.scrollTop = log.scrollHeight;
 
-      const reply = await fetchCustomAIResponse(text);
-      typingEl.remove();
-
-      if (statusLabel) statusLabel.textContent = "Sanctuary Sync: Active";
-
-      // Append to history
-      S.customAI.chatHistory.push({ role: 'assistant', content: reply });
-      save();
-
-      // Typing animation for live response feel
+      // ── Live response bubble (shown as soon as first token arrives) ──────
+      const bubbleId = 'live-stream-' + Date.now();
       const bubbleContainer = document.createElement('div');
-      bubbleContainer.className = "flex justify-start w-full";
-      log.appendChild(bubbleContainer);
-
-      const bubbleId = 'live-typing-' + Date.now();
+      bubbleContainer.className = 'flex justify-start w-full';
+      bubbleContainer.style.display = 'none'; // Hidden until first token
       bubbleContainer.innerHTML = `
         <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs bg-slate-900 border border-white/5 rounded-tl-none shadow-xl flex flex-col gap-1.5 relative group">
           <p class="font-extrabold text-[9px] text-indigo-300 uppercase tracking-widest flex items-center gap-1">
-            <span>${S.customAI.name}</span>
+            <span>${cName}</span>
             <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
             <span>Just Now</span>
           </p>
           <div id="${bubbleId}" class="leading-relaxed text-slate-200 chat-bubble-markdown"></div>
         </div>
       `;
-      
-      const el = document.getElementById(bubbleId);
+      log.appendChild(bubbleContainer);
+
+      const bubbleEl = document.getElementById(bubbleId);
+      let firstToken = true;
+
+      // ── Try real SSE streaming first ─────────────────────────────────────
+      const streamResult = await streamAPIResponse(
+        text,
+        streamPayload,
+        (_token, accumulated) => {
+          if (firstToken) {
+            // Replace typing indicator with live bubble on first token
+            typingEl.remove();
+            bubbleContainer.style.display = '';
+            firstToken = false;
+          }
+          bubbleEl.innerHTML = parseMarkdownAndCards(accumulated);
+          log.scrollTop = log.scrollHeight;
+        },
+        abortSignal
+      );
+
+      if (abortSignal.aborted) {
+        // User sent a new message — discard this response silently
+        typingEl.remove();
+        bubbleContainer.remove();
+        return;
+      }
+
+      if (streamResult) {
+        // ── Streaming succeeded ────────────────────────────────────────────
+        const reply = streamResult.text;
+        if (firstToken) {
+          // No tokens were emitted (shouldn't happen, but guard it)
+          typingEl.remove();
+          bubbleContainer.remove();
+        } else {
+          // Ensure final render is complete
+          bubbleEl.innerHTML = parseMarkdownAndCards(reply);
+        }
+
+        S.customAI.chatHistory.push({ role: 'assistant', content: reply });
+        save();
+        if (statusLabel) statusLabel.textContent = 'Sanctuary Sync: Active';
+        addRelationshipXp(8);
+        // Refresh history view so copy/retry buttons appear on the final bubble
+        renderCustomAIChat();
+        return;
+      }
+
+      // ── Streaming unavailable — fall back to non-streaming path ──────────
+      typingEl.remove();
+      bubbleContainer.remove();
+
+      // Re-show typing indicator for the non-streaming request
+      const fallbackTypingEl = document.createElement('div');
+      fallbackTypingEl.className = 'flex justify-start w-full';
+      fallbackTypingEl.innerHTML = typingEl.innerHTML;
+      log.appendChild(fallbackTypingEl);
+      log.scrollTop = log.scrollHeight;
+
+      const reply = await fetchCustomAIResponse(text);
+      fallbackTypingEl.remove();
+
+      if (statusLabel) statusLabel.textContent = 'Sanctuary Sync: Active';
+      S.customAI.chatHistory.push({ role: 'assistant', content: reply });
+      save();
+
+      // Typewriter animation as fallback (cosmetic streaming feel)
+      const fallbackContainer = document.createElement('div');
+      fallbackContainer.className = 'flex justify-start w-full';
+      log.appendChild(fallbackContainer);
+
+      const fallbackBubbleId = 'live-typing-' + Date.now();
+      fallbackContainer.innerHTML = `
+        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs bg-slate-900 border border-white/5 rounded-tl-none shadow-xl flex flex-col gap-1.5 relative group">
+          <p class="font-extrabold text-[9px] text-indigo-300 uppercase tracking-widest flex items-center gap-1">
+            <span>${cName}</span>
+            <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
+            <span>Just Now</span>
+          </p>
+          <div id="${fallbackBubbleId}" class="leading-relaxed text-slate-200 chat-bubble-markdown"></div>
+        </div>
+      `;
+
+      const fallbackEl = document.getElementById(fallbackBubbleId);
       let i = 0;
       const speed = reply.length > 200 ? 5 : 15;
-      
+
       function typeText() {
         if (i < reply.length) {
-          el.innerHTML = parseMarkdownAndCards(reply.slice(0, i + 1));
+          fallbackEl.innerHTML = parseMarkdownAndCards(reply.slice(0, i + 1));
           i++;
           log.scrollTop = log.scrollHeight;
           setTimeout(typeText, speed);
@@ -5175,7 +5371,14 @@
         if (candidates.length > 0) renderMemoriesList();
       }
 
+      // Show stop button while generation is in progress
+      const stopBtn = document.getElementById('custom-ai-stop-btn');
+      if (stopBtn) stopBtn.style.display = '';
+
       await triggerCompanionAIResponse(text);
+
+      // Hide stop button once generation completes
+      if (stopBtn) stopBtn.style.display = 'none';
     }
 
     async function fetchCustomAIResponse(userText) {
@@ -5461,6 +5664,18 @@ Directives:
       }
     }
 
+    /** Cancel any in-progress SSE stream triggered by the companion chat. */
+    function stopCompanionStream() {
+      if (_activeStreamController) {
+        _activeStreamController.abort();
+        _activeStreamController = null;
+      }
+      const stopBtn = document.getElementById('custom-ai-stop-btn');
+      if (stopBtn) stopBtn.style.display = 'none';
+      const statusLabel = document.getElementById('custom-ai-status-label');
+      if (statusLabel) statusLabel.textContent = 'Sanctuary Sync: Active';
+    }
+
     // Attach key listener to Custom AI chat input
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
@@ -5611,6 +5826,9 @@ Directives:
     let _chatMessages = [];
     let _chatConversationId = null;
     let _chatIsTyping = false;
+    // Tracks the AbortController for any in-flight SSE stream so it can be
+    // cancelled when the user sends a new message or presses Stop.
+    let _activeStreamController = null;
 
     const ALL_TRACK_KEYS = [
       'morning-sun', 'afternoon-forest', 'golden-valley', 'daylight-rain',
