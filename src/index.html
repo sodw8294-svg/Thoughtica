@@ -644,7 +644,7 @@
        SANCTUARY APP ROOT
        Shown after user clicks "Enter Your Sanctuary"
        ============================================= -->
-  <div id="app-sanctuary-auth-container" class="flex flex-col min-h-screen min-h-[100dvh] flex-1">
+  <div id="app-sanctuary-auth-container" class="relative z-[9000]">
 
     <!-- AUTH GATE: shown when not signed in -->
     <div id="auth-gate" class="fixed inset-0 z-[9000] bg-[#090A0F] flex flex-col items-center justify-center p-6 hidden">
@@ -654,6 +654,42 @@
           <h2 class="text-3xl font-extrabold premium-text-gradient font-heading">Your Sanctuary</h2>
           <p class="text-slate-400 text-sm">Sign in to continue your journey.</p>
         </div>
+
+        <!-- Auth Tabs -->
+        <div class="flex rounded-xl overflow-hidden border border-slate-700 mb-4">
+          <button id="tab-signin" onclick="showAuthTab('signin')" class="flex-1 py-2 text-sm font-bold bg-indigo-600 text-white transition-all">Sign In</button>
+          <button id="tab-signup" onclick="showAuthTab('signup')" class="flex-1 py-2 text-sm font-bold bg-transparent text-slate-400 transition-all">Create Account</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div id="auth-signin" class="space-y-4">
+          <input id="si-email" type="email" placeholder="Email address" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="email">
+          <input id="si-password" type="password" placeholder="Password" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="current-password">
+          <button onclick="doSignIn()" class="w-full py-3 premium-button text-white font-bold rounded-xl">Sign In</button>
+          <button onclick="doGoogleSignIn()" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-semibold text-sm flex items-center justify-center gap-2 hover:border-indigo-500 transition-all">
+            <span>🌐</span> Continue with Google
+          </button>
+          <p id="auth-error-si" class="text-rose-400 text-xs text-center hidden"></p>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="auth-signup" class="space-y-4 hidden">
+          <input id="su-name" type="text" placeholder="Your name (or alias)" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="name">
+          <input id="su-email" type="email" placeholder="Email address" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="email">
+          <input id="su-password" type="password" placeholder="Password (min 6 chars)" class="w-full px-4 py-3 rounded-xl text-base" autocomplete="new-password">
+          <button onclick="doSignUp()" class="w-full py-3 premium-button text-white font-bold rounded-xl">Create Account</button>
+          <button onclick="doGoogleSignIn()" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-semibold text-sm flex items-center justify-center gap-2 hover:border-indigo-500 transition-all">
+            <span>🌐</span> Continue with Google
+          </button>
+          <p id="auth-error-su" class="text-rose-400 text-xs text-center hidden"></p>
+        </div>
+
+        <!-- Guest Mode -->
+        <button onclick="continueAsGuest()" class="w-full py-2 text-xs text-slate-500 hover:text-slate-300 transition-all">
+          Continue without account →
+        </button>
+      </div>
+    </div>
 
 
   <!-- AUTH MODAL -->
@@ -908,6 +944,7 @@
   </div>
 
   </div> <!-- /app-sanctuary-root -->
+  </div> <!-- /app-sanctuary-auth-container -->
 
   <!-- =============================================
        FIREBASE CONFIGURATION
@@ -10033,7 +10070,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
             launchApp();
           } else if (!_guestMode) {
             showAuthGate();
-            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('app-sanctuary-root').classList.add('hidden');
           }
         });
       } else {
@@ -10043,7 +10080,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     }
 
     function launchApp() {
-      document.getElementById('main-app').classList.remove('hidden');
+      document.getElementById('app-sanctuary-root').classList.remove('hidden');
       refreshStatsUI();
       renderQuests();
       refreshCheckInBtn();

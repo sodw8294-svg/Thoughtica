@@ -104,12 +104,19 @@ async function connectCDP() {
             const root = document.getElementById('app-sanctuary-root');
             const overlay = document.getElementById('landing-page-overlay');
             const body = document.body.innerHTML.substring(0, 1000);
-            return {
+            return JSON.stringify({
               rootHidden: root ? root.classList.contains('hidden') : null,
               overlayHidden: overlay ? overlay.classList.contains('hidden') : null,
               rootHeight: root ? root.offsetHeight : null,
-              bodyLength: document.body.innerHTML.length
-            };
+              rootDisplay: root ? window.getComputedStyle(root).display : null,
+              rootCompHeight: root ? window.getComputedStyle(root).height : null,
+              parentTag: root ? root.parentNode.tagName : null,
+              parentHeight: root ? root.parentNode.offsetHeight : null,
+              parentDisplay: root ? window.getComputedStyle(root.parentNode).display : null,
+              parentCompHeight: root ? window.getComputedStyle(root.parentNode).height : null,
+              bodyHeight: document.body.offsetHeight,
+              windowHeight: window.innerHeight
+            });
           })()`
         });
       }, 4000);
