@@ -5194,7 +5194,7 @@
       const uWis = S.stats?.WIS || 10;
       const uVit = S.stats?.VIT || 10;
 
-      // Build structured memory context for API
+      // Extract memories for persistent awareness
       const memoryContext = (S.customAI?.memoryEnabled !== false && S.customAI?.memories)
         ? S.customAI.memories.slice(-20).map(m => ({
             text: m.text,
@@ -5203,26 +5203,44 @@
           }))
         : [];
 
-      // Infer support mode from user message if not explicitly set
+      const memorySummary = memoryContext.length > 0
+        ? "\nPERSISTENT MEMORY VAULT (facts about user):\n" + memoryContext.map(m => ` • [${m.category}] ${m.text}`).join('\n')
+        : '';
+
       const activeSupportMode = S.customAI?.supportMode || detectSupportMode(userText);
 
-      const systemPrompt = `You are ${cName}, a genuine AI companion in Thoughtica (gamified Life RPG). Personality: ${personality}. Tone: ${tone}. Motivation style: ${motivation}. Communication: ${communication}. User: ${uName}, Level ${uLevel} (${uXP} XP), Streak ${uStreak} days, Specialization ${uSpecial}, Goal: "${uGoal}", WIS ${uWis}, VIT ${uVit}. Be warm, honest, helpful. You are a companion, not a licensed professional.`;
+      const systemPrompt = `You are ${cName}, a genuine AI companion in Thoughtica.io (a gamified Life RPG and Sanctuary). Personality: ${personality}. Tone: ${tone}. Motivation style: ${motivation}. Communication style: ${communication}. User: ${uName}, Level ${uLevel} (${uXP} XP), ${uStreak}-day streak, Specialization: ${uSpecial}, Active Goal: "${uGoal}", WIS ${uWis}, VIT ${uVit}.${memorySummary}
 
-      const pastMessages = (S.customAI?.chatHistory || []).slice(-8).map(m => ({
-        role: m.role,
+Directives:
+- Maintain full awareness of the multi-turn conversation.
+- Be warm, authentic, wise, and articulate.
+- Embed interactive XP cards when proposing habits or goals: [⚡ Anchor Habit (+15 XP)], [🧘 3-Min Breathing (+20 XP)], [🎯 Add Goal Quest (+25 XP)].
+- Do NOT prefix your response with your name or "Assistant:".`;
+
+      // ── Clean & Extract Multi-Turn Chat History ──
+      const rawHistory = (S.customAI?.chatHistory || []).filter(m => m && typeof m.content === 'string' && !m.content.startsWith("System Sync Update:"));
+      
+      // If the last entry in rawHistory is the userText just pushed, exclude it from pastMessages to avoid duplicating current prompt
+      const historyWithoutCurrent = (rawHistory.length > 0 && rawHistory[rawHistory.length - 1].role === 'user' && rawHistory[rawHistory.length - 1].content === userText)
+        ? rawHistory.slice(0, -1)
+        : rawHistory;
+
+      // Take up to 16 previous turns for conversation memory
+      const pastMessages = historyWithoutCurrent.slice(-16).map(m => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
         content: m.content
       }));
 
-      const messages = [
+      const fullMessagesPayload = [
         { role: 'system', content: systemPrompt },
         ...pastMessages,
         { role: 'user', content: userText }
       ];
 
-      // Tier 1: Server API endpoint /api/chat (with full memory + support mode context)
+      // ── Tier 1: Server API /api/chat (Vercel Serverless with Gemini/Groq/OpenAI) ──
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 12000);
+        const timer = setTimeout(() => controller.abort(), 8000);
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -5249,20 +5267,20 @@
         console.warn("Tier 1 /api/chat failed:", err);
       }
 
-      // Tier 2: Pollinations POST with 7s timeout
+      // ── Tier 2: Pollinations POST with full conversation messages array ──
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 7000);
+        const timer = setTimeout(() => controller.abort(), 6000);
         const res = await fetch('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages, model: 'openai' }),
+          body: JSON.stringify({ messages: fullMessagesPayload, model: 'openai', json: false }),
           signal: controller.signal
         });
         clearTimeout(timer);
         if (res.ok) {
           const reply = await res.text();
-          if (reply && reply.trim().length > 3 && !reply.includes('402 Payment Required')) {
+          if (reply && reply.trim().length > 3 && !reply.includes('402 Payment Required') && !reply.includes('Internal Server Error')) {
             return reply.trim();
           }
         }
@@ -5270,11 +5288,47 @@
         console.warn("Tier 2 Pollinations POST failed:", err);
       }
 
-      // Tier 3: Pollinations GET URL query fallback
+      // ── Tier 3: BYOK (Bring Your Own Key: Groq, OpenAI, Gemini, Anthropic, OpenRouter) ──
+      if (S.aiApiKey && S.aiApiKey.trim().length > 5) {
+        try {
+          const key = S.aiApiKey.trim();
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 8000);
+
+          if (key.startsWith('gsk_')) {
+            // Groq Llama 3.3 70B
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+              body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: fullMessagesPayload }),
+              signal: controller.signal
+            });
+            const data = await res.json();
+            clearTimeout(timer);
+            if (data.choices && data.choices[0]?.message?.content) return data.choices[0].message.content.trim();
+          } else if (key.startsWith('sk-')) {
+            // OpenAI GPT-4o-mini
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+              body: JSON.stringify({ model: 'gpt-4o-mini', messages: fullMessagesPayload }),
+              signal: controller.signal
+            });
+            const data = await res.json();
+            clearTimeout(timer);
+            if (data.choices && data.choices[0]?.message?.content) return data.choices[0].message.content.trim();
+          }
+        } catch (e) {
+          console.warn("Tier 3 BYOK failed:", e);
+        }
+      }
+
+      // ── Tier 4: Pollinations GET URL Fallback ──
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 5000);
-        const promptParam = encodeURIComponent(`System: ${systemPrompt}\nUser: ${userText}`);
+        const contextSnippet = pastMessages.slice(-4).map(m => `${m.role === 'user' ? 'User' : cName}: ${m.content}`).join('\n');
+        const promptParam = encodeURIComponent(`System: ${systemPrompt}\n${contextSnippet}\nUser: ${userText}`);
         const res = await fetch(`https://text.pollinations.ai/${promptParam}?model=openai`, {
           signal: controller.signal
         });
@@ -5286,28 +5340,10 @@
           }
         }
       } catch (err) {
-        console.warn("Tier 3 Pollinations GET failed:", err);
+        console.warn("Tier 4 Pollinations GET failed:", err);
       }
 
-      // Tier 4: BYOK Keys if stored in settings
-      if (S.aiApiKey && S.aiApiKey.trim().length > 5) {
-        try {
-          const key = S.aiApiKey.trim();
-          if (key.startsWith('gsk_')) {
-            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-              body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
-            });
-            const data = await res.json();
-            if (data.choices && data.choices.length > 0) return data.choices[0].message.content.trim();
-          }
-        } catch (e) {
-          console.warn("Tier 4 BYOK failed:", e);
-        }
-      }
-
-      // Tier 5: Contextual offline wisdom fallback
+      // ── Tier 5: Context-aware Offline AI Wisdom Fallback ──
       return generateOfflineKoraWisdom(userText, cName);
     }
 
