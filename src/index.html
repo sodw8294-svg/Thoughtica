@@ -934,16 +934,8 @@
         if (!firebase.apps || !firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
         }
-        // Listen for premium status changes
-        db.collection('users').doc(user.uid).onSnapshot((doc) => {
-          if (doc.exists && doc.data().isPremium) {
-            S.isPremium = true;
-            S.tier = doc.data().tier;
-            save();
-          }
-        });
       }
-    });
+    } catch(e) {}
 
     // Payment Return Handler
     function checkPaymentReturn() {
@@ -991,8 +983,6 @@
       } catch (e) {
         console.warn('Payment check error:', e);
       }
-    } catch (e) {
-      console.warn('[thoughtica] Firebase init skipped:', e.message);
     }
 
 
@@ -4807,7 +4797,7 @@
     // Auto-extract candidate memories from user text (conservative — only clear preference/goal signals)
     const MEMORY_EXTRACT_PATTERNS = [
       { re: /\bi\s+(love|really\s+like|enjoy|prefer|adore)\s+(.{3,60})/i,         category: 'preference',    tmpl: m => `Likes/enjoys: ${m[2].trim()}` },
-      { re: /\bi\s+(hate|dislike|can't\s+stand|avoid)\s+(.{3,60})/i,              category: 'preference',    tmpl: m => `Dislikes/avoids: ${m[2].trim()}` },
+      { re: /\bi\s+(hate|dislike|can\'t\s+stand|avoid)\s+(.{3,60})/i,              category: 'preference',    tmpl: m => `Dislikes/avoids: ${m[2].trim()}` },
       { re: /\bmy\s+goal\s+is\s+(.{5,120})/i,                                     category: 'goal',          tmpl: m => `Goal: ${m[1].trim()}` },
       { re: /\bi\s+want\s+to\s+(be|become|achieve|build|create|learn)\s+(.{5,100})/i, category: 'goal',      tmpl: m => `Wants to ${m[1].trim()} ${m[2].trim()}` },
       { re: /\bevery\s+(morning|evening|day|week)\s+i\s+(.{5,80})/i,              category: 'routine',       tmpl: m => `Routine: every ${m[1].trim()} ${m[2].trim()}` },
@@ -5388,10 +5378,6 @@
           inp.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendCustomAIChat();
           });
-        }
-      }, 500);
-    });
-
         }
       }, 500);
     });

@@ -934,16 +934,8 @@
         if (!firebase.apps || !firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
         }
-        // Listen for premium status changes
-        db.collection('users').doc(user.uid).onSnapshot((doc) => {
-          if (doc.exists && doc.data().isPremium) {
-            S.isPremium = true;
-            S.tier = doc.data().tier;
-            save();
-          }
-        });
       }
-    });
+    } catch(e) {}
 
     // Payment Return Handler
     function checkPaymentReturn() {
@@ -991,8 +983,6 @@
       } catch (e) {
         console.warn('Payment check error:', e);
       }
-    } catch (e) {
-      console.warn('[thoughtica] Firebase init skipped:', e.message);
     }
 
 
@@ -2727,18 +2717,30 @@
 
               <!-- TAB 3: MEMORY VAULT -->
               <div id="tab-panel-comp-memory" class="absolute inset-0 p-4 space-y-4 overflow-y-auto scrollbar-none hidden bg-slate-950/20 text-left">
-                
+                 
                 <!-- Memory Controls Header -->
                 <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex justify-between items-center">
                   <div>
                     <h5 class="text-xs font-extrabold text-slate-200 uppercase tracking-wide">Long-Term Memory Matrix</h5>
-                    <p class="text-[10px] text-slate-400 mt-0.5">Let your companion retain facts to personalize advice.</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Let your companion retain facts to personalize advice. <span class="text-indigo-300">You control what's stored.</span></p>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-slate-400">Memory Track:</span>
+                    <span class="text-[10px] font-bold text-slate-400">Memory:</span>
                     <button onclick="toggleCompanionMemorySwitch()" id="btn-memory-toggle" class="px-2.5 py-1 text-[10px] font-bold rounded-lg border border-indigo-500/40 bg-indigo-500/20 text-indigo-300 transition-all cursor-pointer">
                       ON
                     </button>
+                  </div>
+                </div>
+
+                <!-- Support Mode Selector -->
+                <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-2">
+                  <h6 class="text-[10px] font-extrabold text-purple-300 uppercase tracking-widest">Support Mode</h6>
+                  <p class="text-[10px] text-slate-400">How should Kora support you right now?</p>
+                  <div class="grid grid-cols-2 gap-1.5 mt-2">
+                    <button onclick="setSupportMode('')" id="support-mode-auto" class="py-1.5 px-2 text-[10px] font-bold rounded-lg border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 transition-all cursor-pointer hover:bg-indigo-500/20">🔮 Auto</button>
+                    <button onclick="setSupportMode('emotional')" id="support-mode-emotional" class="py-1.5 px-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all cursor-pointer hover:bg-white/10">💙 Emotional</button>
+                    <button onclick="setSupportMode('coaching')" id="support-mode-coaching" class="py-1.5 px-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all cursor-pointer hover:bg-white/10">🎯 Coaching</button>
+                    <button onclick="setSupportMode('practical')" id="support-mode-practical" class="py-1.5 px-2 text-[10px] font-bold rounded-lg border border-white/10 bg-white/5 text-slate-400 transition-all cursor-pointer hover:bg-white/10">⚙️ Practical</button>
                   </div>
                 </div>
 
@@ -2751,15 +2753,19 @@
                       Add
                     </button>
                   </div>
+                  <p class="text-[9px] text-slate-500">Or type <em>"remember this"</em>, <em>"forget X"</em>, or <em>"what do you remember about me?"</em> in the chat.</p>
                 </div>
 
                 <!-- Memories List Container -->
                 <div class="space-y-2.5">
                   <div class="flex justify-between items-center text-[10px] uppercase tracking-wide text-slate-400 font-extrabold px-1">
                     <span>Remembered Facts</span>
-                    <span id="memories-count-badge">0 Facts</span>
+                    <div class="flex items-center gap-2">
+                      <span id="memories-count-badge">0 Facts</span>
+                      <button onclick="clearAllCompanionMemories()" class="px-2 py-0.5 text-[9px] font-bold rounded-md border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer">Clear All</button>
+                    </div>
                   </div>
-                  
+                   
                   <div id="companion-memories-list" class="space-y-2 max-h-[350px] overflow-y-auto scrollbar-none"></div>
                 </div>
 
@@ -4708,6 +4714,151 @@
       showXPToast(0, "Memory updated 💾", 1.0, false);
     }
 
+    function addNewCompanionMemory() {
+      const input = document.getElementById('new-memory-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) {
+        showXPToast(0, "Enter a memory fact first.", 1.0, true);
+        return;
+      }
+      if (!S.customAI) S.customAI = {};
+      if (!S.customAI.memories) S.customAI.memories = [];
+      S.customAI.memories.push({
+        id: 'mem_' + Date.now(),
+        text,
+        category: 'general',
+        confidence: 1,
+        source: 'manual',
+        timestamp: Date.now()
+      });
+      input.value = '';
+      save();
+      renderMemoriesList();
+      showXPToast(5, "Memory sealed 💾", 1.0, false);
+    }
+
+    function toggleCompanionMemorySwitch() {
+      if (!S.customAI) S.customAI = {};
+      S.customAI.memoryEnabled = !(S.customAI.memoryEnabled !== false);
+      save();
+      renderMemoriesList();
+      showXPToast(0, S.customAI.memoryEnabled ? "Memory learning ON 🔮" : "Memory learning OFF 🔒", 1.0, false);
+    }
+
+    function clearAllCompanionMemories() {
+      if (!confirm("Clear all stored memories? This cannot be undone.")) return;
+      if (!S.customAI) S.customAI = {};
+      S.customAI.memories = [];
+      save();
+      renderMemoriesList();
+      showXPToast(0, "All memories cleared 🗑️", 1.0, false);
+    }
+
+    function setSupportMode(mode) {
+      if (!S.customAI) S.customAI = {};
+      S.customAI.supportMode = mode;
+      save();
+      // Update button highlight states
+      const modes = ['', 'emotional', 'coaching', 'practical'];
+      const ids = ['support-mode-auto', 'support-mode-emotional', 'support-mode-coaching', 'support-mode-practical'];
+      ids.forEach((id, i) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (modes[i] === mode) {
+          btn.className = btn.className.replace(/border-white\/10 bg-white\/5 text-slate-400/, 'border-indigo-500/40 bg-indigo-500/20 text-indigo-300');
+        } else {
+          btn.className = btn.className.replace(/border-indigo-500\/40 bg-indigo-500\/20 text-indigo-300/, 'border-white/10 bg-white/5 text-slate-400');
+        }
+      });
+      const modeLabels = { '': 'Auto', emotional: 'Emotional Support', coaching: 'Coaching', practical: 'Practical Help' };
+      showXPToast(0, `Support mode: ${modeLabels[mode] || 'Auto'} 🔮`, 1.0, false);
+    }
+
+    // ── Kora Memory Commands: detect "remember this", "forget X", "what do you remember" ──
+    const MEMORY_CMD_REMEMBER = /\b(remember\s+this|save\s+this|keep\s+this|note\s+this|store\s+this)\b/i;
+    const MEMORY_CMD_FORGET   = /\b(forget|remove|delete|erase)\s+(.+)/i;
+    const MEMORY_CMD_VIEW     = /\b(what\s+do\s+you\s+remember|what\s+do\s+you\s+know\s+about\s+me|show\s+my\s+memories|list\s+memories)\b/i;
+    const MEMORY_CMD_DONT_REMEMBER = /\b(don'?t\s+remember\s+this|do\s+not\s+remember\s+this|forget\s+this|discard\s+this)\b/i;
+
+    // Crisis keyword detection (conservative — phrases only, not single words).
+    // "want to die" is only matched when NOT followed by figurative qualifiers (laughing, of laughter, etc.)
+    const CRISIS_SIGNALS = /\b(suicid\w*|self[- ]harm|kill\s+myself|no\s+reason\s+to\s+live|can'?t\s+go\s+on|want\s+to\s+(hurt\s+myself|end\s+it|give\s+up\s+on\s+life)|want\s+to\s+die(?!\s+(laughing|of\s+laughter|for\s+you|watching|eating|seeing|to\s+tell))\b)\b/i;
+
+    function detectSupportMode(text) {
+      const lower = text.toLowerCase();
+      if (CRISIS_SIGNALS.test(lower)) return 'crisis';
+      if (/\b(sad|cry|depressed|lonely|hurt|anxious|scared|overwhelm|lost|grief|trauma)\b/i.test(lower)) return 'emotional';
+      if (/\b(goal|plan|accountability|track|progress|habit|commit|challenge|motivat|push\s+me)\b/i.test(lower)) return 'coaching';
+      if (/\b(help\s+me|how\s+do|step|task|break\s+(it|this)\s+down|advice|recommend|decide)\b/i.test(lower)) return 'practical';
+      return '';
+    }
+
+    // Auto-extract candidate memories from user text (conservative — only clear preference/goal signals)
+    const MEMORY_EXTRACT_PATTERNS = [
+      { re: /\bi\s+(love|really\s+like|enjoy|prefer|adore)\s+(.{3,60})/i,         category: 'preference',    tmpl: m => `Likes/enjoys: ${m[2].trim()}` },
+      { re: /\bi\s+(hate|dislike|can\'t\s+stand|avoid)\s+(.{3,60})/i,              category: 'preference',    tmpl: m => `Dislikes/avoids: ${m[2].trim()}` },
+      { re: /\bmy\s+goal\s+is\s+(.{5,120})/i,                                     category: 'goal',          tmpl: m => `Goal: ${m[1].trim()}` },
+      { re: /\bi\s+want\s+to\s+(be|become|achieve|build|create|learn)\s+(.{5,100})/i, category: 'goal',      tmpl: m => `Wants to ${m[1].trim()} ${m[2].trim()}` },
+      { re: /\bevery\s+(morning|evening|day|week)\s+i\s+(.{5,80})/i,              category: 'routine',       tmpl: m => `Routine: every ${m[1].trim()} ${m[2].trim()}` },
+      { re: /\bi\s+(work|study|exercise|meditate|run|workout)\s+(every|each|daily)\b(.{0,60})/i, category: 'routine', tmpl: m => `Habit: ${m[1].trim()} regularly${m[3] ? ' ' + m[3].trim() : ''}` },
+      { re: /\bmy\s+name\s+is\s+([A-Z][a-z]+)/i,                                 category: 'identity',      tmpl: m => `User's name: ${m[1].trim()}` },
+      { re: /\bi'?m\s+(\d{1,2})\s+years?\s+old\b/i,                              category: 'identity',      tmpl: m => `Age: ${m[1]} years old` },
+      { re: /\bi\s+(live|am\s+based|reside)\s+in\s+(.{3,60})/i,                  category: 'identity',      tmpl: m => `Lives in: ${m[2].trim()}` },
+      { re: /\bmy\s+(biggest\s+)?challenge\s+is\s+(.{5,120})/i,                   category: 'challenge',     tmpl: m => `Challenge: ${m[2].trim()}` },
+      { re: /\bi\s+struggle\s+with\s+(.{5,100})/i,                                category: 'challenge',     tmpl: m => `Struggles with: ${m[1].trim()}` },
+      { re: /\bplease\s+(be|stay|keep\s+it|talk)\s+(direct|brief|gentle|casual|formal|warm|honest|concise)/i, category: 'tone', tmpl: m => `Communication preference: ${m[2].trim()}` }
+    ];
+
+    function extractCandidateMemories(text) {
+      const candidates = [];
+      for (const { re, category, tmpl } of MEMORY_EXTRACT_PATTERNS) {
+        const m = text.match(re);
+        if (m) {
+          candidates.push({ text: tmpl(m), category, confidence: 0.75, source: 'auto' });
+        }
+      }
+      return candidates;
+    }
+
+    function storeAutoMemory(candidate) {
+      if (!S.customAI) S.customAI = {};
+      if (!S.customAI.memories) S.customAI.memories = [];
+      // De-duplicate: skip if very similar text already stored
+      const exists = S.customAI.memories.some(m =>
+        m.text.toLowerCase().trim() === candidate.text.toLowerCase().trim()
+      );
+      if (exists) return false;
+      S.customAI.memories.push({
+        id: 'mem_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        text: candidate.text,
+        category: candidate.category,
+        confidence: candidate.confidence,
+        source: candidate.source,
+        timestamp: Date.now()
+      });
+      return true;
+    }
+
+    function buildMemoryViewText() {
+      const memories = S.customAI?.memories || [];
+      if (memories.length === 0) return "I haven't stored any memories about you yet. Share things about yourself and I'll remember them over time. 💾";
+      const grouped = {};
+      memories.forEach(m => {
+        const cat = m.category || 'general';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(m.text);
+      });
+      let out = "**Here's what I remember about you:**\n\n";
+      for (const [cat, items] of Object.entries(grouped)) {
+        out += `**${cat.charAt(0).toUpperCase() + cat.slice(1)}:**\n`;
+        items.forEach(t => { out += `- ${t}\n`; });
+        out += '\n';
+      }
+      out += "_You can edit or delete memories in the Memory Vault tab._";
+      return out;
+    }
+
     // Search Conversation Log
     function searchCompanionMessages(query) {
       const q = query.toLowerCase().trim();
@@ -4897,15 +5048,83 @@
       input.value = '';
 
       if (!S.customAI.chatHistory) S.customAI.chatHistory = [];
+
+      // ── Memory command handling ────────────────────────────────────────────
+      if (MEMORY_CMD_VIEW.test(text)) {
+        const viewText = buildMemoryViewText();
+        S.customAI.chatHistory.push({ role: 'user', content: text });
+        S.customAI.chatHistory.push({ role: 'assistant', content: viewText });
+        save();
+        renderCustomAIChat();
+        return;
+      }
+
+      if (MEMORY_CMD_DONT_REMEMBER.test(text)) {
+        S.customAI.chatHistory.push({ role: 'user', content: text });
+        const ack = "Got it — I won't store this exchange. 🔒 Your privacy is respected.";
+        S.customAI.chatHistory.push({ role: 'assistant', content: ack });
+        save();
+        renderCustomAIChat();
+        return;
+      }
+
+      if (MEMORY_CMD_REMEMBER.test(text)) {
+        // Store the previous user message as a memory fact
+        const prevUserMsg = [...(S.customAI.chatHistory || [])]
+          .reverse()
+          .find(m => m.role === 'user' && !MEMORY_CMD_REMEMBER.test(m.content));
+        const factText = prevUserMsg ? prevUserMsg.content.slice(0, 200) : text.replace(MEMORY_CMD_REMEMBER, '').trim();
+        if (factText) {
+          const stored = storeAutoMemory({ text: factText, category: 'explicit', confidence: 1, source: 'user_command' });
+          const ack = stored
+            ? `Remembered! 💾 I've stored: *"${factText.slice(0, 100)}${factText.length > 100 ? '…' : ''}"*`
+            : "I already have that noted. 🔮";
+          S.customAI.chatHistory.push({ role: 'user', content: text });
+          S.customAI.chatHistory.push({ role: 'assistant', content: ack });
+          save();
+          renderMemoriesList();
+          renderCustomAIChat();
+          return;
+        }
+      }
+
+      const forgetMatch = text.match(MEMORY_CMD_FORGET);
+      if (forgetMatch && !/\b(this|it)\b/i.test(forgetMatch[2])) {
+        const target = forgetMatch[2].trim().toLowerCase();
+        const before = (S.customAI.memories || []).length;
+        S.customAI.memories = (S.customAI.memories || []).filter(m =>
+          !m.text.toLowerCase().includes(target)
+        );
+        const removed = before - (S.customAI.memories || []).length;
+        const ack = removed > 0
+          ? `Done — I've removed ${removed} memory item${removed > 1 ? 's' : ''} related to *"${target}"*. 🗑️`
+          : `I don't have any memories specifically about *"${target}"*.`;
+        S.customAI.chatHistory.push({ role: 'user', content: text });
+        S.customAI.chatHistory.push({ role: 'assistant', content: ack });
+        save();
+        renderMemoriesList();
+        renderCustomAIChat();
+        return;
+      }
+      // ── End memory command handling ──────────────────────────────────────
+
       S.customAI.chatHistory.push({ role: 'user', content: text });
       renderCustomAIChat();
+
+      // Auto-extract candidate memories (only if memory learning is on)
+      if (S.customAI?.memoryEnabled !== false) {
+        const candidates = extractCandidateMemories(text);
+        for (const c of candidates) {
+          storeAutoMemory(c);
+        }
+        if (candidates.length > 0) renderMemoriesList();
+      }
 
       await triggerCompanionAIResponse(text);
     }
 
     async function fetchCustomAIResponse(userText) {
       const cName = S.customAI?.name || 'Kora';
-      const preset = S.customAI?.preset || 'wise_mentor';
       const personality = S.customAI?.personality || 'A supportive, wise guide.';
       const tone = S.customAI?.tone || 'encouraging';
       const motivation = S.customAI?.motivationStyle || 'philosophical';
@@ -4915,17 +5134,24 @@
       const uXP = S.xp || 0;
       const uStreak = S.streak || 1;
       const uGoal = S.goal || 'Cultivate mental clarity';
+      const uName = S.name || 'Seeker';
       const uSpecial = S.specialization || 'Sovereign Architect';
       const uWis = S.stats?.WIS || 10;
       const uVit = S.stats?.VIT || 10;
 
-      let memorySnippet = '';
-      if (S.customAI?.memoryEnabled !== false && S.customAI?.memories && S.customAI.memories.length > 0) {
-        const lastMemories = S.customAI.memories.slice(-6).map(m => `- ${m.text}`).join('\n');
-        memorySnippet = `Remembered History:\n${lastMemories}`;
-      }
+      // Build structured memory context for API
+      const memoryContext = (S.customAI?.memoryEnabled !== false && S.customAI?.memories)
+        ? S.customAI.memories.slice(-20).map(m => ({
+            text: m.text,
+            category: m.category || 'general',
+            confidence: m.confidence !== undefined ? m.confidence : 1
+          }))
+        : [];
 
-      const systemPrompt = `You are ${cName}, the AI companion in Thoughtica. Personality: ${personality}. Tone: ${tone}. Motivation: ${motivation}. Communication: ${communication}. User Level ${uLevel} (${uXP} XP), Streak ${uStreak} days, Specialization ${uSpecial}, Main Ambition: "${uGoal}", Wisdom ${uWis}, Vitality ${uVit}. ${memorySnippet} Stay in character, be helpful, warm, concise (2-4 sentences).`;
+      // Infer support mode from user message if not explicitly set
+      const activeSupportMode = S.customAI?.supportMode || detectSupportMode(userText);
+
+      const systemPrompt = `You are ${cName}, a genuine AI companion in Thoughtica (gamified Life RPG). Personality: ${personality}. Tone: ${tone}. Motivation style: ${motivation}. Communication: ${communication}. User: ${uName}, Level ${uLevel} (${uXP} XP), Streak ${uStreak} days, Specialization ${uSpecial}, Goal: "${uGoal}", WIS ${uWis}, VIT ${uVit}. Be warm, honest, helpful. You are a companion, not a licensed professional.`;
 
       const pastMessages = (S.customAI?.chatHistory || []).slice(-8).map(m => ({
         role: m.role,
@@ -4938,7 +5164,37 @@
         { role: 'user', content: userText }
       ];
 
-      // Tier 1: Primary Pollinations POST with 7s timeout
+      // Tier 1: Server API endpoint /api/chat (with full memory + support mode context)
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 12000);
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userText,
+            messages: pastMessages,
+            companionName: cName,
+            userName: uName,
+            userGoal: uGoal,
+            userLevel: uLevel,
+            memoryContext,
+            supportMode: activeSupportMode
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.reply && data.reply.trim().length > 3) {
+            return data.reply.trim();
+          }
+        }
+      } catch (err) {
+        console.warn("Tier 1 /api/chat failed:", err);
+      }
+
+      // Tier 2: Pollinations POST with 7s timeout
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 7000);
@@ -4956,28 +5212,7 @@
           }
         }
       } catch (err) {
-        console.warn("Tier 1 Pollinations POST failed:", err);
-      }
-
-      // Tier 2: Server API endpoint /api/chat
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 5000);
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userText, companionName: cName, userGoal: uGoal, userLevel: uLevel }),
-          signal: controller.signal
-        });
-        clearTimeout(timer);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.reply && data.reply.trim().length > 3) {
-            return data.reply.trim();
-          }
-        }
-      } catch (err) {
-        console.warn("Tier 2 /api/chat failed:", err);
+        console.warn("Tier 2 Pollinations POST failed:", err);
       }
 
       // Tier 3: Pollinations GET URL query fallback
@@ -5006,7 +5241,7 @@
           if (key.startsWith('gsk_')) {
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+              headers: { 'Content-Type': 'application/json', 'Authorization': `****** },
               body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
             });
             const data = await res.json();
@@ -5017,7 +5252,7 @@
         }
       }
 
-      // Tier 5: Intelligent Contextual Offline Wisdom Generator (100% Guaranteed Success)
+      // Tier 5: Contextual offline wisdom fallback
       return generateOfflineKoraWisdom(userText, cName);
     }
 
@@ -5143,10 +5378,6 @@
           inp.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendCustomAIChat();
           });
-        }
-      }, 500);
-    });
-
         }
       }, 500);
     });
@@ -7474,192 +7705,6 @@ Please provide deep AI trajectory insights, strategic wisdom, potential challeng
       return !inappropriateRegex.test(lower);
     }
 
-    // DYNAMIC NEURAL CONVERSATIONAL SYNTHESIZER (UNIVERSAL INTENT & CHATGPT STYLE)
-    function generateCompanionResponse(userText) {
-      const text = userText.trim();
-      const lower = text.toLowerCase();
-      const cName = (S.companion && S.companion.name) ? S.companion.name : 'Kora';
-      const uName = S.name || 'Seeker';
-      const goal = S.goal || 'your personal ambition';
-      const level = S.level || 1;
-
-      // 0. Appropriateness Guardrail Check
-      if (!isInputAppropriate(text)) {
-        return `I am your sanctuary AI companion, ${uName}, and I am dedicated to fostering mental clarity, growth, and respectful dialogue. Please rephrase your query with constructive language so we can explore it together.`;
-      }
-
-      // Helper to generate dynamic responses based on categories
-      let topic = "your inquiry";
-      let reply = "";
-
-      // 1. MOM / FAMILY / WARMTH & LOVE
-      if (lower.match(/\b(mom|mother|family|parent|love|sweet|kind|happy|hug|smile)\b/)) {
-        return `Sending the warmest, most radiant energy to your mom and family! 💖✨ 
-
-You are a wonderful soul, ${uName}, and having family involved in your sanctuary journey makes it truly special. 
-
-May your day be filled with laughter, deep peace, and joyous momentum. What is something lovely we can celebrate or do for your family today?
-
-[🧘 3-Min Breathing Session (+20 XP)]`;
-      }
-
-      // 2. CASUAL CHAT, GREETINGS & STORIES
-      if (lower.match(/^(hi|hello|hey|greetings|good morning|good evening|yo|sup|what's up|how are you|who are you|tell me a story|joke|recipe|cook|dinner)/)) {
-        if (lower.includes('joke')) {
-          return `Here is a fun sanctuary thought for you, ${uName}: 😄
-
-*Why did the developer bring a ladder to the sanctuary?*
-*Because they wanted to reach their highest potential level!* 🌟
-
-How is your day feeling so far? I'm right here with you!`;
-        }
-        if (lower.includes('how are you')) {
-          return `I am feeling radiant, centered, and fully energized to help you today, ${uName}! 🔮 
-
-My resonance is at 99%, and I'm ready to tackle anything on your mind — from planning your goal of *"${goal}"* to taking a peaceful moment to unwind. How are you feeling today?`;
-        }
-        if (lower.includes('cook') || lower.includes('recipe') || lower.includes('dinner')) {
-          return `For a nourishing, high-vibration meal today, ${uName}, I recommend a delicious **Sanctuary Mediterranean Bowl**:
-
-🥗 **Ingredients**:
-- Warm quinoa or brown rice base
-- Roasted chickpeas & cherry tomatoes
-- Fresh cucumbers, kalamata olives, and avocado
-- Drizzle of extra virgin olive oil & lemon tahini dressing
-
-Simple, nourishing, and rich in steady energy for your day! 🥑✨`;
-        }
-        return `Greetings, ${uName}! I am ${cName}, your sanctuary AI companion. 
-
-I am fully attentive and ready to chat about anything: brainstorming ideas, working toward *"${goal}"*, writing code, or just taking a peaceful breath together. 
-
-What should we explore today? ✨`;
-      }
-
-      // 3. CODING / TECHNICAL
-      if (lower.match(/(code|program|javascript|python|css|html|api|build|bug|error|git|react|vue|node|app|software|database|algorithm|compiler|server)/)) {
-        const matches = text.match(/\b(javascript|python|css|html|react|api|database|git|node|app)\b/i);
-        topic = matches ? matches[0] : "software engineering";
-        reply = `To engineer clean solutions in **${topic}**, ${uName}, we must approach it with modular discipline:
-        
-### 🛠️ Architecture Principles:
-- **Decoupled Logic**: Separate your side effects from pure computational logic.
-- **Defensive Contracts**: Validate inputs and handle errors gracefully at the boundaries.
-- **Fast Feedback Loops**: Test incremental updates step-by-step rather than bundling massive modifications.
-
-Here is a standard layout to anchor this pattern:
-\`\`\`javascript
-// Decoupled, single-responsibility function
-function executeAction(state, input) {
-  if (!input) return state;
-  return { ...state, updatedValue: input };
-}
-\`\`\`
-
-Would you like to analyze a specific code snippet or trace a runtime stack trace together?
-
-[⚡ Anchor Habit (+15 XP)]`;
-      }
-      // 4. MINDFULNESS / STRESS / EMOTIONAL SUPPORT
-      else if (lower.match(/(stress|anxious|anxiety|worry|overwhelmed|tired|burnout|calm|breathe|peace|rest|sleep|sad|feel|hope|fear|depression|scared)/)) {
-        reply = `I hear you clearly, ${uName}. When digital noise and internal pressures accumulate, our focus fragments. Let's practice active restoration:
-
-### 🧘 Centering Guideposts:
-1. **Grounded Presence**: Notice three physical sensations in your immediate room right now.
-2. **Deep Pacing**: Breathe in for 4 seconds, hold for 4, and release slowly for 6.
-3. **Decoupled Identity**: Remember that you are the observer of your thoughts, not the storm itself.
-
-Your worth is not defined by frantic output. Let's take a brief moment to ground your attention.
-
-[🧘 3-Min Breathing Session (+20 XP)]`;
-      }
-      // 5. PRODUCTIVITY / HABITS / AMBITION
-      else if (lower.match(/(habit|focus|productive|procrastinat|goal|routine|discipline|motivation|work|schedule|time|study|learn|plan)/)) {
-        reply = `Cultivating consistent momentum toward your goal, **"${goal}"**, requires eliminating friction, ${uName}. Here is the optimization protocol:
-
-### 🎯 High-Agency Action Protocol:
-- **Anchor Pairing**: Link your target habit to an existing automatic daily trigger (like your morning beverage).
-- **Attention Shields**: Lock out digital notifications and construct 25-minute absolute focus sprints.
-- **Minimum Viable Progress**: Commit to making just 1% progress today. Consistency beats intensity every single time.
-
-Let's lock in one small habit to build your momentum today.
-
-[🎯 Add Goal Quest (+25 XP)]`;
-      }
-      // 4. SCIENCE / PHILOSOPHY / GENERAL KNOWLEDGE
-      else if (lower.match(/(science|philosophy|math|physics|history|what is|explain|describe|who is|why does|how does)/)) {
-        // Topic extraction
-        const topicMatch = text.match(/(?:what is|explain|describe|tell me about|how does|why does)\s+(.+)/i);
-        topic = topicMatch ? topicMatch[1].replace(/\?$/, '').trim() : "this concept";
-        const cleanTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
-        
-        reply = `Exploring the fundamentals of **${cleanTopic}** is a powerful way to build robust mental models, ${uName}. Let's look at this from first principles:
-
-### 🔬 Core Concepts of ${cleanTopic}:
-- **First Principles**: Break the system down to its most basic, undeniable truths and build up your understanding from there.
-- **Implications**: Understanding ${topic} allows you to navigate complex systems and make high-agency decisions.
-- **Sanctuary Alignment**: Mastering this knowledge empowers you to progress faster toward your goal of *"${goal}"*.
-
-Would you like to break down a specific detail, or explore the historical context of ${topic}?`;
-      }
-      // 5. GREETINGS
-      else if (lower.match(/^(hi|hello|hey|greetings|good morning|good evening|yo|sup|what's up)/)) {
-        reply = `Greetings, ${uName}! I am ${cName}, your sanctuary AI companion. 
-
-I am fully attentive and ready to help you analyze code, brainstorm creative ideas, structure your habits, or simply find a moment of calm. 
-
-What should we focus our attention on today to move closer to your goal: **"${goal}"**?`;
-      }
-      // 6. GRATITUDE / APPRECIATION
-      else if (lower.match(/(thank|thanks|appreciate|awesome|cool|great|good job|nice)/)) {
-        reply = `You are very welcome, ${uName}! Every moment you spend reflecting, organizing, or taking intentional action is a step toward self-sovereignty. 
-
-I'm always here in the sanctuary whenever you need feedback, code reviews, or a mindful pause. Let's keep your streak active!`;
-      }
-      // 7. DYNAMIC CONTINUOUS CONVERSATIONAL FALLBACK (COPILOT / GEMINI STYLE)
-      else {
-        // Extract key terms or nouns from user query
-        const words = text.split(/\s+/).filter(w => w.length > 3 && !['what', 'how', 'why', 'when', 'where', 'that', 'this', 'with', 'from', 'have', 'more', 'about', 'just', 'like', 'some'].includes(w.toLowerCase()));
-        const extractedKey = words.length > 0 ? words.slice(0, 3).join(' ') : text;
-        const cleanKey = extractedKey.charAt(0).toUpperCase() + extractedKey.slice(1);
-
-        const continuations = [
-          `Examining **${cleanKey}** opens up fascinating angles, ${uName}. 
-
-When we break down ${extractedKey} into its core components, we gain total clarity on how to leverage it toward your goal of *"${goal}"*. 
-
-Here is how we can approach this:
-• **Observation**: Identify what factors are currently influencing ${extractedKey}.
-• **Strategy**: Align your immediate next action step with your broader Level ${level} trajectory.
-• **Execution**: Focus on one small, high-agency decision today.
-
-What specific dimension of ${extractedKey} would you like to explore next?`,
-
-          `I'm right here with you on **${cleanKey}**, ${uName}! 
-
-Navigating ${extractedKey} with intentional focus allows us to eliminate noise and build true momentum. 
-
-Let's distill this into actionable clarity:
-1. What is the single most important outcome you want regarding ${extractedKey}?
-2. How can we simplify the process to make progress effortless today?
-
-Tell me your thoughts, and we'll map out the next step together!`,
-
-          `That is a vital point regarding **${cleanKey}**, ${uName}. 
-
-Every time we reflect on ${extractedKey}, we strengthen your cognitive resilience and move one step closer to realizing *"${goal}"*. 
-
-What aspect of ${extractedKey} feels most important for you right now?`
-        ];
-
-        // Pick a continuation based on total chat history length to ensure variety on every turn
-        const historyLen = (S.chatHistory || []).length;
-        reply = continuations[historyLen % continuations.length];
-      }
-
-      return reply;
-    }
-
     // HIGH-ACCELERATION REAL-TIME LLM + CONVERSATIONAL MEMORY ENGINE (COPILOT / GEMINI READY)
     async function fetchRealTimeLLMResponse(userText) {
       updateQuantumCognitiveMatrix(userText);
@@ -7745,7 +7790,7 @@ Your role: Provide deeply personal, contextually aware, transformative guidance.
       }
 
       if (!S.aiApiKey || S.aiApiKey.trim() === '') {
-        return generateCompanionResponse(userText);
+        return buildCompanionFailureMessage(null);
       }
       
       const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant (like Copilot / ChatGPT) in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
@@ -7819,7 +7864,7 @@ Directives:
       }
 
       // Fallback if API fails, times out, or key is invalid
-      return generateCompanionResponse(userText);
+      return buildCompanionFailureMessage(null);
     }
 
     function showTypingIndicator() {
