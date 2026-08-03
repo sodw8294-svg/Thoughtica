@@ -25,14 +25,14 @@ module.exports = async (req, res) => {
         mode: 'subscription',
         name: 'thoughtica.io - Kindred',
         description: 'Increased daily interactions and expanded memory.',
-        amount: 699,
+        amount: 999,
         recurring: { interval: 'month' },
       },
       soulbound: {
         mode: 'subscription',
         name: 'thoughtica.io - Soulbound',
         description: 'Voice conversations, long-term memory, and companion evolution.',
-        amount: 1499,
+        amount: 1999,
         recurring: { interval: 'month' },
       },
       transcendence: {

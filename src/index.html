@@ -472,6 +472,102 @@
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 20px 2px rgba(236, 72, 153, 0.3) !important;
       background: rgba(15,23,42,0.6) !important;
     }
+
+    /* Kora AI Companion Refurbished Styles */
+    @keyframes kora-breathing {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.015) translateY(-1px); }
+    }
+    @keyframes kora-floating {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(0.5deg); }
+    }
+    @keyframes kora-glow-pulse {
+      0%, 100% { filter: blur(50px) opacity(0.2); }
+      50% { filter: blur(65px) opacity(0.35); }
+    }
+    @keyframes kora-blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    @keyframes dot-flash {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .kora-breath {
+      animation: kora-breathing 4s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .kora-float {
+      animation: kora-floating 6s ease-in-out infinite;
+    }
+    .kora-glow {
+      animation: kora-glow-pulse 5s ease-in-out infinite;
+    }
+    .kora-eye-blink {
+      animation: kora-blink 5s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .somatic-mood-card {
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer;
+      user-select: none;
+    }
+    .somatic-mood-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .somatic-mood-card.active {
+      transform: scale(0.98);
+      background: rgba(99, 102, 241, 0.15) !important;
+      border-color: rgba(99, 102, 241, 0.6) !important;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+    }
+    .chat-bubble-markdown h1, .chat-bubble-markdown h2, .chat-bubble-markdown h3 {
+      font-weight: 800;
+      color: #fff;
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .chat-bubble-markdown h1 { font-size: 1.1rem; }
+    .chat-bubble-markdown h2 { font-size: 1rem; }
+    .chat-bubble-markdown h3 { font-size: 0.9rem; }
+    .chat-bubble-markdown ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .chat-bubble-markdown ol {
+      list-style-type: decimal;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .chat-bubble-markdown li {
+      margin-bottom: 0.2rem;
+    }
+    .chat-bubble-markdown code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85em;
+      color: #f472b6;
+    }
+    .chat-bubble-markdown pre {
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      overflow-x: auto;
+    }
+    .chat-bubble-markdown pre code {
+      background: none;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 0.8em;
+    }
   </style>
   <link rel="stylesheet" crossorigin href="./style.css">
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
@@ -615,7 +711,7 @@
             <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">🌿</div>
             <div>
               <h3 class="text-2xl font-bold font-heading text-white">Sanctuary Plus</h3>
-              <div class="text-3xl font-extrabold text-amber-400 mt-1">$6.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+              <div class="text-3xl font-extrabold text-amber-400 mt-1">$9.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
             </div>
             <p class="text-xs text-amber-200/80 font-medium pb-1 border-b border-amber-500/20">Complete sonic sanctuary & streak protection.</p>
             <ul class="text-xs text-slate-300 space-y-2.5">
@@ -626,17 +722,17 @@
               <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>49 RPG Badges & Mastery Honors</span></li>
             </ul>
           </div>
-          <button onclick="startCheckout('kindred')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 rounded-xl text-white font-extrabold text-sm cursor-pointer shadow-lg transition-all hover:scale-[1.02]">Upgrade to Plus ($6.99)</button>
+          <button onclick="startCheckout('kindred')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 rounded-xl text-white font-extrabold text-sm cursor-pointer shadow-lg transition-all hover:scale-[1.02]">Upgrade to Plus ($9.99)</button>
         </div>
 
-        <!-- Tier 2: Sovereign Infinite / Soulbound ($14.99/mo) -->
+        <!-- Tier 2: Sovereign Infinite / Soulbound ($19.99/mo) -->
         <div class="p-6 bg-gradient-to-b from-purple-950/40 via-indigo-950/30 to-slate-950/60 border-2 border-purple-500/60 rounded-3xl flex flex-col justify-between relative shadow-[0_0_60px_rgba(168,85,247,0.3)] md:scale-105 z-10">
           <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.6)]">MOST POPULAR</div>
           <div class="space-y-4">
             <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-2xl border border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.4)]">🔮</div>
             <div>
               <h3 class="text-2xl font-bold font-heading text-white">Sovereign Infinite</h3>
-              <div class="text-3xl font-extrabold text-purple-300 mt-1">$14.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+              <div class="text-3xl font-extrabold text-purple-300 mt-1">$19.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
             </div>
             <p class="text-xs text-purple-200/80 font-medium pb-1 border-b border-purple-500/30">The ultimate goal architect & identity suite.</p>
             <ul class="text-xs text-slate-300 space-y-2.5">
@@ -648,7 +744,7 @@
               <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Custom RPG 3D Shader Aura Wheel & Profile Seal</span></li>
             </ul>
           </div>
-          <button onclick="startCheckout('soulbound')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-sm rounded-xl cursor-pointer shadow-[0_0_25px_rgba(168,85,247,0.5)] border-none transition-all hover:scale-[1.02]">Become Sovereign ($14.99)</button>
+          <button onclick="startCheckout('soulbound')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-sm rounded-xl cursor-pointer shadow-[0_0_25px_rgba(168,85,247,0.5)] border-none transition-all hover:scale-[1.02]">Become Sovereign ($19.99)</button>
         </div>
 
       </div>
@@ -679,7 +775,7 @@
               <h4 class="text-white font-bold font-heading mb-1 text-lg">Midnight Void</h4>
               <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep OLED midnight contrast with glowing neon aura highlights.</p>
               <div class="flex gap-2">
-                <button onclick="setAtmosphere('twilight'); showXPToast(0, '🌌 Midnight Void Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere('twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="setAtmosphere('twilight'); showXPToast(0, '🌌 Midnight Void Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere(S.companion.aura || 'twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
                 <button onclick="startCheckout('theme_midnight')" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-purple-500/30">$1.99</button>
               </div>
             </div>
@@ -697,7 +793,7 @@
               <h4 class="text-white font-bold font-heading mb-1 text-lg">Zen Garden</h4>
               <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Calming emerald moss greens & bamboo canopy ambiance.</p>
               <div class="flex gap-2">
-                <button onclick="setAtmosphere('moss'); showXPToast(0, '🌿 Zen Garden Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere('twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="setAtmosphere('moss'); showXPToast(0, '🌿 Zen Garden Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere(S.companion.aura || 'twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
                 <button onclick="startCheckout('theme_zen')" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-emerald-500/30">$1.99</button>
               </div>
             </div>
@@ -735,7 +831,7 @@
                   <p class="text-xs text-slate-400">Multi-companion · Max memory · Exclusive</p>
                 </div>
                 <div class="text-right">
-                  <p class="text-xl font-extrabold text-white">$14.99</p>
+                  <p class="text-xl font-extrabold text-white">$19.99</p>
                   <p class="text-[10px] text-slate-500">/month</p>
                 </div>
               </div>
@@ -752,15 +848,15 @@
           <!-- Cosmetics Section -->
           <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Cosmetics · $1.99 each</p>
           <div class="grid grid-cols-3 gap-3 mb-6">
-            <button onclick="purchaseTier('theme_midnight')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+            <button onclick="startCheckout('theme_midnight')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
               <div class="text-2xl mb-1">🌑</div>
               <p class="text-[11px] font-bold text-slate-200">Midnight Void</p>
             </button>
-            <button onclick="purchaseTier('theme_zen')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+            <button onclick="startCheckout('theme_zen')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
               <div class="text-2xl mb-1">🍃</div>
               <p class="text-[11px] font-bold text-slate-200">Zen Garden</p>
             </button>
-            <button onclick="purchaseTier('aura_rain')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
+            <button onclick="startCheckout('aura_rain')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
               <div class="text-2xl mb-1">🌧️</div>
               <p class="text-[11px] font-bold text-slate-200">Mountain Rain</p>
             </button>
@@ -856,13 +952,30 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('payment_success') === 'true') {
           const tierRaw = urlParams.get('tier') || 'kindred';
-          S.subscriptionTier = tierRaw;
-          S.isPremium = true;
+          let displayTier = tierRaw.toUpperCase();
+          if (tierRaw.startsWith('theme_') || tierRaw.startsWith('aura_')) {
+            if (!S.cosmetics) S.cosmetics = [];
+            if (!S.cosmetics.includes(tierRaw)) {
+              S.cosmetics.push(tierRaw);
+            }
+            if (tierRaw === 'theme_midnight') {
+              S.companion.aura = 'twilight';
+              displayTier = 'Midnight Void Theme';
+            } else if (tierRaw === 'theme_zen') {
+              S.companion.aura = 'moss';
+              displayTier = 'Zen Garden Theme';
+            } else if (tierRaw === 'aura_rain') {
+              displayTier = 'Mountain Rain Aura';
+            }
+            setAtmosphere(S.companion.aura || 'twilight');
+          } else {
+            S.subscriptionTier = tierRaw;
+            S.isPremium = true;
+          }
           save();
           if (typeof updateSubscriptionUI === 'function') {
             updateSubscriptionUI();
           }
-          const displayTier = tierRaw.toUpperCase();
           if (typeof confetti === 'function') {
             confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
           }
@@ -2302,7 +2415,7 @@
         <!-- Header -->
         <div class="p-4 border-b border-white/5 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between shrink-0">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-xl shadow-lg border border-white/20">🤖</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-xl shadow-lg border border-white/20 animate-[float_4s_ease-in-out_infinite]">🔮</div>
             <div>
               <h2 id="custom-ai-header-title" class="text-sm font-extrabold text-white tracking-wide font-heading">AI Companion</h2>
               <p class="text-[10px] text-cyan-300 font-bold uppercase tracking-widest flex items-center gap-1.5">
@@ -2316,19 +2429,31 @@
           </button>
         </div>
 
+        <!-- ONBOARDING SECTION -->
+        <div id="companion-onboarding-panel" class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto space-y-6 hidden">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-600 to-cyan-400 flex items-center justify-center text-4xl shadow-[0_0_50px_rgba(99,102,241,0.3)] border border-white/20 animate-bounce">🔮</div>
+          <div class="space-y-2">
+            <h2 class="text-2xl font-black text-white font-heading">Awaken Your Companion</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Synthesize a dedicated guide tailored to your psychological profile and core life ambitions. Customize appearance, tone, and traits.</p>
+          </div>
+          <button onclick="startCompanionSetupWizard()" class="py-3 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-sm rounded-xl shadow-lg transition-all hover:scale-105 cursor-pointer">
+            Begin Awakening Protocol ➔
+          </button>
+        </div>
+
         <!-- Dashboard Grid Container -->
-        <div class="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-6 p-4 md:p-6 overflow-y-auto scrollbar-none">
+        <div id="companion-main-dashboard" class="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-6 p-4 md:p-6 overflow-y-auto scrollbar-none">
           
           <!-- LEFT COLUMN: PORTAL, STATUS & SOMATIC SYNC -->
           <div class="lg:col-span-5 space-y-5 flex flex-col">
             
             <!-- AVATAR & LEVEL PROGRESSION CARD -->
             <div class="relative bg-slate-950/60 border border-white/10 rounded-3xl p-5 shadow-2xl overflow-hidden backdrop-blur-xl flex flex-col items-center text-center">
-              <div id="companion-aura-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600/25 rounded-full blur-[60px] pointer-events-none transition-all duration-700"></div>
+              <div id="companion-aura-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600/25 rounded-full blur-[60px] pointer-events-none transition-all duration-700 kora-glow"></div>
               
               <!-- Modular Avatar SVG Container -->
-              <div class="relative w-36 h-36 rounded-2xl bg-slate-900/80 border border-white/5 flex items-center justify-center overflow-hidden shadow-inner z-10">
-                <svg id="companion-avatar-svg" viewBox="0 0 100 100" class="w-full h-full"></svg>
+              <div class="relative w-36 h-36 rounded-2xl bg-slate-900/80 border border-white/5 flex items-center justify-center overflow-hidden shadow-inner z-10 kora-float">
+                <svg id="companion-avatar-svg" viewBox="0 0 100 100" class="w-full h-full kora-breath"></svg>
                 <!-- Interactive Expression Pulse Rings -->
                 <div id="avatar-pulse-ring" class="absolute inset-0 border border-indigo-400/25 rounded-2xl animate-ping pointer-events-none opacity-0"></div>
               </div>
@@ -2364,17 +2489,36 @@
               </div>
 
               <!-- Check-In Inputs -->
-              <div class="space-y-3 text-left">
+              <div class="space-y-4 text-left">
                 <div>
-                  <label class="text-[9px] text-slate-400 font-extrabold uppercase block mb-1">Current Mood Resonance</label>
-                  <select id="checkin-mood" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                    <option value="Serene">🧘 Serene / Calm</option>
-                    <option value="Energized">⚡ Energized / Productive</option>
-                    <option value="Focused">🎯 Focused / Flow</option>
-                    <option value="Anxious">😰 Anxious / Stressed</option>
-                    <option value="Restless">🌀 Restless / Distracted</option>
-                    <option value="Drained">🔋 Drained / Fatigued</option>
-                  </select>
+                  <label class="text-[9px] text-indigo-300 font-extrabold uppercase block mb-2 tracking-wider">Current Mood Resonance</label>
+                  <div class="grid grid-cols-3 gap-2" id="checkin-mood-cards">
+                    <button type="button" onclick="selectCheckinMood('Serene')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center active" data-mood="Serene">
+                      <span class="text-lg">🧘</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Serene</span>
+                    </button>
+                    <button type="button" onclick="selectCheckinMood('Energized')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center" data-mood="Energized">
+                      <span class="text-lg">⚡</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Active</span>
+                    </button>
+                    <button type="button" onclick="selectCheckinMood('Focused')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center" data-mood="Focused">
+                      <span class="text-lg">🎯</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Focus</span>
+                    </button>
+                    <button type="button" onclick="selectCheckinMood('Anxious')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center" data-mood="Anxious">
+                      <span class="text-lg">😰</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Anxious</span>
+                    </button>
+                    <button type="button" onclick="selectCheckinMood('Restless')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center" data-mood="Restless">
+                      <span class="text-lg">🌀</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Restless</span>
+                    </button>
+                    <button type="button" onclick="selectCheckinMood('Drained')" class="somatic-mood-card bg-slate-900 border border-white/10 rounded-2xl p-2.5 text-center flex flex-col items-center justify-center" data-mood="Drained">
+                      <span class="text-lg">🔋</span>
+                      <span class="text-[8px] font-black uppercase text-slate-300 mt-1">Drained</span>
+                    </button>
+                  </div>
+                  <input type="hidden" id="checkin-mood" value="Serene">
                 </div>
                 <div>
                   <label class="text-[9px] text-slate-400 font-extrabold uppercase block mb-1">Today's Principal Ambition</label>
@@ -2953,7 +3097,7 @@
             <span class="text-sm font-extrabold text-white flex items-center gap-1.5">🌿 Sanctuary Plus</span>
             <div class="text-right">
               <span class="text-xs font-black text-emerald-400">7 Days Free</span>
-              <span class="text-[9px] text-slate-400 block font-bold">then $6.99/mo (or $59.99/yr)</span>
+              <span class="text-[9px] text-slate-400 block font-bold">then $9.99/mo (or $59.99/yr)</span>
             </div>
           </div>
           <p class="text-[10px] text-slate-400 mt-1.5">Unlocks 12 Premium Soundscapes (Pages 2-4), Full AI Voice Resonance & Persistent Conversation Memory.</p>
@@ -2965,7 +3109,7 @@
             <span class="text-sm font-extrabold text-white flex items-center gap-1.5">✨ Sovereign Infinite <span class="px-1.5 py-0.5 rounded text-[8px] bg-amber-400/20 text-amber-300 border border-amber-400/30 font-bold uppercase">POPULAR</span></span>
             <div class="text-right">
               <span class="text-xs font-black text-indigo-400">7 Days Free</span>
-              <span class="text-[9px] text-indigo-300 block font-bold">then $14.99/mo (or $119.99/yr)</span>
+              <span class="text-[9px] text-indigo-300 block font-bold">then $19.99/mo (or $119.99/yr)</span>
             </div>
           </div>
           <p class="text-[10px] text-slate-400 mt-1.5">AI Goal Architect & Micro-Roadmaps, Future-Self AI Transmissions, Binaural Deck, Custom RPG Aura Wheel & All AI Mentors.</p>
@@ -4190,25 +4334,25 @@
 
       let eyeSVG = '';
       if (app.eyeStyle === 'calm') {
-        eyeSVG = `<path d="M36 50 Q42 47 48 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" />
-                  <path d="M52 50 Q58 47 64 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" />`;
+        eyeSVG = `<path d="M36 50 Q42 47 48 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" class="kora-eye-blink" />
+                  <path d="M52 50 Q58 47 64 50" stroke="${eyeFill}" stroke-width="2.5" stroke-linecap="round" fill="none" class="kora-eye-blink" />`;
       } else if (app.eyeStyle === 'spark') {
-        eyeSVG = `<polygon points="42,46 45,50 42,54 39,50" fill="${eyeFill}" />
-                  <polygon points="58,46 61,50 58,54 55,50" fill="${eyeFill}" />
-                  <circle cx="42" cy="50" r="1.5" fill="#fff" />
-                  <circle cx="58" cy="50" r="1.5" fill="#fff" />`;
+        eyeSVG = `<polygon points="42,46 45,50 42,54 39,50" fill="${eyeFill}" class="kora-eye-blink" />
+                  <polygon points="58,46 61,50 58,54 55,50" fill="${eyeFill}" class="kora-eye-blink" />
+                  <circle cx="42" cy="50" r="1.5" fill="#fff" class="kora-eye-blink" />
+                  <circle cx="58" cy="50" r="1.5" fill="#fff" class="kora-eye-blink" />`;
       } else if (app.eyeStyle === 'glow') {
-        eyeSVG = `<circle cx="42" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" />
-                  <circle cx="58" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" />
-                  <circle cx="42" cy="50" r="1.5" fill="#fff" />
-                  <circle cx="58" cy="50" r="1.5" fill="#fff" />`;
+        eyeSVG = `<circle cx="42" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" class="kora-eye-blink" />
+                  <circle cx="58" cy="50" r="4" fill="${eyeFill}" filter="drop-shadow(0 0 4px ${eyeFill})" class="kora-eye-blink" />
+                  <circle cx="42" cy="50" r="1.5" fill="#fff" class="kora-eye-blink" />
+                  <circle cx="58" cy="50" r="1.5" fill="#fff" class="kora-eye-blink" />`;
       } else { // focused
-        eyeSVG = `<ellipse cx="42" cy="50" rx="4" ry="2" fill="#fff" />
-                  <ellipse cx="58" cy="50" rx="4" ry="2" fill="#fff" />
-                  <circle cx="42" cy="50" r="2.2" fill="${eyeFill}" />
-                  <circle cx="58" cy="50" r="2.2" fill="${eyeFill}" />
-                  <circle cx="42" cy="50" r="0.8" fill="#000" />
-                  <circle cx="58" cy="50" r="0.8" fill="#000" />`;
+        eyeSVG = `<ellipse cx="42" cy="50" rx="4" ry="2" fill="#fff" class="kora-eye-blink" />
+                  <ellipse cx="58" cy="50" rx="4" ry="2" fill="#fff" class="kora-eye-blink" />
+                  <circle cx="42" cy="50" r="2.2" fill="${eyeFill}" class="kora-eye-blink" />
+                  <circle cx="58" cy="50" r="2.2" fill="${eyeFill}" class="kora-eye-blink" />
+                  <circle cx="42" cy="50" r="0.8" fill="#000" class="kora-eye-blink" />
+                  <circle cx="58" cy="50" r="0.8" fill="#000" class="kora-eye-blink" />`;
       }
 
       let clothingSVG = '';
@@ -4536,33 +4680,6 @@
       safeguardAllIcons();
     }
 
-    function toggleCompanionMemorySwitch() {
-      if (!S.customAI) S.customAI = {};
-      S.customAI.memoryEnabled = (S.customAI.memoryEnabled === undefined) ? false : !S.customAI.memoryEnabled;
-      save();
-      renderMemoriesList();
-      showXPToast(0, `Memory Matrix: ${S.customAI.memoryEnabled ? 'Enabled' : 'Disabled'}`, 1.0, false);
-    }
-
-    function addNewCompanionMemory() {
-      const input = document.getElementById('new-memory-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      if (!S.customAI.memories) S.customAI.memories = [];
-      S.customAI.memories.push({
-        id: 'mem_' + Date.now(),
-        text: text,
-        timestamp: Date.now()
-      });
-
-      input.value = '';
-      save();
-      renderMemoriesList();
-      showXPToast(0, "Memory sealed in vault! 💾", 1.0, false);
-    }
-
     function deleteMemory(id) {
       if (confirm("Delete this memory fact from companion database?")) {
         S.customAI.memories = (S.customAI.memories || []).filter(m => m.id !== id);
@@ -4610,15 +4727,115 @@
       }
     }
 
+    // Mood select check-in visual updates
+    function selectCheckinMood(mood) {
+      document.getElementById('checkin-mood').value = mood;
+      document.querySelectorAll('#checkin-mood-cards .somatic-mood-card').forEach(card => {
+        if (card.dataset.mood === mood) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+    }
+
+    // Onboarding wizard helpers
+    function checkCompanionInitialization() {
+      const onboardPanel = document.getElementById('companion-onboarding-panel');
+      const mainDashboard = document.getElementById('companion-main-dashboard');
+      if (!onboardPanel || !mainDashboard) return;
+
+      if (S.customAI && S.customAI.initialized) {
+        onboardPanel.classList.add('hidden');
+        mainDashboard.classList.remove('hidden');
+      } else {
+        onboardPanel.classList.remove('hidden');
+        mainDashboard.classList.add('hidden');
+      }
+    }
+
+    function startCompanionSetupWizard() {
+      if (!S.customAI) S.customAI = {};
+      S.customAI.initialized = true;
+      save();
+      checkCompanionInitialization();
+      switchCompanionTab('stylist');
+    }
+
+    // Markdown and RPG Action Cards Parser
+    function parseMarkdownAndCards(text) {
+      if (!text) return '';
+      let html = text;
+      
+      // Escape HTML to prevent XSS (but preserve newlines)
+      html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      // 1. Multi-line code blocks
+      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        return `<pre class="my-2"><code class="text-[10px] text-slate-300 font-mono block whitespace-pre-wrap">${code.trim()}</code></pre>`;
+      });
+      
+      // 2. Inline code
+      html = html.replace(/`([^`]+)`/g, '<code class="bg-black/40 text-pink-400 px-1 py-0.5 rounded text-[10px] font-mono">$1</code>');
+      
+      // 3. Bold / Strong
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-extrabold text-white">$1</strong>');
+      
+      // 4. Bullet lists
+      html = html.replace(/^\s*[-*+]\s+(.+)$/gm, '<li class="ml-4 list-disc text-slate-200 mt-1">$1</li>');
+      
+      // 5. Headings
+      html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-xs font-bold text-indigo-300 mt-2 mb-1">$1</h3>');
+      html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-sm font-extrabold text-white mt-3 mb-1">$1</h2>');
+      html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-base font-black text-white mt-4 mb-1">$1</h1>');
+      
+      // 6. Line breaks
+      html = html.replace(/\n/g, '<br>');
+
+      // 7. Interactive Action Cards: [⚡ Action Name (+XP XP)]
+      html = html.replace(/\[(⚡|🧘|🎯|🏆|🧠)\s*([^\]]+?)\s*\(\+(\d+)\s*XP\)\s*\]/g, (match, icon, actionName, xp) => {
+        let clickAttr = '';
+        const lowerName = actionName.toLowerCase();
+        if (lowerName.includes('breath') || lowerName.includes('breathe')) {
+          clickAttr = `onclick="switchScreen('sanctuary'); setTimeout(() => { const btn = document.getElementById('btn-toggle-breathing'); if(btn) btn.click(); }, 300)"` ;
+        } else if (lowerName.includes('habit') || lowerName.includes('anchor')) {
+          clickAttr = `onclick="addXP(15, 'Kora Anchor Point'); showXPToast(15, 'Anchor Habit Gained'); triggerConfetti()"` ;
+        } else if (lowerName.includes('quest') || lowerName.includes('ambition')) {
+          clickAttr = `onclick="switchScreen('quests')"` ;
+        } else {
+          clickAttr = `onclick="addXP(${xp}, 'Kora Directives Complete'); showXPToast(${xp}, '${actionName}'); triggerConfetti()"` ;
+        }
+        return `
+          <button ${clickAttr} class="mt-2 w-full py-2 px-3 bg-indigo-500/20 hover:bg-indigo-500/35 border border-indigo-500/30 text-indigo-300 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-1.5 shadow-md">
+            <span>${icon}</span> <span>${actionName} (+${xp} XP)</span>
+          </button>
+        `;
+      });
+      
+      return html;
+    }
+
     // Dynamic Prompts & AI Responses
     async function triggerCompanionAIResponse(text) {
       const log = document.getElementById('custom-ai-chat-log');
+      const statusLabel = document.getElementById('custom-ai-status-label');
+      
+      if (statusLabel) statusLabel.textContent = "Synthesizing Wisdom...";
+      
       const typingEl = document.createElement('div');
-      typingEl.className = "flex justify-start w-full animate-pulse";
+      typingEl.className = "flex justify-start w-full";
       typingEl.innerHTML = `
-        <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-xs bg-white/5 text-slate-400 border border-white/10 rounded-tl-none">
-          <p class="font-extrabold text-[9px] uppercase tracking-wider mb-1">${S.customAI.name} is thinking...</p>
-          <p class="leading-relaxed">...</p>
+        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs bg-slate-900 border border-white/5 rounded-tl-none shadow-xl flex flex-col gap-1.5">
+          <p class="font-extrabold text-[9px] text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>${S.customAI.name}</span>
+            <span class="w-1 h-1 rounded-full bg-slate-500"></span>
+            <span>Synthesizing...</span>
+          </p>
+          <div class="flex items-center gap-1 py-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0ms"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 150ms"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 300ms"></span>
+          </div>
         </div>
       `;
       log.appendChild(typingEl);
@@ -4627,11 +4844,45 @@
       const reply = await fetchCustomAIResponse(text);
       typingEl.remove();
 
+      if (statusLabel) statusLabel.textContent = "Sanctuary Sync: Active";
+
+      // Append to history
       S.customAI.chatHistory.push({ role: 'assistant', content: reply });
       save();
-      renderCustomAIChat();
 
-      // Award relationship XP for conversing!
+      // Typing animation for live response feel
+      const bubbleContainer = document.createElement('div');
+      bubbleContainer.className = "flex justify-start w-full";
+      log.appendChild(bubbleContainer);
+
+      const bubbleId = 'live-typing-' + Date.now();
+      bubbleContainer.innerHTML = `
+        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs bg-slate-900 border border-white/5 rounded-tl-none shadow-xl flex flex-col gap-1.5 relative group">
+          <p class="font-extrabold text-[9px] text-indigo-300 uppercase tracking-widest flex items-center gap-1">
+            <span>${S.customAI.name}</span>
+            <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
+            <span>Just Now</span>
+          </p>
+          <div id="${bubbleId}" class="leading-relaxed text-slate-200 chat-bubble-markdown"></div>
+        </div>
+      `;
+      
+      const el = document.getElementById(bubbleId);
+      let i = 0;
+      const speed = reply.length > 200 ? 5 : 15;
+      
+      function typeText() {
+        if (i < reply.length) {
+          el.innerHTML = parseMarkdownAndCards(reply.slice(0, i + 1));
+          i++;
+          log.scrollTop = log.scrollHeight;
+          setTimeout(typeText, speed);
+        } else {
+          renderCustomAIChat();
+        }
+      }
+      typeText();
+
       addRelationshipXp(8);
     }
 
@@ -4658,7 +4909,6 @@
       const motivation = S.customAI?.motivationStyle || 'philosophical';
       const communication = S.customAI?.communicationStyle || 'formal';
 
-      // Load Thoughtica state variables to bind RPG loops
       const uLevel = S.level || 1;
       const uXP = S.xp || 0;
       const uStreak = S.streak || 1;
@@ -4691,7 +4941,6 @@
         energetic: 'Use exclamation points, high energy words, and playful expressions.'
       }[communication] || '';
 
-      // Memory integration (only if memory is enabled)
       let memorySnippet = '';
       if (S.customAI.memoryEnabled !== false && S.customAI.memories && S.customAI.memories.length > 0) {
         const lastMemories = S.customAI.memories.slice(-6).map(m => `- ${m.text}`).join('\n');
@@ -4710,17 +4959,21 @@ Thoughtica RPG Environment State:
 - Active Daily Streak: ${uStreak} Days consecutive
 - Seeker Specialization Class: ${uSpecial}
 - Main Sanctuary Ambition: "${uGoal}"
-- Wisdom Stat (WIS): ${uWis}
-- Vitality Stat (VIT): ${uVit}
-- Unlocked Skill Trees: ${uSkills} nodes active
+- Wisdom (WIS): ${uWis}
+- Vitality (VIT): ${uVit}
+- Unlocked Skill Tree Nodes: ${uSkills}
 
 ${memorySnippet}
 
 Directives:
 1. Stay in character as ${cName} at all times.
-2. Reference the user's RPG stats, streak, or ambition naturally only when relevant (e.g. if their energy is low or streak is high). Avoid robotic, constant listing of stats.
+2. Reference the user's RPG stats, streak, or ambition naturally only when relevant. Avoid listing them robotically.
 3. Keep responses engaging and concise (2-4 sentences max).
-4. Never start your response with your name.`;
+4. Never start your response with your name.
+5. If the user feels anxious, restless, or low energy, recommend one of the following interactive action cards exactly as written:
+- [🧘 Somatic Breathing Circle (+20 XP)]
+- [⚡ Anchor Anchor Habit (+15 XP)]
+- [🎯 Open Quests Dashboard (+25 XP)]`;
 
       const pastMessages = (S.customAI.chatHistory || []).slice(-8).map(m => ({
         role: m.role,
@@ -4749,6 +5002,36 @@ Directives:
       return "Direct connection lost. Please verify your connection or settings.";
     }
 
+    // Copy message to clipboard helper
+    function copyMessageToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '📋 Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 1500);
+      });
+    }
+
+    // Regenerate last AI response helper
+    async function regenerateLastCompanionResponse() {
+      const history = S.customAI?.chatHistory || [];
+      if (history.length < 2) return;
+      
+      let lastUserIdx = -1;
+      for (let idx = history.length - 1; idx >= 0; idx--) {
+        if (history[idx].role === 'user') {
+          lastUserIdx = idx;
+          break;
+        }
+      }
+      if (lastUserIdx === -1) return;
+
+      const promptText = history[lastUserIdx].content;
+      S.customAI.chatHistory = history.slice(0, lastUserIdx + 1);
+      save();
+      renderCustomAIChat();
+      await triggerCompanionAIResponse(promptText);
+    }
+
     function renderCustomAIChat() {
       const log = document.getElementById('custom-ai-chat-log');
       if (!log) return;
@@ -4757,29 +5040,44 @@ Directives:
       const history = S.customAI?.chatHistory || [];
       if (history.length === 0) {
         log.innerHTML = `
-          <div class="text-center py-8 text-slate-500 text-xs my-auto">
-            <span class="text-3xl block mb-2">🤖</span>
-            No messages yet. Configure your companion and start typing!
+          <div class="text-center py-8 text-slate-500 text-xs my-auto flex flex-col items-center gap-2">
+            <span class="text-3xl animate-bounce">🔮</span>
+            <p class="font-extrabold text-slate-400">Your companion awaits</p>
+            <p class="text-[10px] text-slate-500 max-w-[200px]">Submit a Daily Somatic Sync or send a message to start.</p>
           </div>
         `;
         return;
       }
 
-      history.forEach(m => {
+      history.forEach((m, idx) => {
         const isUser = m.role === 'user';
-        // Skip System checkin noise in raw visualization
         if (m.content.startsWith("System Sync Update:")) return;
 
         const bubble = document.createElement('div');
         bubble.className = `flex ${isUser ? 'justify-end' : 'justify-start'} w-full`;
+        
+        const actionsHtml = isUser 
+          ? `<button onclick="copyMessageToClipboard(\`${m.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, this)" class="opacity-0 group-hover:opacity-100 absolute top-2 right-2 text-[8px] font-bold bg-black/40 hover:bg-black/60 px-1.5 py-0.5 rounded text-slate-400 transition-all">📋 Copy</button>`
+          : `
+            <div class="opacity-0 group-hover:opacity-100 absolute top-2 right-2 flex gap-1 transition-all">
+              <button onclick="copyMessageToClipboard(\`${m.content.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, this)" class="text-[8px] font-bold bg-black/40 hover:bg-black/60 px-1.5 py-0.5 rounded text-slate-400">📋 Copy</button>
+              ${idx === history.length - 1 ? `<button onclick="regenerateLastCompanionResponse()" class="text-[8px] font-bold bg-indigo-500/30 hover:bg-indigo-500/50 px-1.5 py-0.5 rounded text-indigo-300">🔄 Retry</button>` : ''}
+            </div>
+          `;
+
         bubble.innerHTML = `
-          <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-md border ${
+          <div class="max-w-[85%] rounded-2xl px-4 py-3 text-xs shadow-xl border relative group flex flex-col gap-1 ${
             isUser 
-              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-500/40 rounded-tr-none' 
-              : 'bg-white/5 text-slate-100 border-white/10 rounded-tl-none'
+              ? 'bg-gradient-to-tr from-indigo-600/90 to-purple-600/90 text-white border-indigo-500/30 rounded-tr-none' 
+              : 'bg-slate-900 text-slate-200 border-white/5 rounded-tl-none'
           }">
-            <p class="font-extrabold text-[9px] uppercase tracking-wider mb-1 opacity-80">${isUser ? S.name || 'Seeker' : S.customAI.name}</p>
-            <p class="leading-relaxed whitespace-pre-wrap">${m.content}</p>
+            <p class="font-extrabold text-[9px] uppercase tracking-widest opacity-60">
+              ${isUser ? S.name || 'Seeker' : S.customAI.name}
+            </p>
+            <div class="leading-relaxed chat-bubble-markdown select-text">
+              ${isUser ? m.content.replace(/\n/g, '<br>') : parseMarkdownAndCards(m.content)}
+            </div>
+            ${actionsHtml}
           </div>
         `;
         log.appendChild(bubble);
@@ -7557,7 +7855,7 @@ Directives:
             formattedText = formattedText.replace(/\[⚡ Anchor Habit \(\+15 XP\)\]/g, '<br/><button onclick="addXP(15, \'Habit Anchored via AI\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">⚡ Anchor Habit (+15 XP)</button>');
             formattedText = formattedText.replace(/\[🧘 3-Min Breathing Session \(\+20 XP\)\]/g, '<br/><button onclick="switchScreen(\'sanctuary\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🧘 Start Breathing Session (+20 XP)</button>');
             formattedText = formattedText.replace(/\[🎯 Add Goal Quest \(\+25 XP\)\]/g, '<br/><button onclick="switchScreen(\'self\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🎯 Add Goal Quest (+25 XP)</button>');
-            formattedText = formattedText.replace(/\[✨ Unlock Unlimited AI Chat \(\$9\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Unlock Unlimited AI Chat ($6.99/mo)</button>');
+            formattedText = formattedText.replace(/\[✨ Unlock Unlimited AI Chat \(\$9\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Unlock Unlimited AI Chat ($9.99/mo)</button>');
 
             bubble.innerHTML = `
               <div class="flex items-center justify-between border-b border-white/10 pb-1.5 text-[9px] font-extrabold text-amber-300 uppercase tracking-wider">
@@ -7616,7 +7914,7 @@ Directives:
 
 To continue conversing with me without any limits, access all 16 nature soundscapes, and unlock full voice resonance, please upgrade to a paid Sanctuary membership:
 
-[✨ Unlock Unlimited AI Chat ($6.99/mo)]` 
+[✨ Unlock Unlimited AI Chat ($9.99/mo)]` 
           });
           renderChat();
           showUpgradeModal();
@@ -9543,7 +9841,11 @@ To continue conversing with me without any limits, access all 16 nature soundsca
         const toast = document.getElementById('payment-toast');
         const msg = document.getElementById('payment-toast-msg');
         if (toast && msg) {
-          msg.textContent = `✨ ${tier.charAt(0).toUpperCase() + tier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
+          let displayTier = tier;
+          if (tier === 'theme_midnight') displayTier = 'Midnight Void Theme';
+          if (tier === 'theme_zen') displayTier = 'Zen Garden Theme';
+          if (tier === 'aura_rain') displayTier = 'Mountain Rain Aura';
+          msg.textContent = `✨ ${displayTier.charAt(0).toUpperCase() + displayTier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
           toast.classList.remove('hidden');
           setTimeout(() => toast.classList.add('hidden'), 8000);
         }
