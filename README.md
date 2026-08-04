@@ -230,3 +230,136 @@ node --test test/chat-api.test.js test/chat-frontend-regression.test.js test/kor
 - **Confirmation UX for uncertain extractions**: Show a toast asking "Should I remember this?" for auto-extracted memories
 - **Proactive check-ins**: Use the existing `buildKoraMorningBriefing` infrastructure to add goal-based check-in notifications
 - **Memory categories UI**: Add category filtering in the Memory Vault for easier organization
+
+---
+
+## AI Companion System (Full Implementation)
+
+### Architecture
+
+```
+CompanionTurnInput
+      │
+      ▼
+┌─────────────────────────────────────────────┐
+│  src/lib/companion/orchestrator.ts          │
+│                                             │
+│  1. loadPersonality() ──────────────────┐   │
+│  2. retrieveTopKMemories(query, k=8) ───┤   │
+│  3. evaluateCoachingTriggers() ─────────┤   │
+│  4. buildSystemPrompt() ────────────────┤   │
+│  5. buildLLMHistory(userId, 20) ────────┘   │
+│  6. POST /api/chat                          │
+│  7. parseCompanionOutput(raw)               │
+│  8. appendMessages() (persist history)      │
+│  9. upsertMemory() for each write           │
+│ 10. applyToneAdjustment()                   │
+│ 11. return CompanionResponse                │
+└─────────────────────────────────────────────┘
+```
+
+### Key Modules
+
+| File | Purpose |
+|------|---------|
+| `src/lib/companion/types.ts` | All shared TypeScript interfaces |
+| `src/lib/companion/memory.ts` | Long-term memory store (localStorage) + top-k retrieval |
+| `src/lib/companion/conversation.ts` | Conversation history persistence |
+| `src/lib/companion/personality.ts` | Personality profile + tone adaptation |
+| `src/lib/companion/sidecar.ts` | Structured JSON sidecar parser |
+| `src/lib/companion/coaching.ts` | Deterministic coaching trigger evaluation |
+| `src/lib/companion/orchestrator.ts` | Main turn orchestrator |
+| `src/lib/companion/index.ts` | Public API exports |
+
+### Data Model
+
+**Memory** (`CompanionMemory`):
+- `type`: `fact | preference | event | goal | insight`
+- `content`: up to 300 chars
+- `salience`: 0–1 relevance score (increases with reinforcement)
+- Stored in localStorage under `thoughtica-companion-memories-{userId}`
+- Top-k retrieval via keyword-salience scoring (graceful fallback when embeddings unavailable)
+
+**Personality** (`CompanionPersonalityProfile`):
+- `tonePreset`: `supportive | direct | playful | minimal`
+- `verbosity`: 0–1
+- `coachingStyle`: `gentle | structured | socratic`
+- Gradually adapted from `tone_adjustment` sidecar signals
+
+**Conversation** (`CompanionConversationMessage`):
+- Full history stored in localStorage
+- Last 20 messages injected into LLM context per turn
+- Max 100 messages retained
+
+**Sidecar Schema** (returned by LLM after visible reply):
+```json
+{
+  "memory_writes": [{"type": "goal", "content": "...", "salience": 0.8}],
+  "coaching_suggestion": "string or null",
+  "rpg_action": {"type": "xp_grant|quest_complete|quest_add", "label": "...", "xp": 25} | null,
+  "tone_adjustment": "supportive|direct|playful|minimal" | null
+}
+```
+
+### Sanctuary Chat Natural Behavior
+
+The system prompt explicitly instructs:
+- Always respond naturally to greetings/small talk **first**
+- Answer general questions directly before adding coaching context
+- Never fabricate user history not present in memory
+
+Saying "hi" will get a warm conversational response, not a coaching lecture.
+
+### RPG Integration Safety
+
+- `rpg_action.xp` is capped at 200 per turn in the orchestrator
+- Only `xp_grant`, `quest_complete`, `quest_add` are valid RPG action types
+- Invalid/unknown types are silently dropped by the sidecar normalizer
+- XP is applied atomically via `setState` callback (no mutation of stale state)
+
+### Environment Variables for LLM
+
+The companion uses `/api/chat` which requires at least one provider key:
+
+```env
+GEMINI_API_KEY=...        # Google Gemini (tried first)
+GROQ_API_KEY=...          # Groq (tried second)
+OPENAI_API_KEY=...        # OpenAI (tried third)
+
+GEMINI_MODEL=gemini-1.5-flash   # optional, default: gemini-1.5-flash
+GROQ_MODEL=llama3-8b-8192       # optional
+OPENAI_MODEL=gpt-4o-mini        # optional
+
+AI_CHAT_TIMEOUT_MS=15000        # optional, default: 15000
+```
+
+### Testing the Companion
+
+```bash
+cd test
+node --test companion-system.test.js    # companion-specific tests
+node --test                             # full suite (64 tests)
+```
+
+Key test coverage:
+- Greeting response: sidecar parser returns full text for plain replies
+- Memory extraction: writes with empty content are dropped
+- RPG safety: XP capped at 500 by normalizer, invalid action types rejected
+- Coaching triggers: streak risk, daily check-in, goal staleness
+- Pricing: $4.99 price in checkout handler, legacy tier mapping
+
+---
+
+## Pricing Model (Freemium)
+
+Two plans only:
+
+| Plan | Price | Features |
+|------|-------|---------|
+| **Free** | $0/mo | Core AI companion, 10 daily AI interactions, basic soundscapes |
+| **Pro** | $4.99/mo | Unlimited AI, long-term memory, proactive coaching, all soundscapes, soul reports, full RPG |
+
+Legacy tier names (`kindred`, `soulbound`, `plus`, `infinite`, `transcendence`) are all mapped to Pro in `api/create-checkout-session.js` for backward compatibility with any existing Stripe links.
+
+Cosmetic one-time purchases ($1.99 each) remain supported: `theme_midnight`, `theme_zen`, `aura_rain`.
+

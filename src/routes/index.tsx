@@ -12,12 +12,14 @@ import { RelaxTab } from '@/components/RelaxTab'
 import { SoundtrackTab } from '@/components/SoundtrackTab'
 import { DetoxTab } from '@/components/DetoxTab'
 import { blink } from '@/blink/client'
+import { processCompanionTurn, loadConversation, loadPersonality, loadMemories } from '@/lib/companion'
+import type { RpgContext } from '@/lib/companion'
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES & DEFAULTS
    ═══════════════════════════════════════════════════════════════ */
 
-type Tier = 'free' | 'pro' | 'celestial'
+type Tier = 'free' | 'pro'
 type CompanionPersona = 'calm-philosopher' | 'gentle-strategist' | 'socratic-mentor'
 type AuraMood = 'dawn-mist' | 'sage-sanctuary' | 'twilight-solitude'
 type TabId = 'companion' | 'journal' | 'relax' | 'soundscapes' | 'soundtrack' | 'detox' | 'rituals' | 'reports'
@@ -100,8 +102,7 @@ const XP_PER_TASK = 50
 const XP_PER_INTENTION = 25
 const FREE_AI_LIMIT = 10
 const PRICING = {
-  pro: { monthly: 14.99, annual: 11.99 },
-  celestial: { monthly: 49, annual: 39 },
+  pro: { monthly: 4.99 },
 }
 
 function todayStr() { return new Date().toISOString().split('T')[0] }
@@ -230,12 +231,11 @@ function TierBadge({ tier }: { tier: Tier }) {
   const config = {
     free: 'bg-slate-100 text-slate-600 border-slate-200',
     pro: 'bg-primary/10 text-primary border-primary/30',
-    celestial: 'bg-purple-100 text-purple-700 border-purple-200',
   }
-  const label = { free: 'Free Mindful', pro: 'Sovereign Pro', celestial: 'Celestial Sanctuary' }
+  const label = { free: 'Free', pro: 'Pro · $4.99/mo' }
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${config[tier]}`}>
-      {tier === 'celestial' ? <Gem className="w-3 h-3" /> : tier === 'pro' ? <Crown className="w-3 h-3" /> : <Compass className="w-3 h-3" />}
+      {tier === 'pro' ? <Crown className="w-3 h-3" /> : <Compass className="w-3 h-3" />}
       {label[tier]}
     </span>
   )
@@ -458,67 +458,47 @@ function Onboarding({ state, setState, onComplete }: { state: AppState; setState
    ═══════════════════════════════════════════════════════════════ */
 
 function UpgradeModal({ state, setState, onClose }: { state: AppState; setState: (s: AppState) => void; onClose: () => void }) {
-  const [target, setTarget] = useState<Tier>('pro')
-  const isAnnual = state.billingInterval === 'annual'
-
-  const upgrade = (t: Tier) => {
-    const updated = { ...state, tier: t, trialActive: t === 'pro', trialStartDate: t === 'pro' ? new Date().toISOString() : null, aiInteractionsRemaining: 9999 }
+  const upgrade = () => {
+    const updated = { ...state, tier: 'pro' as Tier, trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 }
     setState(updated)
     onClose()
   }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/60 overflow-hidden">
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-sm bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/60 overflow-hidden">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-foreground">Upgrade Your Sanctuary</h2>
             <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="w-4 h-4" /></button>
           </div>
 
-          {/* Billing toggle */}
-          <div className="flex items-center justify-center gap-2 mb-6 p-1 bg-muted rounded-xl">
-            {(['monthly', 'annual'] as const).map(i => (
-              <button
-                key={i}
-                onClick={() => setState({ ...state, billingInterval: i })}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${state.billingInterval === i ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground'}`}
-              >
-                {i === 'monthly' ? 'Monthly' : 'Annual (Save 20%)'}
-              </button>
-            ))}
-          </div>
+          <div className="space-y-3">
+            {/* Free Card */}
+            <div className="p-4 rounded-2xl border border-border bg-muted/40 text-left">
+              <Compass className="w-5 h-5 text-muted-foreground mb-2" />
+              <p className="font-bold text-foreground text-sm">Free</p>
+              <p className="text-2xl font-bold text-foreground mt-1">$0<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
+              <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
+                <li className="flex items-center gap-1"><Check className="w-3 h-3" />Core AI Companion</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3" />Basic soundscapes</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3" />{FREE_AI_LIMIT} daily AI interactions</li>
+              </ul>
+            </div>
 
-          <div className="grid grid-cols-2 gap-3">
             {/* Pro Card */}
             <button
-              onClick={() => upgrade('pro')}
-              className={`p-4 rounded-2xl border text-left transition-all ${target === 'pro' ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-border hover:bg-white/80'}`}
+              onClick={upgrade}
+              className="w-full p-4 rounded-2xl border-2 border-primary ring-2 ring-primary/20 bg-primary/5 text-left transition-all hover:bg-primary/10"
             >
               <Crown className="w-5 h-5 text-primary mb-2" />
-              <p className="font-bold text-foreground text-sm">Sovereign Pro</p>
-              <p className="text-2xl font-bold text-foreground mt-1">${isAnnual ? PRICING.pro.annual : PRICING.pro.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
+              <p className="font-bold text-foreground text-sm">Pro</p>
+              <p className="text-2xl font-bold text-foreground mt-1">${PRICING.pro.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
               <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited AI</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />AI Reflections</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Sound Mixer</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Soul Reports</li>
-              </ul>
-            </button>
-
-            {/* Celestial Card */}
-            <button
-              onClick={() => upgrade('celestial')}
-              className={`p-4 rounded-2xl border text-left transition-all ${target === 'celestial' ? 'border-purple-400 ring-2 ring-purple-300/30 bg-purple-50/50' : 'border-border hover:bg-white/80'}`}
-            >
-              <Gem className="w-5 h-5 text-purple-500 mb-2" />
-              <p className="font-bold text-foreground text-sm">Celestial</p>
-              <p className="text-2xl font-bold text-foreground mt-1">${isAnnual ? PRICING.celestial.annual : PRICING.celestial.monthly}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
-              <ul className="mt-3 space-y-1.5 text-[11px] text-muted-foreground">
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-purple-500" />All Pro features</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-purple-500" />Binaural Library</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-purple-500" />1-on-1 Insights</li>
-                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-purple-500" />5 Family Seats</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Unlimited AI + long-term memory</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />AI Reflections & Soul Reports</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Proactive coaching</li>
+                <li className="flex items-center gap-1"><Check className="w-3 h-3 text-primary" />Custom Sound Mixer</li>
               </ul>
             </button>
           </div>
@@ -706,30 +686,72 @@ function AppHeader({ state, setState }: { state: AppState; setState: (s: AppStat
 
 function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppState) => void }) {
   const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [state.chatMessages])
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [state.chatMessages, isTyping])
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return
 
     const canUseAi = state.tier !== 'free' || state.aiInteractionsRemaining > 0
 
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: 'user', text: text.trim(), timestamp: new Date().toISOString() }
-    const updated = { ...state, chatMessages: [...state.chatMessages, userMsg] }
+    const withUser = { ...state, chatMessages: [...state.chatMessages, userMsg] }
     if (state.tier === 'free' && state.aiInteractionsRemaining > 0) {
-      updated.aiInteractionsRemaining = state.aiInteractionsRemaining - 1
+      withUser.aiInteractionsRemaining = state.aiInteractionsRemaining - 1
     }
-
-    if (canUseAi) {
-      const response = generateCompanionResponse(userMsg.text, state.companion.persona)
-      const companionMsg: ChatMessage = { id: crypto.randomUUID(), role: 'companion', text: response, timestamp: new Date().toISOString() }
-      updated.chatMessages = [...updated.chatMessages, companionMsg]
-      updated.xp = state.xp + 5
-    }
-
-    setState(updated)
+    setState(withUser)
     setInput('')
+
+    if (!canUseAi) return
+
+    setIsTyping(true)
+    try {
+      const rpgCtx: RpgContext = {
+        level: state.level,
+        xp: state.xp,
+        streak: state.streak,
+        activeQuestNames: state.pathMarkers.filter(p => !p.completed).map(p => p.text).slice(0, 5),
+        recentBadgeNames: state.badges.slice(-3).map(b => b.name),
+      }
+
+      const result = await processCompanionTurn({
+        userId: state.companion.name,
+        userMessage: text.trim(),
+        rpgContext: rpgCtx,
+        topKMemories: 8,
+      })
+
+      // Apply any RPG action safely (XP only, capped at 200 per turn)
+      let xpGain = 5
+      if (result.sidecar.rpg_action?.type === 'xp_grant' && result.sidecar.rpg_action.xp) {
+        xpGain = Math.min(200, result.sidecar.rpg_action.xp)
+      }
+
+      const companionMsg: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'companion',
+        text: result.reply,
+        timestamp: new Date().toISOString(),
+      }
+
+      setState(prev => ({
+        ...prev,
+        chatMessages: [...prev.chatMessages, companionMsg],
+        xp: prev.xp + xpGain,
+      }))
+    } catch {
+      const fallbackMsg: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'companion',
+        text: 'I\'m having a quiet moment — your message is safe. Try again in a moment and I\'ll be fully present. 🌿',
+        timestamp: new Date().toISOString(),
+      }
+      setState(prev => ({ ...prev, chatMessages: [...prev.chatMessages, fallbackMsg] }))
+    } finally {
+      setIsTyping(false)
+    }
   }
 
   const quickActions = [
@@ -783,16 +805,25 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
             </div>
           </motion.div>
         ))}
+        {isTyping && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+            <div className="px-4 py-2.5 rounded-2xl rounded-bl-md bg-muted text-muted-foreground text-sm flex items-center gap-1.5">
+              <span className="animate-bounce delay-0 w-1.5 h-1.5 bg-muted-foreground rounded-full inline-block" />
+              <span className="animate-bounce delay-100 w-1.5 h-1.5 bg-muted-foreground rounded-full inline-block" />
+              <span className="animate-bounce delay-200 w-1.5 h-1.5 bg-muted-foreground rounded-full inline-block" />
+            </div>
+          </motion.div>
+        )}
         {isOverLimit && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-4">
             <GlassCard className="p-4 space-y-2">
               <p className="text-sm font-semibold text-foreground">Daily AI limit reached</p>
-              <p className="text-xs text-muted-foreground">Upgrade to Sovereign Pro for unlimited interactions.</p>
+              <p className="text-xs text-muted-foreground">Upgrade to Pro for unlimited AI interactions.</p>
               <button
                 onClick={() => setState({ ...state, tier: 'pro', trialActive: true, trialStartDate: new Date().toISOString(), aiInteractionsRemaining: 9999 })}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-semibold"
               >
-                Try 7 Days Free
+                Upgrade to Pro · $4.99/mo
               </button>
             </GlassCard>
           </motion.div>
@@ -805,8 +836,8 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
         {quickActions.map((a, i) => (
           <button
             key={i}
-            onClick={() => sendMessage(a.text)}
-            disabled={isOverLimit}
+            onClick={() => { void sendMessage(a.text) }}
+            disabled={isOverLimit || isTyping}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-full text-[11px] font-medium text-foreground whitespace-nowrap transition-colors disabled:opacity-50"
           >
             <a.icon className="w-3 h-3" />{a.label}
@@ -820,14 +851,14 @@ function CompanionTab({ state, setState }: { state: AppState; setState: (s: AppS
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) } }}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void sendMessage(input) } }}
             placeholder={isOverLimit ? 'Upgrade to continue...' : `Message ${state.companion.name}...`}
-            disabled={isOverLimit}
+            disabled={isOverLimit || isTyping}
             className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-white/80 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow disabled:opacity-50"
           />
           <button
-            onClick={() => sendMessage(input)}
-            disabled={!input.trim() || isOverLimit}
+            onClick={() => { void sendMessage(input) }}
+            disabled={!input.trim() || isOverLimit || isTyping}
             className="p-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             <Send className="w-4 h-4" />
