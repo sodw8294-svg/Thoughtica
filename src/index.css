@@ -168,3 +168,87 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 }
+
+/* ───────────────────────────────────────────────────────────────
+   Markdown message styles (used by MarkdownMessage component)
+─────────────────────────────────────────────────────────────── */
+@layer components {
+  .md-message {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    word-break: break-words;
+  }
+
+  .md-message .md-p {
+    margin: 0 0 0.5em;
+  }
+
+  .md-message .md-p:last-child { margin-bottom: 0; }
+
+  .md-message .md-h1 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0.75em 0 0.35em;
+    line-height: 1.3;
+  }
+
+  .md-message .md-h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.65em 0 0.3em;
+  }
+
+  .md-message .md-h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0.5em 0 0.25em;
+  }
+
+  .md-message .md-ul,
+  .md-message .md-ol {
+    margin: 0.35em 0 0.5em 1.25em;
+    padding: 0;
+  }
+
+  .md-message .md-li { margin: 0.15em 0; }
+
+  .md-message .md-blockquote {
+    border-left: 3px solid var(--color-border);
+    margin: 0.5em 0;
+    padding-left: 0.875em;
+    color: var(--color-muted-foreground);
+  }
+
+  .md-message .md-bq-p { margin: 0.2em 0; }
+
+  .md-message .md-code-block {
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 0.75em 1em;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    margin: 0.5em 0;
+  }
+
+  .md-message .inline-code {
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    padding: 0.1em 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.8125em;
+  }
+
+  .md-message .md-hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 0.75em 0;
+  }
+
+  /* prose-companion adjustments when inside companion bubble */
+  .prose-companion .md-p:first-child { margin-top: 0; }
+  .prose-companion .md-p:last-child  { margin-bottom: 0; }
+}

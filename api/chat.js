@@ -189,7 +189,14 @@ module.exports = async (req, res) => {
   const memoryItems = normalizeMemoryContext(req.body.memoryContext);
   const supportMode = normalizeText(req.body.supportMode, '', 20);
 
-  const systemPrompt = buildSystemPrompt(cName, uName, goal, level, memoryItems, supportMode);
+  // Allow the orchestrator to supply its own richer system prompt (includes memory,
+  // coaching context, tone, RPG quest data).  Fall back to the local builder when
+  // no override is present so standalone API calls still work.
+  const rawOverride = req.body._systemPromptOverride;
+  const systemPrompt =
+    typeof rawOverride === 'string' && rawOverride.trim()
+      ? rawOverride.trim().slice(0, 8000)
+      : buildSystemPrompt(cName, uName, goal, level, memoryItems, supportMode);
 
   const providerCalls = [];
   const providerFailures = [];
