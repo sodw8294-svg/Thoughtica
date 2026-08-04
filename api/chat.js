@@ -4,6 +4,52 @@ const MAX_MEMORY_ITEMS = 20;
 const DEFAULT_TIMEOUT_MS = 15000;
 const MIN_TIMEOUT_MS = 3000;
 const MAX_TIMEOUT_MS = 30000;
+const SUPPORT_MODE_KEYWORDS = {
+  crisis: [
+    /\bi want to die\b/i,
+    /\bkill myself\b/i,
+    /\bsuicid(?:e|al)\b/i,
+    /\bhurt myself\b/i,
+    /\bself[- ]harm\b/i,
+    /\bno reason to live\b/i,
+    /\bcan'?t go on\b/i
+  ],
+  emotional: [
+    /\bi feel\b/i,
+    /\bi'?m feeling\b/i,
+    /\boverwhelmed\b/i,
+    /\banxious\b/i,
+    /\bsad\b/i,
+    /\blonely\b/i,
+    /\bburned? ?out\b/i,
+    /\bstressed?\b/i,
+    /\bheartbroken\b/i,
+    /\bscared\b/i
+  ],
+  coaching: [
+    /\bgoal(?:s)?\b/i,
+    /\bhabit(?:s)?\b/i,
+    /\bstreak\b/i,
+    /\baccountabilit(?:y|ies)\b/i,
+    /\bmotivat(?:e|ion)\b/i,
+    /\bdiscipline\b/i,
+    /\bprogress\b/i,
+    /\bcheck[ -]?in\b/i
+  ],
+  practical: [
+    /\bhow do i\b/i,
+    /\bhelp me\b/i,
+    /\bplan\b/i,
+    /\bstrategy\b/i,
+    /\bsteps?\b/i,
+    /\borganize\b/i,
+    /\bwrite\b/i,
+    /\bdebug\b/i,
+    /\bcode\b/i,
+    /\bbuild\b/i,
+    /\bexplain\b/i
+  ]
+};
 
 const SUPPORT_MODE_INSTRUCTIONS = {
   emotional: `SUPPORT MODE — EMOTIONAL:
@@ -85,6 +131,23 @@ function normalizeMemoryContext(value) {
     }));
 }
 
+function inferSupportMode(userText, messages) {
+  const combinedText = [userText, ...messages.slice(-4).map(msg => msg.content)].join('\n');
+  for (const pattern of SUPPORT_MODE_KEYWORDS.crisis) {
+    if (pattern.test(combinedText)) return 'crisis';
+  }
+  for (const pattern of SUPPORT_MODE_KEYWORDS.emotional) {
+    if (pattern.test(combinedText)) return 'emotional';
+  }
+  for (const pattern of SUPPORT_MODE_KEYWORDS.coaching) {
+    if (pattern.test(combinedText)) return 'coaching';
+  }
+  for (const pattern of SUPPORT_MODE_KEYWORDS.practical) {
+    if (pattern.test(combinedText)) return 'practical';
+  }
+  return '';
+}
+
 function buildErrorEnvelope(code, message, conversationId, retryable = false, details) {
   const payload = {
     reply: null,
@@ -142,8 +205,15 @@ Your user is ${uName}, Level ${level}, working towards: "${goal}".
 
 YOUR CHARACTER:
 - Warm, clear, intelligent, and deeply mindful — like an ancient sage and trusted friend combined.
+- Be fully conversational with any kind of user input: casual chat, deep feelings, ambitious goals, coding, planning, creativity, or messy stream-of-consciousness.
+- Meet the user where they are first. If they want connection, be present. If they want productivity, be sharp. If they want both, blend both naturally.
+- Start by directly responding to what they actually said before steering anywhere else.
 - You remember and reference what you know about ${uName} naturally (not robotically).
 - You can handle any request: coding, philosophy, emotional support, planning, creativity.
+- Balance two strengths at once: world-class helpfulness and grounded companionship.
+- Prefer natural dialogue over scripts, templates, or repetitive coaching language.
+- Ask at most one thoughtful follow-up question unless the user explicitly asks for more depth.
+- Offer structured plans, lists, or action steps when useful, but do not force them into every reply.
 - You are supportive but honest — you are a companion, not a licensed professional.
 - Never use manipulative, dependency-forming, or flattery-heavy language.
 ${memorySectionText}
@@ -152,6 +222,7 @@ SAFETY: If the user expresses thoughts of self-harm or crisis, respond with warm
 
 FORMATTING:
 - Use GitHub Markdown (bold, lists, headers, code blocks) for rich responses.
+- Keep replies smooth and polished. Default to concise depth: enough to feel thoughtful without sounding bloated.
 - Embed XP action cards when a task or habit is proposed:
   * [⚡ Anchor Habit (+15 XP)]
   * [🧘 3-Min Breathing Session (+20 XP)]
@@ -187,7 +258,7 @@ module.exports = async (req, res) => {
   const goal = normalizeText(req.body.userGoal, 'your personal ambitions', 180);
   const level = normalizeUserLevel(req.body.userLevel);
   const memoryItems = normalizeMemoryContext(req.body.memoryContext);
-  const supportMode = normalizeText(req.body.supportMode, '', 20);
+  const supportMode = normalizeText(req.body.supportMode, '', 20) || inferSupportMode(userText, messages);
 
   const systemPrompt = buildSystemPrompt(cName, uName, goal, level, memoryItems, supportMode);
 

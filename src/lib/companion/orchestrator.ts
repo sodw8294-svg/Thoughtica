@@ -35,6 +35,60 @@ import {
 import { parseCompanionOutput } from './sidecar'
 import { evaluateCoachingTriggers, buildCoachingContext } from './coaching'
 
+function inferSupportMode(userMessage: string): 'emotional' | 'coaching' | 'practical' | 'crisis' | '' {
+  const text = userMessage.trim()
+  if (!text) return ''
+  if (
+    /\bi want to die\b/i.test(text) ||
+    /\bkill myself\b/i.test(text) ||
+    /\bsuicid(?:e|al)\b/i.test(text) ||
+    /\bhurt myself\b/i.test(text) ||
+    /\bself[- ]harm\b/i.test(text) ||
+    /\bno reason to live\b/i.test(text) ||
+    /\bcan'?t go on\b/i.test(text)
+  ) {
+    return 'crisis'
+  }
+  if (
+    /\bi feel\b/i.test(text) ||
+    /\bi'?m feeling\b/i.test(text) ||
+    /\boverwhelmed\b/i.test(text) ||
+    /\banxious\b/i.test(text) ||
+    /\bsad\b/i.test(text) ||
+    /\blonely\b/i.test(text) ||
+    /\bburned? ?out\b/i.test(text) ||
+    /\bstressed?\b/i.test(text)
+  ) {
+    return 'emotional'
+  }
+  if (
+    /\bgoal(?:s)?\b/i.test(text) ||
+    /\bhabit(?:s)?\b/i.test(text) ||
+    /\bstreak\b/i.test(text) ||
+    /\baccountabilit(?:y|ies)\b/i.test(text) ||
+    /\bmotivat(?:e|ion)\b/i.test(text) ||
+    /\bprogress\b/i.test(text)
+  ) {
+    return 'coaching'
+  }
+  if (
+    /\bhow do i\b/i.test(text) ||
+    /\bhelp me\b/i.test(text) ||
+    /\bplan\b/i.test(text) ||
+    /\bstrategy\b/i.test(text) ||
+    /\bsteps?\b/i.test(text) ||
+    /\borganize\b/i.test(text) ||
+    /\bwrite\b/i.test(text) ||
+    /\bdebug\b/i.test(text) ||
+    /\bcode\b/i.test(text) ||
+    /\bbuild\b/i.test(text) ||
+    /\bexplain\b/i.test(text)
+  ) {
+    return 'practical'
+  }
+  return ''
+}
+
 /** Build the system prompt for the LLM */
 function buildSystemPrompt(
   companionName: string,
@@ -63,12 +117,18 @@ Your user is ${userName}, Level ${level}, working towards: "${goal}".${questCont
 
 CORE BEHAVIOR:
 - ALWAYS respond naturally to greetings and small talk first. If the user says "hi", "hello", or similar, respond conversationally and warmly before anything else.
+- Be fully conversational with any kind of user input, from quick banter to deep emotional sharing to practical problem-solving.
+- First answer what the user is actually trying to say or ask. Then add coaching or RPG context only if it helps.
+- Blend two strengths naturally: elite usefulness and grounded companionship.
 - Answer general questions directly like a helpful assistant. Add coaching context only when genuinely relevant.
 - You remember and reference what you know about ${userName} naturally (never robotically).
 - You can handle any request: coding, philosophy, emotional support, planning, creativity.
 - You are supportive but honest — a companion, not a licensed professional.
 - Never fabricate user history not present in your memory context.
 - Never use manipulative, dependency-forming, or flattery-heavy language.
+- Avoid sounding scripted, preachy, or repetitive.
+- Offer clear steps, options, or structure when the user wants productivity help, but keep it human and smooth.
+- Ask no more than one follow-up question unless the user clearly wants a deeper back-and-forth.
 ${toneInstruction[tonePreset] ?? toneInstruction.supportive}
 
 ${memoryBlock}
@@ -122,6 +182,7 @@ async function callLLM(
       messages: history,
       memoryContext,
       conversationId: `companion-${Date.now()}`,
+      supportMode: inferSupportMode(userText),
       // Pass the full system prompt override via a custom field
       _systemPromptOverride: systemPrompt,
     }),

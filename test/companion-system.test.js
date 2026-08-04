@@ -265,10 +265,14 @@ test('companion system prompt instructs natural greeting behavior', () => {
   const prompt = `You are Kora, a genuine persistent AI companion.
 CORE BEHAVIOR:
 - ALWAYS respond naturally to greetings and small talk first. If the user says "hi", "hello", or similar, respond conversationally and warmly before anything else.
+- Be fully conversational with any kind of user input, from quick banter to deep emotional sharing to practical problem-solving.
+- Blend two strengths naturally: elite usefulness and grounded companionship.
 - Answer general questions directly like a helpful assistant. Add coaching context only when genuinely relevant.
 - Never fabricate user history not present in your memory context.`;
 
   assert.ok(prompt.includes('ALWAYS respond naturally to greetings'), 'prompt must instruct natural greeting response');
+  assert.ok(prompt.includes('fully conversational with any kind of user input'), 'prompt must support broad conversational input');
+  assert.ok(prompt.includes('elite usefulness and grounded companionship'), 'prompt must balance productivity and companionship');
   assert.ok(prompt.includes('Never fabricate user history'), 'prompt must prevent fabrication');
 });
 

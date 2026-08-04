@@ -170,3 +170,53 @@ test('preserves anchor and recent messages when trimming long history', async ()
   assert.equal(contents.includes('message-39'), true);
   assert.equal(contents[contents.length - 1], 'continue');
 });
+
+test('infers emotional support mode from user text when not supplied', async () => {
+  clearProviderEnv();
+  process.env.OPENAI_API_KEY = 'test-openai-key';
+
+  let payloadBody = null;
+  global.fetch = async (_url, options) => {
+    payloadBody = JSON.parse(options.body);
+    return {
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ choices: [{ message: { content: 'I am here with you.' } }] })
+    };
+  };
+
+  const req = { method: 'POST', body: { userText: 'I feel overwhelmed and anxious today' } };
+  const res = createRes();
+
+  await chatHandler(req, res);
+
+  assert.equal(res.statusCode, 200);
+  const systemMsg = payloadBody.messages.find(msg => msg.role === 'system');
+  assert.ok(systemMsg.content.includes('EMOTIONAL'), 'Should auto-infer emotional support mode');
+});
+
+test('infers practical support mode from user text when not supplied', async () => {
+  clearProviderEnv();
+  process.env.OPENAI_API_KEY = 'test-openai-key';
+
+  let payloadBody = null;
+  global.fetch = async (_url, options) => {
+    payloadBody = JSON.parse(options.body);
+    return {
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ choices: [{ message: { content: 'Here is a clean plan.' } }] })
+    };
+  };
+
+  const req = { method: 'POST', body: { userText: 'Help me plan and debug this code issue' } };
+  const res = createRes();
+
+  await chatHandler(req, res);
+
+  assert.equal(res.statusCode, 200);
+  const systemMsg = payloadBody.messages.find(msg => msg.role === 'system');
+  assert.ok(systemMsg.content.includes('PRACTICAL'), 'Should auto-infer practical support mode');
+});
