@@ -27,6 +27,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Canvas Confetti for Level-Up Explosions -->
@@ -829,13 +831,6 @@
                 <button onclick="toggleSoundscape('rain'); showXPToast(0, '🌧️ Mountain Rain Soundscape Preview Playing...', 1.0, false);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Listen Preview</button>
                 <button onclick="startCheckout('aura_rain')" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-cyan-500/30">$1.99</button>
               </div>
-              <ul class="text-xs text-slate-400 space-y-1 mt-3">
-                <li>✓ Unlimited companion interactions</li>
-                <li>✓ 30-day deep memory</li>
-                <li>✓ Companion evolution &amp; personality</li>
-                <li>✓ Voice conversations</li>
-              </ul>
-              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Soulbound</button>
             </div>
 
           <!-- Auth nudge for guests -->
@@ -976,6 +971,7 @@
 
     document.addEventListener('DOMContentLoaded', checkPaymentReturn);
     checkPaymentReturn();
+    document.addEventListener('DOMContentLoaded', initStripe);
     window.audioUnlocked = false;
     function unlockAudio() {
       if (window.audioUnlocked) return;
@@ -3135,6 +3131,18 @@
 
     let _stripe = null;
 
+    function initStripe() {
+      if (typeof Stripe === 'undefined') {
+        console.warn('[thoughtica] Stripe.js not loaded yet.');
+        return;
+      }
+      if (!window.__STRIPE_PK__) {
+        console.warn('[thoughtica] Stripe public key not configured. Set window.__STRIPE_PK__ before loading.');
+        return;
+      }
+      _stripe = Stripe(window.__STRIPE_PK__);
+    }
+
     function get5AMDateKey() {
       const now = new Date();
       const effectiveDate = new Date(now);
@@ -3545,11 +3553,6 @@
           ctx.fill();
         });
       }
-      _stripe = Stripe(window.__STRIPE_PK__ || '');
-      if (!window.__STRIPE_PK__) {
-        console.warn('[thoughtica] Stripe public key not configured. Set window.__STRIPE_PK__ before loading.');
-      }
-      return _stripe;
     }
 
     function selectLanguage(langCode, label) {
@@ -5510,7 +5513,7 @@ Directives:
         const res = await fetch('/api/create-checkout-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tier, uid })
+          body: JSON.stringify({ tier, uid: S.uid })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Checkout failed');
