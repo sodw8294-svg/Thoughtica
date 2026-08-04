@@ -51,40 +51,6 @@ module.exports = async (req, res) => {
       return res.status(200).json({ sessionId: session.id, url: session.url });
     }
 
-    // Cosmetic one-time purchases remain supported
-    const COSMETICS = {
-      theme_midnight: 'Theme: Midnight Void',
-      theme_zen: 'Theme: Zen Garden',
-      aura_rain: 'Aura: Mountain Rain',
-    };
-
-    if (Object.prototype.hasOwnProperty.call(COSMETICS, tier)) {
-      const name = COSMETICS[tier];
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'payment',
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: `Thoughtica - ${name}`,
-                description: 'Purely cosmetic upgrade for your sanctuary.',
-                images: ['https://thoughtica.io/logo-book.jpg'],
-              },
-              unit_amount: 199, // $1.99
-            },
-            quantity: 1,
-          },
-        ],
-        success_url: `${baseUrl}/?payment_success=true&tier=${tier}`,
-        cancel_url: `${baseUrl}/?payment_cancelled=true`,
-        client_reference_id: uid,
-        metadata: { tier },
-      });
-      return res.status(200).json({ sessionId: session.id, url: session.url });
-    }
-
     return res.status(400).json({ error: 'Invalid tier specified' });
   } catch (error) {
     console.error('Stripe Checkout Error:', error);
