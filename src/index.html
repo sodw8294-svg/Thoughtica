@@ -915,13 +915,23 @@
       }
     } catch(e) {}
 
+    const LEGACY_PRO_TIER_ALIASES = new Set(['pro', 'kindred', 'soulbound', 'plus', 'infinite', 'transcendence']);
+    const DISPLAY_SUBSCRIPTION_TIERS = ['pro'];
+
+    function normalizeSubscriptionTier(rawTier) {
+      if (!rawTier) return 'pro';
+      const normalizedTier = String(rawTier).toLowerCase();
+      return LEGACY_PRO_TIER_ALIASES.has(normalizedTier) ? 'pro' : normalizedTier;
+    }
+
     // Payment Return Handler
     function checkPaymentReturn() {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('payment_success') === 'true') {
           const tierRaw = urlParams.get('tier') || 'pro';
-          let displayTier = tierRaw === 'pro' ? 'Thoughtica Pro' : tierRaw.toUpperCase();
+          const tier = normalizeSubscriptionTier(tierRaw);
+          let displayTier = tier === 'pro' ? 'Thoughtica Pro' : tier.toUpperCase();
           if (tierRaw.startsWith('theme_') || tierRaw.startsWith('aura_')) {
             if (!S.cosmetics) S.cosmetics = [];
             if (!S.cosmetics.includes(tierRaw)) {
@@ -938,7 +948,7 @@
             }
             setAtmosphere(S.companion.aura || 'twilight');
           } else {
-            S.subscriptionTier = tierRaw;
+            S.subscriptionTier = tier;
             S.isPremium = true;
           }
           save();
@@ -9156,8 +9166,9 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
     }
     function updateSubscriptionUI() {
       const tierTag = document.getElementById('settings-status-tier');
-      const tier = S.subscriptionTier || 'free';
-      const isPaid = tier === 'pro' || tier === 'plus' || tier === 'kindred' || tier === 'infinite' || tier === 'soulbound' || tier === 'transcendence' || S.isPremium;
+      const rawTier = S.subscriptionTier || 'free';
+      const tier = rawTier === 'free' ? 'free' : normalizeSubscriptionTier(rawTier);
+      const isPaid = DISPLAY_SUBSCRIPTION_TIERS.includes(tier) || S.isPremium;
 
       if (tierTag) {
         if (isPaid) {

@@ -974,13 +974,23 @@
       }
     } catch(e) {}
 
+    const LEGACY_PRO_TIER_ALIASES = new Set(['pro', 'kindred', 'soulbound', 'plus', 'infinite', 'transcendence']);
+    const DISPLAY_SUBSCRIPTION_TIERS = ['pro'];
+
+    function normalizeSubscriptionTier(rawTier) {
+      if (!rawTier) return 'pro';
+      const normalizedTier = String(rawTier).toLowerCase();
+      return LEGACY_PRO_TIER_ALIASES.has(normalizedTier) ? 'pro' : normalizedTier;
+    }
+
     // Payment Return Handler
     function checkPaymentReturn() {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('payment_success') === 'true') {
-          const tierRaw = urlParams.get('tier') || 'kindred';
-          let displayTier = tierRaw.toUpperCase();
+          const tierRaw = urlParams.get('tier') || 'pro';
+          const tier = normalizeSubscriptionTier(tierRaw);
+          let displayTier = tier === 'pro' ? 'Thoughtica Pro' : tier.toUpperCase();
           if (tierRaw.startsWith('theme_') || tierRaw.startsWith('aura_')) {
             if (!S.cosmetics) S.cosmetics = [];
             if (!S.cosmetics.includes(tierRaw)) {
@@ -997,7 +1007,7 @@
             }
             setAtmosphere(S.companion.aura || 'twilight');
           } else {
-            S.subscriptionTier = tierRaw;
+            S.subscriptionTier = tier;
             S.isPremium = true;
           }
           save();
@@ -3136,28 +3146,15 @@
       <p class="text-xs text-slate-400 mt-1 mb-5">Unlock deep focus, custom environments, and AI companion voice resonance.</p>
 
       <div class="space-y-3.5 text-left">
-        <!-- PLUS TIER -->
-        <div onclick="buySubscription('plus')" class="p-4 bg-white/5 border border-white/10 hover:border-emerald-500/50 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] relative group">
+        <!-- PRO TIER -->
+        <div onclick="buySubscription('pro')" class="p-4 bg-white/5 border border-white/10 hover:border-emerald-500/50 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] relative group">
           <div class="flex justify-between items-center">
-            <span class="text-sm font-extrabold text-white flex items-center gap-1.5">🌿 Sanctuary Plus</span>
+            <span class="text-sm font-extrabold text-white flex items-center gap-1.5">🔮 Thoughtica Pro</span>
             <div class="text-right">
-              <span class="text-xs font-black text-emerald-400">7 Days Free</span>
-              <span class="text-[9px] text-slate-400 block font-bold">then $9.99/mo (or $59.99/yr)</span>
+              <span class="text-xs font-black text-purple-400">$4.99/mo</span>
             </div>
           </div>
-          <p class="text-[10px] text-slate-400 mt-1.5">Unlocks 12 Premium Soundscapes (Pages 2-4), Full AI Voice Resonance & Persistent Conversation Memory.</p>
-        </div>
-
-        <!-- INFINITE TIER -->
-        <div onclick="buySubscription('infinite')" class="p-4 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 border border-indigo-500/30 hover:border-indigo-400 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] relative group shadow-xl">
-          <div class="flex justify-between items-center">
-            <span class="text-sm font-extrabold text-white flex items-center gap-1.5">✨ Sovereign Infinite <span class="px-1.5 py-0.5 rounded text-[8px] bg-amber-400/20 text-amber-300 border border-amber-400/30 font-bold uppercase">POPULAR</span></span>
-            <div class="text-right">
-              <span class="text-xs font-black text-indigo-400">7 Days Free</span>
-              <span class="text-[9px] text-indigo-300 block font-bold">then $19.99/mo (or $119.99/yr)</span>
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1.5">AI Goal Architect & Micro-Roadmaps, Future-Self AI Transmissions, Binaural Deck, Custom RPG Aura Wheel & All AI Mentors.</p>
+          <p class="text-[10px] text-slate-400 mt-1.5">Unlimited AI + long-term memory, proactive coaching, all soundscapes, soul reports & full RPG features.</p>
         </div>
       </div>
 
@@ -9227,19 +9224,16 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     }
     function updateSubscriptionUI() {
       const tierTag = document.getElementById('settings-status-tier');
-      const tier = S.subscriptionTier || 'free';
-      const isPaid = tier === 'plus' || tier === 'kindred' || tier === 'infinite' || tier === 'soulbound' || S.isPremium;
-      const isInfinite = tier === 'infinite' || tier === 'soulbound';
+      const rawTier = S.subscriptionTier || 'free';
+      const tier = rawTier === 'free' ? 'free' : normalizeSubscriptionTier(rawTier);
+      const isPaid = DISPLAY_SUBSCRIPTION_TIERS.includes(tier) || S.isPremium;
 
       if (tierTag) {
-        if (isInfinite) {
-          tierTag.textContent = "🔮 Sovereign Infinite Tier";
+        if (isPaid) {
+          tierTag.textContent = "🔮 Pro Tier · $4.99/mo";
           tierTag.className = "text-xs font-black text-purple-400 font-heading";
-        } else if (isPaid) {
-          tierTag.textContent = "🌿 Sanctuary Plus Tier";
-          tierTag.className = "text-xs font-black text-amber-400 font-heading";
         } else {
-          tierTag.textContent = "🌱 Awakening (Free)";
+          tierTag.textContent = "🌱 Free Plan";
           tierTag.className = "text-xs font-bold text-slate-300";
         }
       }
