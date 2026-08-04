@@ -9132,6 +9132,8 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
 
     function showUpgradeModal() {
       document.getElementById('modal-premium').classList.remove('hidden');
+      const bottomNav = document.getElementById('bottom-nav');
+      if (bottomNav) bottomNav.classList.add('hidden');
       setTimeout(() => {
         const exitBtn = document.getElementById('delayed-paywall-exit');
         if (exitBtn) {
@@ -9148,6 +9150,8 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
     function closeUpgradeModal() {
       document.getElementById('modal-upgrade').classList.add('hidden');
       document.getElementById('modal-premium').classList.add('hidden');
+      const bottomNav = document.getElementById('bottom-nav');
+      if (bottomNav) bottomNav.classList.remove('hidden');
     }
     function buySubscription(tier) {
       closeUpgradeModal();
