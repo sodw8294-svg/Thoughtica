@@ -5793,27 +5793,6 @@ Directives:
     // ── XP & Levelling ─────────────────────────────
     function xpForLevel(level) { return level * 100; }
 
-    function addXP(amount) {
-      const stats = loadStats();
-      stats.xp += amount;
-      while (stats.xp >= xpForLevel(stats.level)) {
-        stats.xp -= xpForLevel(stats.level);
-        stats.level += 1;
-        showXPToast(`⬆️ Level Up! You are now Level ${stats.level}`);
-      }
-      saveStats(stats);
-      refreshStatsUI();
-      showXPToast(`+${amount} XP`);
-    }
-
-    function showXPToast(msg) {
-      const t = document.createElement('div');
-      t.className = 'xp-toast fixed bottom-24 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-indigo-600/90 text-white text-xs font-bold z-[9999] whitespace-nowrap';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2500);
-    }
-
     function refreshStatsUI() {
       const s = loadStats();
       const maxXP = xpForLevel(s.level);
@@ -7499,16 +7478,6 @@ Please provide deep AI trajectory insights, strategic wisdom, potential challeng
     function closeShareCardModal() {
       const modal = document.getElementById('share-card-modal');
       if (modal) modal.classList.add('hidden');
-    }
-
-    function copyShareCardText() {
-      const rankTitle = RANK_TITLES[Math.min(RANK_TITLES.length - 1, Math.floor((S.level - 1) / 2))];
-      const text = `🔮 Thoughtica Sanctuary Horizon\nSeeker: ${S.name || 'Seeker'} (${rankTitle})\nLevel: ${S.level} | Streak: ${S.streak} Days | SP: ${S.skillPoints || 0}\nAmbition: "${S.goal}"\nJoin me in Thoughtica! ✨`;
-      navigator.clipboard.writeText(text).then(() => {
-        showXPToast(0, 'Sovereign Summary Copied 📋', 1.0, false);
-      }).catch(() => {
-        alert(text);
-      });
     }
 
     function copyShareCardText() {
