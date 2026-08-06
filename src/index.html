@@ -2386,8 +2386,8 @@
 
       </section>
 
-      <!-- SCREEN: CUSTOM AI COMPANION SYSTEM -->
-      <section id="screen-aibot" class="screen h-full flex flex-col justify-between scrollbar-none pb-12 overflow-y-auto">
+      <!-- SCREEN: CUSTOM AI COMPANION SYSTEM (REMOVED) -->
+      <section id="screen-aibot" class="hidden" style="display:none !important;">
         
         <!-- Header -->
         <div class="p-4 border-b border-white/5 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between shrink-0">
@@ -2777,10 +2777,7 @@
           <span class="text-[9px] font-extrabold tracking-tight">Sanctuary</span>
         </button>
 
-        <button id="tour-target-aibot" onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-xl" data-screen="aibot">
-          <span class="text-base leading-none">🔮</span>
-          <span class="text-[9px] font-extrabold tracking-tight text-indigo-300">Kora AI</span>
-        </button>
+
 
         <button onclick="switchScreen('self')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="self">
           <span class="text-base leading-none">🪞</span>
@@ -9756,7 +9753,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
     // ── Navigation ─────────────────────────────────
     function navigateTo(screen) {
       if (screen === 'chat') {
-        switchScreen('aibot');
+        switchScreen('dashboard');
         const navChat = document.getElementById('nav-chat');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if (navChat) { navChat.classList.add('active'); navChat.setAttribute('aria-current', 'page'); }

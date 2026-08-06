@@ -719,67 +719,47 @@
         <p class="text-slate-300 font-medium text-sm sm:text-base max-w-2xl mx-auto">Your journey. Your evolution. Support the sanctuary to deepen your relationship with your AI companion and unlock advanced RPG systems.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
         
-        <!-- Tier 0: Awakening (Free) -->
+        <!-- Plan 0: Free -->
         <div class="p-6 bg-white/5 border border-white/10 rounded-3xl flex flex-col justify-between opacity-85 hover:opacity-100 transition-all">
           <div class="space-y-4">
             <div class="w-12 h-12 rounded-2xl bg-slate-500/20 text-slate-400 flex items-center justify-center text-2xl border border-slate-500/30">🌱</div>
             <div>
-              <h3 class="text-xl font-bold font-heading text-white">Awakening</h3>
+              <h3 class="text-xl font-bold font-heading text-white">Free</h3>
               <div class="text-2xl font-extrabold text-slate-300 mt-1">$0 <span class="text-xs text-slate-400 font-medium">/ month</span></div>
             </div>
-            <p class="text-xs text-slate-400 font-medium pb-1 border-b border-white/10">Essential focus tools & starter companion.</p>
+            <p class="text-xs text-slate-400 font-medium pb-1 border-b border-white/10">Essential focus tools & core AI companion.</p>
             <ul class="text-xs text-slate-300 space-y-2.5">
               <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Core AI Companion (Kora)</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Page 1 Nature Soundscapes (4 Tracks)</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>36 Distraction Boss Battles</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Basic Digital Detox Timer</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Basic soundscapes (4 tracks)</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Daily AI interactions (limited)</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-slate-400 w-4 h-4 shrink-0"></i> <span>Digital Detox Timer</span></li>
             </ul>
           </div>
-          <button disabled class="w-full mt-6 py-3 bg-slate-800/50 rounded-xl text-slate-400 font-bold cursor-not-allowed border border-slate-700/50">Current Sanctuary Tier</button>
+          <button disabled class="w-full mt-6 py-3 bg-slate-800/50 rounded-xl text-slate-400 font-bold cursor-not-allowed border border-slate-700/50">Current Plan</button>
         </div>
 
-        <!-- Tier 1: Sanctuary Plus / Kindred ($6.99/mo) -->
-        <div class="p-6 bg-white/5 border border-amber-500/30 rounded-3xl flex flex-col justify-between relative shadow-[0_0_30px_rgba(245,158,11,0.12)] hover:border-amber-500/50 transition-all">
-          <div class="space-y-4">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">🌿</div>
-            <div>
-              <h3 class="text-2xl font-bold font-heading text-white">Sanctuary Plus</h3>
-              <div class="text-3xl font-extrabold text-amber-400 mt-1">$9.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
-            </div>
-            <p class="text-xs text-amber-200/80 font-medium pb-1 border-b border-amber-500/20">Complete sonic sanctuary & streak protection.</p>
-            <ul class="text-xs text-slate-300 space-y-2.5">
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Persistent AI Conversation Memory</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>All 16 Procedural Nature Soundscapes</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>Full AI Voice Resonance (Speech & Audio)</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span class="font-semibold text-amber-300">Streak Armor & Momentum Vault</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-amber-400 w-4 h-4 shrink-0"></i> <span>49 RPG Badges & Mastery Honors</span></li>
-            </ul>
-          </div>
-          <button onclick="startCheckout('kindred')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 rounded-xl text-white font-extrabold text-sm cursor-pointer shadow-lg transition-all hover:scale-[1.02]">Upgrade to Plus ($9.99)</button>
-        </div>
-
-        <!-- Tier 2: Sovereign Infinite / Soulbound ($19.99/mo) -->
-        <div class="p-6 bg-gradient-to-b from-purple-950/40 via-indigo-950/30 to-slate-950/60 border-2 border-purple-500/60 rounded-3xl flex flex-col justify-between relative shadow-[0_0_60px_rgba(168,85,247,0.3)] md:scale-105 z-10">
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.6)]">MOST POPULAR</div>
+        <!-- Plan 1: Pro ($4.99/mo) -->
+        <div class="p-6 bg-gradient-to-b from-purple-950/40 via-indigo-950/30 to-slate-950/60 border-2 border-purple-500/60 rounded-3xl flex flex-col justify-between relative shadow-[0_0_60px_rgba(168,85,247,0.3)]">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.6)]">BEST VALUE</div>
           <div class="space-y-4">
             <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-2xl border border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.4)]">🔮</div>
             <div>
-              <h3 class="text-2xl font-bold font-heading text-white">Sovereign Infinite</h3>
-              <div class="text-3xl font-extrabold text-purple-300 mt-1">$19.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
+              <h3 class="text-2xl font-bold font-heading text-white">Pro</h3>
+              <div class="text-3xl font-extrabold text-purple-300 mt-1">$4.99 <span class="text-sm text-slate-400 font-medium">/ month</span></div>
             </div>
-            <p class="text-xs text-purple-200/80 font-medium pb-1 border-b border-purple-500/30">The ultimate goal architect & identity suite.</p>
+            <p class="text-xs text-purple-200/80 font-medium pb-1 border-b border-purple-500/30">Unlimited AI, long-term memory & full RPG features.</p>
             <ul class="text-xs text-slate-300 space-y-2.5">
-              <li class="flex gap-2 items-center"><i data-lucide="plus" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Everything in Sanctuary Plus</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="sparkles" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-purple-200">AI Goal Architect & Micro-Roadmap Engine</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="zap" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-semibold text-purple-300">Future-Self AI Transmissions & Dispatch</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>All Specialized Guides (Sophia, Kai, Luna)</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Binaural Frequency Deck (Alpha/Theta/Solfeggio)</span></li>
-              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Custom RPG 3D Shader Aura Wheel & Profile Seal</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-white">Unlimited AI + Persistent Memory</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="sparkles" class="text-purple-400 w-4 h-4 shrink-0"></i> <span class="font-bold text-purple-200">Proactive Coaching & Daily Nudges</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="zap" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>All 16 Procedural Nature Soundscapes</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>AI Soul Reports & Reflections</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Full RPG Badges & Mastery Honors</span></li>
+              <li class="flex gap-2 items-center"><i data-lucide="check" class="text-purple-400 w-4 h-4 shrink-0"></i> <span>Custom Soundscape Mixer</span></li>
             </ul>
           </div>
-          <button onclick="startCheckout('soulbound')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-sm rounded-xl cursor-pointer shadow-[0_0_25px_rgba(168,85,247,0.5)] border-none transition-all hover:scale-[1.02]">Become Sovereign ($19.99)</button>
+          <button onclick="startCheckout('pro')" class="w-full mt-6 py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-sm rounded-xl cursor-pointer shadow-[0_0_25px_rgba(168,85,247,0.5)] border-none transition-all hover:scale-[1.02]">Upgrade to Pro · $4.99/mo</button>
         </div>
 
       </div>
@@ -857,45 +837,6 @@
               </ul>
               <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Soulbound</button>
             </div>
-
-            <!-- Transcendence -->
-            <div class="glass-card hover-tilt cursor-pointer border-amber-700/30" onclick="purchaseTier('transcendence')">
-              <div class="flex items-start justify-between mb-2">
-                <div>
-                  <p class="font-extrabold text-lg text-amber-300 font-heading">Transcendence</p>
-                  <p class="text-xs text-slate-400">Multi-companion · Max memory · Exclusive</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-xl font-extrabold text-white">$19.99</p>
-                  <p class="text-[10px] text-slate-500">/month</p>
-                </div>
-              </div>
-              <ul class="text-xs text-slate-400 space-y-1 mt-3">
-                <li>✓ Up to 3 AI companions</li>
-                <li>✓ Permanent memory vault</li>
-                <li>✓ Exclusive auras &amp; themes</li>
-                <li>✓ Early access to new features</li>
-              </ul>
-              <button class="mt-3 w-full py-2 premium-button text-white text-sm font-bold rounded-xl">Unlock Transcendence</button>
-            </div>
-          </div>
-
-          <!-- Cosmetics Section -->
-          <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Cosmetics · $1.99 each</p>
-          <div class="grid grid-cols-3 gap-3 mb-6">
-            <button onclick="startCheckout('theme_midnight')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
-              <div class="text-2xl mb-1">🌑</div>
-              <p class="text-[11px] font-bold text-slate-200">Midnight Void</p>
-            </button>
-            <button onclick="startCheckout('theme_zen')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
-              <div class="text-2xl mb-1">🍃</div>
-              <p class="text-[11px] font-bold text-slate-200">Zen Garden</p>
-            </button>
-            <button onclick="startCheckout('aura_rain')" class="glass-card !mb-0 !p-3 text-center hover-tilt cursor-pointer">
-              <div class="text-2xl mb-1">🌧️</div>
-              <p class="text-[11px] font-bold text-slate-200">Mountain Rain</p>
-            </button>
-          </div>
 
           <!-- Auth nudge for guests -->
           <div id="store-auth-nudge" class="glass-card border-indigo-700/30 text-center hidden">
@@ -1427,8 +1368,8 @@
   <!-- MAIN SANCTUARY APP ROOT WRAPPER (HIDDEN UNTIL SANCTUARY IS ENTERED) -->
   <div id="app-sanctuary-root" class="hidden min-h-screen min-h-[100dvh] w-full flex flex-col flex-1">
     <!-- ATMOSPHERIC HEADER WITH WEBSITE LANDING -->
-    <header class="flex justify-between items-center pb-4 border-b border-white/5 mb-3">
-      <div onclick="showLandingPageOverlay()" class="flex items-center gap-3 cursor-pointer group" title="Return to Landing Page Overview">
+    <header class="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-white/5 mb-3">
+      <div onclick="showLandingPageOverlay()" class="flex min-w-0 items-center gap-3 cursor-pointer group" title="Return to Landing Page Overview">
         <!-- BOOK STAR LOGO — pure inline SVG, always visible -->
         <div class="relative shrink-0 logo-highlight transition-all duration-1000 group-hover:scale-105"
              title="Thoughtica — Return to Landing Page"
@@ -1477,7 +1418,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="ml-auto flex flex-wrap items-center justify-end gap-2 sm:gap-3">
 
         <!-- Atmospheric Aura Palette — Wilderness Explorer Themes -->
         <div class="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1 text-xs">
@@ -1509,23 +1450,23 @@
         </div>
 
         <!-- Streak Info -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-400 shadow-sm backdrop-blur-md">
+        <div class="hidden xs:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-400 shadow-sm backdrop-blur-md">
           <i data-lucide="flame" class="w-3.5 h-3.5 fill-current text-amber-400"></i>
           <span id="streak-counter">1 Day</span>
         </div>
 
-        <button onclick="openKoraLiveVoiceModal()" title="Converse with Kora Live Voiced AI 🔮" class="px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 text-white hover:scale-105 transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_20px_rgba(99,102,241,0.5)] border border-cyan-400/40 relative">
+        <button onclick="openKoraLiveVoiceModal()" title="Converse with Kora Live Voiced AI 🔮" class="hidden sm:flex px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 text-white hover:scale-105 transition-all cursor-pointer items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_20px_rgba(99,102,241,0.5)] border border-cyan-400/40 relative">
           <span class="text-sm">🔮</span>
           <span class="font-extrabold text-[11px] uppercase tracking-wider">Ask Kora</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping absolute top-1 right-1"></span>
         </button>
 
-        <button onclick="openUpgradeModal()" title="View Sovereign Upgrade Tiers & Features 💎" class="px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-500 text-white hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_15px_rgba(168,85,247,0.4)] border border-white/20 animate-pulse">
+        <button onclick="openUpgradeModal()" title="View Sovereign Upgrade Tiers & Features 💎" class="hidden xs:flex px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-500 text-white hover:opacity-90 transition-all cursor-pointer items-center justify-center gap-1.5 text-xs font-black shadow-[0_0_15px_rgba(168,85,247,0.4)] border border-white/20 animate-pulse">
           <span class="text-sm">💎</span>
           <span class="font-extrabold text-[11px] uppercase tracking-wider">Upgrade</span>
         </button>
 
-        <a href="https://buymeacoffee.com/thoughtica" target="_blank" rel="noopener noreferrer" title="Support Thoughtica & Buy Me a Coffee ☕" class="p-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 transition-all cursor-pointer flex items-center justify-center gap-1 text-xs font-bold shadow-md shadow-amber-500/10">
+        <a href="https://buymeacoffee.com/thoughtica" target="_blank" rel="noopener noreferrer" title="Support Thoughtica & Buy Me a Coffee ☕" class="hidden md:flex p-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 transition-all cursor-pointer items-center justify-center gap-1 text-xs font-bold shadow-md shadow-amber-500/10">
           <span class="text-base leading-none">☕</span>
           <span class="hidden md:inline text-[11px] font-extrabold text-amber-300">Coffee</span>
         </a>
@@ -1542,7 +1483,7 @@
           <span class="text-base leading-none">📤</span>
         </button>
 
-        <button id="btn-settings" title="Sanctuary Options & Settings" class="p-2.5 rounded-xl bg-white/10 border border-white/20 text-slate-200 hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center">
+        <button id="btn-settings" title="Sanctuary Options & Settings" class="order-last shrink-0 p-2.5 rounded-xl bg-white/10 border border-white/20 text-slate-200 hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center">
           <span class="text-base leading-none">⚙️</span>
         </button>
       </div>
@@ -1601,21 +1542,21 @@
 
 
           <!-- HIGH-CONVERSION 7-DAY FREE TRIAL HERO BANNER -->
-          <div id="free-tier-conversion-banner" class="bg-gradient-to-r from-amber-950/40 via-purple-950/50 to-indigo-950/60 border border-amber-500/30 rounded-2xl p-4 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div id="free-tier-conversion-banner" class="bg-gradient-to-r from-purple-950/40 via-indigo-950/50 to-slate-950/60 border border-purple-500/30 rounded-2xl p-4 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3.5">
-              <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                🎁
+              <div class="w-11 h-11 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center text-xl shrink-0 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                🔮
               </div>
               <div>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-black text-amber-300 font-heading">7-Day Free Trial Available</span>
-                  <span class="px-2 py-0.5 rounded text-[9px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">$0 TODAY</span>
+                  <span class="text-xs font-black text-purple-300 font-heading">Thoughtica Pro</span>
+                  <span class="px-2 py-0.5 rounded text-[9px] font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/30">$4.99/mo</span>
                 </div>
-                <p class="text-[11px] text-slate-300 mt-0.5">Unlock 16 Nature Soundscapes, AI Voice Resonance, Persistent Memory & Permanent Streak Armor.</p>
+                <p class="text-[11px] text-slate-300 mt-0.5">Unlimited AI, long-term memory, proactive coaching, all soundscapes & full RPG features.</p>
               </div>
             </div>
-            <button onclick="showUpgradeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg cursor-pointer shrink-0 transition-all">
-              Claim 7-Day Free Trial ✨
+            <button onclick="showUpgradeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:scale-[1.02] text-white font-extrabold text-xs rounded-xl shadow-lg cursor-pointer shrink-0 transition-all">
+              Upgrade to Pro · $4.99/mo ✨
             </button>
           </div>
 
@@ -2445,8 +2386,8 @@
 
       </section>
 
-      <!-- SCREEN: CUSTOM AI COMPANION SYSTEM -->
-      <section id="screen-aibot" class="screen h-full flex flex-col justify-between scrollbar-none pb-12 overflow-y-auto">
+      <!-- SCREEN: CUSTOM AI COMPANION SYSTEM (REMOVED) -->
+      <section id="screen-aibot" class="hidden" style="display:none !important;">
         
         <!-- Header -->
         <div class="p-4 border-b border-white/5 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-slate-950/60 flex items-center justify-between shrink-0">
@@ -2836,10 +2777,7 @@
           <span class="text-[9px] font-extrabold tracking-tight">Sanctuary</span>
         </button>
 
-        <button id="tour-target-aibot" onclick="switchScreen('aibot')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-xl" data-screen="aibot">
-          <span class="text-base leading-none">🔮</span>
-          <span class="text-[9px] font-extrabold tracking-tight text-indigo-300">Kora AI</span>
-        </button>
+
 
         <button onclick="switchScreen('self')" class="nav-item flex flex-col items-center gap-1 text-slate-400 hover:text-slate-100 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="self">
           <span class="text-base leading-none">🪞</span>
@@ -3146,7 +3084,7 @@
       <p class="text-xs text-slate-400 mt-1 mb-5">Unlock deep focus, custom environments, and AI companion voice resonance.</p>
 
       <div class="space-y-3.5 text-left">
-        <!-- PRO TIER -->
+        <!-- PLUS TIER -->
         <div onclick="buySubscription('pro')" class="p-4 bg-white/5 border border-white/10 hover:border-emerald-500/50 rounded-2xl cursor-pointer transition-all hover:scale-[1.02] relative group">
           <div class="flex justify-between items-center">
             <span class="text-sm font-extrabold text-white flex items-center gap-1.5">🔮 Thoughtica Pro</span>
@@ -8027,7 +7965,8 @@ Directives:
             formattedText = formattedText.replace(/\[⚡ Anchor Habit \(\+15 XP\)\]/g, '<br/><button onclick="addXP(15, \'Habit Anchored via AI\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">⚡ Anchor Habit (+15 XP)</button>');
             formattedText = formattedText.replace(/\[🧘 3-Min Breathing Session \(\+20 XP\)\]/g, '<br/><button onclick="switchScreen(\'sanctuary\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🧘 Start Breathing Session (+20 XP)</button>');
             formattedText = formattedText.replace(/\[🎯 Add Goal Quest \(\+25 XP\)\]/g, '<br/><button onclick="switchScreen(\'self\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🎯 Add Goal Quest (+25 XP)</button>');
-            formattedText = formattedText.replace(/\[✨ Unlock Unlimited AI Chat \(\$9\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Unlock Unlimited AI Chat ($9.99/mo)</button>');
+            formattedText = formattedText.replace(/\[✨ Unlock Unlimited AI Chat \(\$9\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Upgrade to Pro ($4.99/mo)</button>');
+            formattedText = formattedText.replace(/\[✨ Upgrade to Pro \(\$4\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Upgrade to Pro ($4.99/mo)</button>');
 
             bubble.innerHTML = `
               <div class="flex items-center justify-between border-b border-white/10 pb-1.5 text-[9px] font-extrabold text-amber-300 uppercase tracking-wider">
@@ -8084,9 +8023,9 @@ Directives:
             s: 'mentor', 
             t: `You have reached your limit of **10 free daily AI Companion messages** for today, ${S.name || 'Seeker'}. 
 
-To continue conversing with me without any limits, access all 16 nature soundscapes, and unlock full voice resonance, please upgrade to a paid Sanctuary membership:
+Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, and proactive coaching — just $4.99/mo.
 
-[✨ Unlock Unlimited AI Chat ($9.99/mo)]` 
+[✨ Upgrade to Pro ($4.99/mo)]` 
           });
           renderChat();
           showUpgradeModal();
@@ -9196,6 +9135,8 @@ To continue conversing with me without any limits, access all 16 nature soundsca
 
     function showUpgradeModal() {
       document.getElementById('modal-premium').classList.remove('hidden');
+      const bottomNav = document.getElementById('bottom-nav');
+      if (bottomNav) bottomNav.classList.add('hidden');
       setTimeout(() => {
         const exitBtn = document.getElementById('delayed-paywall-exit');
         if (exitBtn) {
@@ -9212,6 +9153,8 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     function closeUpgradeModal() {
       document.getElementById('modal-upgrade').classList.add('hidden');
       document.getElementById('modal-premium').classList.add('hidden');
+      const bottomNav = document.getElementById('bottom-nav');
+      if (bottomNav) bottomNav.classList.remove('hidden');
     }
     function buySubscription(tier) {
       closeUpgradeModal();
@@ -9263,7 +9206,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
         if (isPaid) {
           voiceBtn.title = "Toggle Voice Resonance Speech (Unlocked ✨)";
         } else {
-          voiceBtn.title = "Toggle Voice Resonance Speech (Requires Plus 💎)";
+          voiceBtn.title = "Toggle Voice Resonance Speech (Requires Pro 💎)";
         }
       }
 
@@ -9275,7 +9218,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
       // 4. RPG Aura Wheel & Sovereign Identity Badges
       const auraBadge = document.getElementById('sovereign-aura-badge');
       if (auraBadge) {
-        if (isInfinite) {
+        if (isPaid) {
           auraBadge.classList.remove('hidden');
         } else {
           auraBadge.classList.add('hidden');
@@ -9810,7 +9753,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
     // ── Navigation ─────────────────────────────────
     function navigateTo(screen) {
       if (screen === 'chat') {
-        switchScreen('aibot');
+        switchScreen('dashboard');
         const navChat = document.getElementById('nav-chat');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if (navChat) { navChat.classList.add('active'); navChat.setAttribute('aria-current', 'page'); }
