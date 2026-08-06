@@ -6568,7 +6568,6 @@ Directives:
       { screen: 'navigation', targetId: 'tour-target-navigation', title: 'Wayfinder 🧭', desc: 'Navigate your personalized multi-step journey map to track progress toward your life ambitions.' },
       { screen: 'skills', targetId: 'tour-target-skills', title: 'Constellation RPG Skill Tree 🧠', desc: 'Invest Sanctuary Points (SP) into traits like Wisdom and Charisma, visualizing your personal growth.' },
       { screen: 'sanctuary', targetId: 'tour-target-sanctuary', title: '100% Pure Nature Sanctuary 🌳', desc: 'Calm your mind with 4-7-8 breathing (+50 XP) and explore 4 pages of pure daytime, nighttime, and water nature soundscapes.' },
-      { screen: 'aibot', targetId: 'tour-target-aibot', title: 'Personal AI Companion 🤖', desc: 'Converse with your dedicated companion offering unique perspectives and wisdom to support your path.' },
       { screen: 'quests', targetId: 'tour-target-quests', title: 'Sacred Badges Suite 🏆', desc: 'Unlock milestone honors as you level up your Seeker Rank. Keep building your daily streak!' },
       { screen: 'detox', targetId: 'tour-target-detox', title: 'Digital Detox Shield 🛡️', desc: 'Reclaim your attention with customizable timers. Start a focused session without digital distractions. Complete the tour to claim +100 Starter XP!' }
     ];
@@ -6977,20 +6976,6 @@ Directives:
       } else {
         showXPToast(0, `Custom Trajectory Saved ✨`, 1.0, false);
       }
-
-      if (triggerAI) {
-        const promptText = `I just updated my Custom Future Trajectory in Wayfinder!
-Target Vision: "${title}"
-Time Horizon: ${timeframe}
-Primary Focus Pillar: ${pillar}
-Key Milestones: ${nodes.map(n => n.title).join(', ')}.
-
-Please provide deep AI trajectory insights, strategic wisdom, potential challenges, and a 3-step action plan for this horizon!`;
-
-        processUserChatMessage(promptText);
-        switchScreen('mentor');
-        showXPToast(0, '🔮 AI Trajectory Insights Generating in AI Companion!', 1.0, true);
-      }
     }
 
     // ════════════════════════════════════════════
@@ -7277,7 +7262,6 @@ Please provide deep AI trajectory insights, strategic wisdom, potential challeng
         showXPToast(0, `Guide Active: ${name} (${role}) 🔮`, 1.0, false);
       }
       save();
-      renderChat();
     }
 
     function selectFutureYear(year) {
@@ -7350,7 +7334,6 @@ Please provide deep AI trajectory insights, strategic wisdom, potential challeng
       const letterBox = document.getElementById('future-letter-box');
       if (letterBox) {
         letterBox.textContent = `"Dear Present Seeker, regarding '${question}': Remember that consistency in quiet moments beats frantic bursts. Trust your guideposts, step forward every day, and watch your ambition unfold naturally."`;
-        speakKoraResponse(`Regarding ${question}: Remember that consistency in quiet moments beats frantic bursts. Trust your guideposts and step forward every day.`);
       }
 
       if (canEarnXP('future_self', 3, 900000)) {
@@ -7808,10 +7791,10 @@ Your role: Provide deeply personal, contextually aware, transformative guidance.
       }
 
       if (!S.aiApiKey || S.aiApiKey.trim() === '') {
-        return buildCompanionFailureMessage(null);
+        return "I am here, listening. My knowledge is limited without a connected intelligence layer, but I am ready to support you with everything I have within.";
       }
       
-      const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant (like Copilot / ChatGPT) in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
+      const systemPrompt = `You are ${cName}, a highly intelligent, perceptive, articulate, and warm AI companion and assistant in Thoughtica. User: ${uName}. Level: ${level}. Main Goal: "${goal}".
 Directives:
 - Answer any question directly with real depth, actionable advice, and human-level authenticity.
 - Maintain a helpful, engaging, and clear conversational tone.
@@ -7881,8 +7864,7 @@ Directives:
         console.error("AI API Stream Error:", err);
       }
 
-      // Fallback if API fails, times out, or key is invalid
-      return buildCompanionFailureMessage(null);
+      return "I'm reflecting on your path. My current connection to the broader intelligence layer is quiet—but I'm fully here with you. What's on your mind?";
     }
 
     function showTypingIndicator() {
@@ -7965,9 +7947,6 @@ Directives:
             // Format interactive RPG Action Cards if embedded by AI
             let formattedText = msg.t;
             formattedText = formattedText.replace(/\[⚡ Anchor Habit \(\+15 XP\)\]/g, '<br/><button onclick="addXP(15, \'Habit Anchored via AI\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">⚡ Anchor Habit (+15 XP)</button>');
-            formattedText = formattedText.replace(/\[🧘 3-Min Breathing Session \(\+20 XP\)\]/g, '<br/><button onclick="switchScreen(\'sanctuary\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🧘 Start Breathing Session (+20 XP)</button>');
-            formattedText = formattedText.replace(/\[🎯 Add Goal Quest \(\+25 XP\)\]/g, '<br/><button onclick="switchScreen(\'self\')" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 rounded-xl font-bold text-[11px] cursor-pointer shadow transition-all">🎯 Add Goal Quest (+25 XP)</button>');
-            formattedText = formattedText.replace(/\[✨ Unlock Unlimited AI Chat \(\$9\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Upgrade to Pro ($4.99/mo)</button>');
             formattedText = formattedText.replace(/\[✨ Upgrade to Pro \(\$4\.99\/mo\)\]/g, '<br/><button onclick="showUpgradeModal()" class="mt-2.5 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-xl shadow-lg cursor-pointer transition-all">✨ Upgrade to Pro ($4.99/mo)</button>');
 
             bubble.innerHTML = `
@@ -8051,7 +8030,6 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
 
       S.chatHistory.push({ s: 'mentor', t: reply });
       renderChat();
-      speakKoraResponse(reply);
       save();
     }
 
@@ -8087,15 +8065,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
     }
 
     function toggleCompanionDrawer() {
-      openKoraLiveVoiceModal();
-    }
-
-    function synthesizeScreenAdvice() {
-      const currentScreen = getCurrentActiveScreen();
-      const screenName = SCREEN_LABELS[currentScreen] || "Sanctuary";
-      const prompt = `Give me a personalized 2-sentence strategy for the ${screenName} screen based on my Level ${S.level} ${S.specialization} profile and ${S.moodToday || 'Serene'} mood.`;
-      processUserChatMessage(prompt);
-      setTimeout(renderFloatingChat, 100);
+      // Logic for drawer visibility handled via CSS class toggling in the UI
     }
 
     function renderFloatingChat() {
@@ -8155,30 +8125,6 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       setTimeout(renderFloatingChat, 100);
     }
 
-    function sendFloatingPrompt(promptText) {
-      processUserChatMessage(promptText);
-      setTimeout(renderFloatingChat, 100);
-    }
-
-    function startFloatingVoiceInput() {
-      const inp = document.getElementById('floating-chat-input');
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {
-        alert("Voice speech recognition is supported natively in Chrome, Edge, and Safari! 🎙️");
-        return;
-      }
-      const rec = new SpeechRec();
-      rec.lang = S.language || 'en-US';
-      rec.onstart = () => { if (inp) inp.placeholder = "Listening... Speak now..."; };
-      rec.onresult = (e) => {
-        const transcript = e.results[0][0].transcript;
-        if (inp) inp.value = transcript;
-        sendFloatingChat();
-      };
-      rec.onend = () => { if (inp) inp.placeholder = "Ask Kora anything on your journey..."; };
-      rec.start();
-    }
-
     function sendChat() {
       const inp = document.getElementById('companion-chat-input');
       if (!inp) return;
@@ -8220,7 +8166,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       "What would the version of you from 10 years ago be most proud of today — and most confused by?",
       "If you had to name the single biggest thing holding you back, what would it be?",
       "What does your ideal day look like in 3 years, and what concrete action separates you from it right now?",
-      "What do you secretly fear people would think if they truly knew what you were working on inside yourself?",
+      "What does your ideal day look like in 3 years, and what concrete action separates you from it right now?",
       "When was the last time you did something purely for growth, with no guarantee of outcome?",
       "What would you do differently if you fully believed you were enough, exactly as you are?",
       "What is the difference between the life you're living and the life you're meant to live?",
@@ -8542,7 +8488,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
 
     function closeMorningRitual() {
       const modal = document.getElementById('modal-kora-morning-ritual');
-      if (modal) modal.classList.add('hidden');
+      if (modal) modal.classList.remove('hidden');
     }
 
     // ── FUTURE-SELF LETTER ENHANCEMENTS ─────────────────
@@ -8666,8 +8612,8 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
 
       try {
         const reply = await fetchRealTimeLLMResponse(prompt);
-        if (loading) loading.classList.add('hidden');
-        if (body) body.classList.remove('hidden');
+        if (loading) loading.classList.hidden = true;
+        if (body) body.classList.hidden = false;
         if (letterText) {
           letterText.innerHTML = '';
           const paragraphs = reply.split(/\n+/).filter(p => p.trim());
@@ -8682,8 +8628,8 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         save();
         if (canEarnXP('future_self_letter', 1)) addXP(50, 'Future-Self Letter Received');
       } catch (e) {
-        if (loading) loading.classList.add('hidden');
-        if (body) body.classList.remove('hidden');
+        if (loading) loading.classList.hidden = true;
+        if (body) body.classList.hidden = false;
         if (letterText) letterText.textContent = 'Kora is reflecting deeply... Try again in a moment.';
       }
     }
@@ -9498,6 +9444,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       lucide.createIcons();
       setAtmosphere(S.companion.aura || 'twilight');
       initIntroCanvasParticles();
+      
       const btnSet = document.getElementById('btn-settings');
       if (btnSet) btnSet.onclick = openSettings;
       
