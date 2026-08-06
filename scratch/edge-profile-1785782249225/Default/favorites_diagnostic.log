@@ -1,0 +1,26 @@
+2026-08-03 18:37:29.954: [INFO] CurrentProfilePath: C:\Users\Kevcs\.gemini\antigravity\scratch\thoughtica-mobile\scratch\edge-profile-1785782249225\Default
+2026-08-03 18:37:29.954: [INFO] Profiles total count: 1
+2026-08-03 18:37:29.954: [INFO] Profile: name=Profile 1 path=C:\Users\Kevcs\.gemini\antigravity\scratch\thoughtica-mobile\scratch\edge-profile-1785782249225\Default lastActive=null
+2026-08-03 18:37:29.954: [INFO] LastUsedProfileDir: C:\Users\Kevcs\.gemini\antigravity\scratch\thoughtica-mobile\scratch\edge-profile-1785782249225\Default
+2026-08-03 18:37:29.954: [INFO] VisibilityChanged: 0
+2026-08-03 18:37:29.985: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:29.989: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:29.994: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:29.997: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.000: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.004: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.009: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.011: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.014: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.019: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:30.041: [INFO] OnDoneLoading sync enabled: 0
+2026-08-03 18:37:30.041: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-08-03 18:37:30.041: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-08-03 18:37:30.041: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-08-03 18:37:30.054: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:33.604: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-08-03 18:37:33.625: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-08-03 18:37:33.632: [INFO] Primary account changed.
+2026-08-03 18:37:33.632: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-08-03 18:37:33.657: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-08-03 18:37:33.771: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
