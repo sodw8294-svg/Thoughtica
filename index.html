@@ -2496,7 +2496,7 @@
               
               <!-- Companion Identification -->
               <div class="mt-4 z-10">
-                <h3 id="companion-badge-name" class="text-base font-extrabold text-white font-heading">Nexus</h3>
+                <h3 id="companion-badge-name" class="text-base font-extrabold text-white font-heading">Kora AI Companion</h3>
                 <div class="flex items-center justify-center gap-1.5 mt-0.5">
                   <span id="companion-badge-rank" class="text-[9px] font-black uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md tracking-wider">New Ally</span>
                   <span id="companion-relationship-lvl" class="text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-md tracking-wider">LVL 1</span>
@@ -4613,7 +4613,7 @@
     function updateCompanionProgressionUI() {
       const lvl = S.customAI?.relationshipLevel || 1;
       const xp = S.customAI?.relationshipXp || 0;
-      const name = S.customAI?.name || 'Nexus';
+      const name = S.customAI?.name || 'Kora';
 
       const badgeName = document.getElementById('companion-badge-name');
       const badgeRank = document.getElementById('companion-badge-rank');
@@ -5346,25 +5346,31 @@ Directives:
     }
 
     function generateOfflineKoraWisdom(userText, cName) {
-      const q = userText.toLowerCase();
+      const q = userText.toLowerCase().trim();
       const goal = S.goal || 'your core ambition';
       const streak = S.streak || 1;
       const level = S.level || 1;
       const name = S.name || 'Seeker';
 
+      if (/^(hi|hello|hey|greetings|sup|howdy|yo)\b/i.test(q)) {
+        return `Hello ${name}! 👋 I am ${cName}, your AI companion. I'm right here with you — how can I help you, answer a question, or support your path today?`;
+      }
+      if (q.includes('how are you') || q.includes('how do you feel') || q.includes('what\'s up')) {
+        return `I'm fully tuned and ready, ${name}! 🔮 Working alongside you on your Level ${level} journey. What's on your mind right now?`;
+      }
       if (q.includes('breath') || q.includes('anxious') || q.includes('stress') || q.includes('calm') || q.includes('overwhelm')) {
-        return `I hear you, ${name}. Take a moment to pause. When tension rises, centering your breath restores immediate sovereignty.\n\n[🧘 Somatic Breathing Circle (+20 XP)]`;
+        return `I hear you, ${name}. Take a moment to pause. When tension rises, centering your breath restores immediate clarity.\n\n[🧘 Somatic Breathing Circle (+20 XP)]`;
       }
       if (q.includes('focus') || q.includes('distraction') || q.includes('procrastinat') || q.includes('work') || q.includes('study')) {
-        return `Focus is not forced, ${name}; it is chosen line by line. Your Level ${level} rank reflects your growing discipline. Anchor a small win right now to build momentum.\n\n[⚡ Anchor Habit (+15 XP)]`;
+        return `Focus is built line by line, ${name}. Your Level ${level} rank reflects your growing discipline. Anchor a small win right now to build momentum.\n\n[⚡ Anchor Habit (+15 XP)]`;
       }
       if (q.includes('goal') || q.includes('ambition') || q.includes('quest') || q.includes('next') || q.includes('plan')) {
-        return `Your current ambition is "${goal}". You are on a ${streak}-day streak. Every small action today feeds into your grander evolution.\n\n[🎯 Open Quests Dashboard (+25 XP)]`;
+        return `Your current ambition is "${goal}". You are on a ${streak}-day streak! What single action can we map out next?\n\n[🎯 Open Quests Dashboard (+25 XP)]`;
       }
-      if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('who are you') || q.includes('kora')) {
-        return `Greetings, ${name}! I am ${cName}, your dedicated Sanctuary AI companion. How can I support your focus, growth, or clarity today?`;
+      if (q.includes('who are you') || q.includes('what can you do') || q.includes('help')) {
+        return `I am ${cName}, your AI companion. I can converse with you on any topic, help you brainstorm, code, analyze ideas, manage habits, or support your clarity and focus!`;
       }
-      return `I am fully tuned to your path, ${name}. Continuing your ${streak}-day streak requires micro-consistency. What single step can we take right now to align with your goal of "${goal}"?`;
+      return `That's an interesting point, ${name}. I am here to discuss any idea, question, or goal with you. Tell me more about what you'd like to explore regarding that!`;
     }
 
     // Copy message to clipboard helper
@@ -5633,7 +5639,7 @@ Directives:
           if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
           if (!S.customAI) {
             S.customAI = {
-              name: 'Nexus',
+              name: 'Kora',
               preset: 'wise_mentor',
               personality: 'A supportive, wise guide who helps you clarify thoughts and focus on daily tasks.',
               tone: 'encouraging',
@@ -6604,7 +6610,7 @@ Directives:
         if (typeof syncAppearanceFormValues === 'function') syncAppearanceFormValues();
         const nameInput = document.getElementById('custom-ai-name');
         const personalityInput = document.getElementById('custom-ai-personality');
-        if (nameInput) nameInput.value = S.customAI?.name || 'Nexus';
+        if (nameInput) nameInput.value = S.customAI?.name || 'Kora';
         if (personalityInput) personalityInput.value = S.customAI?.personality || 'A supportive, wise guide.';
         const chatInput = document.getElementById('custom-ai-chat-input');
         if (chatInput) setTimeout(() => chatInput.focus(), 250);
@@ -9304,7 +9310,7 @@ To continue conversing with me without any limits, access all 16 nature soundsca
           moodToday: '',
           tourComplete: false,
           customAI: {
-            name: 'Nexus',
+            name: 'Kora',
             preset: 'wise_mentor',
             personality: 'A supportive, wise guide who helps you clarify thoughts and focus on daily tasks.',
             tone: 'encouraging',
