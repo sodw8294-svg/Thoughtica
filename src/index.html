@@ -1052,7 +1052,10 @@
   </script>
 
   <!-- COSMETIC BOUTIQUE BACKGROUND THEME OVERLAY (Controlled by Cosmetic Boutique Themes) -->
-  <div id="cosmetic-app-theme-layer" class="fixed inset-0 pointer-events-none z-0 transition-all duration-1000"></div>
+  <div id="cosmetic-app-theme-layer" class="fixed inset-0 pointer-events-none z-0 transition-all duration-1000 overflow-hidden">
+    <canvas id="canvas-cosmetic-theme-art" class="absolute inset-0 w-full h-full object-cover pointer-events-none"></canvas>
+    <div id="cosmetic-svg-art-container" class="absolute inset-0 pointer-events-none flex items-center justify-center"></div>
+  </div>
 
   <!-- DYNAMIC ATMOSPHERIC AURA GLOWS (Controlled by Aura Color Wheel) -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-[1] mix-blend-screen">
@@ -9394,6 +9397,9 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         layer.setAttribute('style', `position:fixed;inset:0;pointer-events:none;z-index:0;transition:all 0.8s ease-in-out;${theme.bgStyle}`);
       }
 
+      // Render genuine animated living artwork and SVG graphics for the selected theme
+      renderCosmeticThemeArt(themeKey);
+
       if (isPreview) {
         // If storefront or settings modal is active, minimize it temporarily so user can see full-screen theme preview!
         const modalPremium = document.getElementById('modal-premium');
@@ -9429,6 +9435,203 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         S.activeAppTheme = themeKey;
         save();
         showXPToast(0, `${theme.icon} ${theme.name} Theme Active`, 1.0, false);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //   AUTHENTIC LIVING ARTWORK & GRAPHICS ENGINE FOR THEMES
+    // ════════════════════════════════════════════════════════════
+    let _themeArtAnimFrame = null;
+    let _themeArtParticles = [];
+
+    function renderCosmeticThemeArt(themeKey) {
+      if (_themeArtAnimFrame) {
+        cancelAnimationFrame(_themeArtAnimFrame);
+        _themeArtAnimFrame = null;
+      }
+
+      const canvas = document.getElementById('canvas-cosmetic-theme-art');
+      const svgContainer = document.getElementById('cosmetic-svg-art-container');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      if (svgContainer) svgContainer.innerHTML = '';
+
+      if (themeKey === 'theme_sakura') {
+        // 🌸 JAPANESE SAKURA ARTWORK: Falling cherry blossom petals + Silver Moon & Wave SVG
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <div class="absolute top-12 right-12 w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-gradient-to-br from-pink-200/20 via-pink-400/10 to-transparent blur-xl pointer-events-none"></div>
+            <svg class="absolute top-8 right-12 w-36 h-36 opacity-35 text-pink-300 pointer-events-none animate-pulse" viewBox="0 0 100 100" fill="currentColor">
+              <path d="M50 10 A40 40 0 1 0 90 50 A32 32 0 1 1 50 10 Z"/>
+            </svg>
+            <svg class="absolute bottom-0 inset-x-0 w-full h-32 opacity-20 text-pink-400 pointer-events-none" viewBox="0 0 1440 320" preserveAspectRatio="none">
+              <path fill="currentColor" d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,213.3C960,224,1056,224,1152,208C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+          `;
+        }
+        _themeArtParticles = Array.from({ length: 45 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 8 + 6,
+          vx: Math.random() * 0.8 - 0.2,
+          vy: Math.random() * 1.2 + 0.6,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 2,
+          opacity: Math.random() * 0.6 + 0.3
+        }));
+
+        function drawSakura() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          _themeArtParticles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vrot;
+            if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
+            if (p.x > canvas.width + 20) p.x = -20;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          _themeArtAnimFrame = requestAnimationFrame(drawSakura);
+        }
+        drawSakura();
+
+      } else if (themeKey === 'theme_zen') {
+        // 🌿 ZEN GARDEN ARTWORK: Ensō Circle SVG + Falling Emerald Bamboo Leaves
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg class="absolute w-[450px] h-[450px] opacity-15 text-emerald-400 pointer-events-none" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+              <circle cx="50" cy="50" r="40" stroke-dasharray="230 20" transform="rotate(-45 50 50)"/>
+            </svg>
+          `;
+        }
+        _themeArtParticles = Array.from({ length: 35 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 10 + 8,
+          vx: Math.random() * 0.4 - 0.2,
+          vy: Math.random() * 0.8 + 0.4,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 1.5,
+          opacity: Math.random() * 0.5 + 0.2
+        }));
+
+        function drawZen() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          _themeArtParticles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vrot;
+            if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.moveTo(0, -p.size);
+            ctx.quadraticCurveTo(p.size * 0.6, 0, 0, p.size);
+            ctx.quadraticCurveTo(-p.size * 0.6, 0, 0, -p.size);
+            ctx.fill();
+            ctx.restore();
+          });
+          _themeArtAnimFrame = requestAnimationFrame(drawZen);
+        }
+        drawZen();
+
+      } else if (themeKey === 'theme_cyberpunk') {
+        // 👾 SYNTHWAVE ARCADE ARTWORK: Giant Neon Sun SVG + Animated Horizon Grid
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <div class="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-gradient-to-t from-pink-500 via-rose-500 to-amber-400 opacity-40 blur-sm pointer-events-none flex flex-col justify-evenly p-2">
+              <div class="h-2 bg-[#050212]"></div>
+              <div class="h-3 bg-[#050212]"></div>
+              <div class="h-4 bg-[#050212]"></div>
+              <div class="h-5 bg-[#050212]"></div>
+            </div>
+          `;
+        }
+        let gridOffsetY = 0;
+        function drawCyber() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          gridOffsetY = (gridOffsetY + 1.2) % 40;
+          ctx.strokeStyle = 'rgba(6, 182, 212, 0.25)';
+          ctx.lineWidth = 1.5;
+
+          for (let y = gridOffsetY; y < canvas.height; y += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+          }
+          _themeArtAnimFrame = requestAnimationFrame(drawCyber);
+        }
+        drawCyber();
+
+      } else if (themeKey === 'theme_celestial') {
+        // ✨ CELESTIAL GALAXY ARTWORK: Constellation SVG Art + Twinkling 60 FPS Stars
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg class="absolute top-1/4 left-10 w-48 h-48 opacity-25 text-indigo-300 pointer-events-none" viewBox="0 0 100 100" stroke="currentColor" fill="none" stroke-width="1">
+              <polyline points="10,20 30,50 60,40 80,70" />
+              <circle cx="10" cy="20" r="3" fill="currentColor"/>
+              <circle cx="30" cy="50" r="3" fill="currentColor"/>
+              <circle cx="60" cy="40" r="3" fill="currentColor"/>
+              <circle cx="80" cy="70" r="3" fill="currentColor"/>
+            </svg>
+          `;
+        }
+        _themeArtParticles = Array.from({ length: 70 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 1,
+          alpha: Math.random(),
+          speed: Math.random() * 0.02 + 0.005
+        }));
+
+        function drawCelestial() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          _themeArtParticles.forEach(p => {
+            p.alpha += p.speed;
+            if (p.alpha > 1 || p.alpha < 0.2) p.speed = -p.speed;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = '#a855f7';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          _themeArtAnimFrame = requestAnimationFrame(drawCelestial);
+        }
+        drawCelestial();
+
+      } else if (themeKey === 'theme_midnight') {
+        // 🌌 MIDNIGHT VOID ARTWORK: Rotating Cyber-Ring SVG + Constellation Net
+        if (svgContainer) {
+          svgContainer.innerHTML = `
+            <svg class="absolute w-[500px] h-[500px] opacity-20 text-purple-400 pointer-events-none animate-spin-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="50" cy="50" r="45" stroke-dasharray="10 5 2 5"/>
+              <circle cx="50" cy="50" r="38" stroke-dasharray="40 10"/>
+              <polygon points="50,15 85,75 15,75" stroke-width="0.5"/>
+            </svg>
+          `;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
 
