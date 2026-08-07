@@ -778,8 +778,8 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <!-- Item 1: Midnight Void Theme -->
-          <div class="rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-purple-500/30 p-5 flex flex-col justify-between hover:border-purple-500/60 transition-all relative overflow-hidden group shadow-lg">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.15),transparent_60%)] pointer-events-none"></div>
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-purple-950/80 border border-purple-500/30 p-5 flex flex-col justify-between hover:border-purple-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.2),transparent_60%)] pointer-events-none"></div>
             <div class="relative z-10 flex justify-between items-start mb-4">
               <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
                 <i data-lucide="palette" class="w-5 h-5"></i>
@@ -787,29 +787,83 @@
               <span class="px-2 py-1 bg-purple-500/20 rounded-lg text-[10px] font-extrabold text-purple-300 border border-purple-500/30 uppercase tracking-wide">Theme</span>
             </div>
             <div class="relative z-10">
-              <h4 class="text-white font-bold font-heading mb-1 text-lg">Midnight Void</h4>
-              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep OLED midnight contrast with glowing neon aura highlights.</p>
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Midnight Void 🌌</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep pitch-black OLED background with subtle glowing violet cyberpunk grid lines & starfield dust.</p>
               <div class="flex gap-2">
-                <button onclick="setAtmosphere('twilight'); showXPToast(0, '🌌 Midnight Void Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere(S.companion.aura || 'twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="setAppTheme('theme_midnight', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
                 <button onclick="startCheckout('theme_midnight')" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-purple-500/30">$1.99</button>
               </div>
             </div>
           </div>
           <!-- Item 2: Zen Garden Theme -->
-          <div class="rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-emerald-500/30 p-5 flex flex-col justify-between hover:border-emerald-500/60 transition-all relative overflow-hidden group shadow-lg">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_60%)] pointer-events-none"></div>
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-emerald-950/80 border border-emerald-500/30 p-5 flex flex-col justify-between hover:border-emerald-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.2),transparent_60%)] pointer-events-none"></div>
             <div class="relative z-10 flex justify-between items-start mb-4">
               <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                <i data-lucide="palette" class="w-5 h-5"></i>
+                <i data-lucide="sprout" class="w-5 h-5"></i>
               </div>
               <span class="px-2 py-1 bg-emerald-500/20 rounded-lg text-[10px] font-extrabold text-emerald-300 border border-emerald-500/30 uppercase tracking-wide">Theme</span>
             </div>
             <div class="relative z-10">
-              <h4 class="text-white font-bold font-heading mb-1 text-lg">Zen Garden</h4>
-              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Calming emerald moss greens & bamboo canopy ambiance.</p>
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Zen Garden 🌿</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Organic dark bamboo mesh wallpaper with calming emerald leaf particles & natural serenity.</p>
               <div class="flex gap-2">
-                <button onclick="setAtmosphere('moss'); showXPToast(0, '🌿 Zen Garden Preview Active (5s)', 1.0, false); setTimeout(() => setAtmosphere(S.companion.aura || 'twilight'), 5000);" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="setAppTheme('theme_zen', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
                 <button onclick="startCheckout('theme_zen')" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-emerald-500/30">$1.99</button>
+              </div>
+            </div>
+          </div>
+          <!-- Item 3: Japanese Sakura Theme -->
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-pink-950/80 border border-pink-500/30 p-5 flex flex-col justify-between hover:border-pink-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(244,114,182,0.2),transparent_60%)] pointer-events-none"></div>
+            <div class="relative z-10 flex justify-between items-start mb-4">
+              <div class="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center border border-pink-500/30 shadow-[0_0_15px_rgba(244,114,182,0.3)]">
+                <i data-lucide="flower" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-1 bg-pink-500/20 rounded-lg text-[10px] font-extrabold text-pink-300 border border-pink-500/30 uppercase tracking-wide">Theme</span>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Japanese Sakura 🌸</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Serene deep plum background with soft cherry blossom gradient petals & artistic tranquil tone.</p>
+              <div class="flex gap-2">
+                <button onclick="setAppTheme('theme_sakura', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="startCheckout('theme_sakura')" class="flex-1 py-2 bg-pink-600 hover:bg-pink-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-pink-500/30">$1.99</button>
+              </div>
+            </div>
+          </div>
+          <!-- Item 4: Synthwave Arcade Theme -->
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-cyan-950/80 border border-cyan-500/30 p-5 flex flex-col justify-between hover:border-cyan-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.2),transparent_60%)] pointer-events-none"></div>
+            <div class="relative z-10 flex justify-between items-start mb-4">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-1 bg-cyan-500/20 rounded-lg text-[10px] font-extrabold text-cyan-300 border border-cyan-500/30 uppercase tracking-wide">Theme</span>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Synthwave Arcade 👾</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Vibrant 80s retro synthwave grid horizon with neon cyan & magenta glowing grid lines.</p>
+              <div class="flex gap-2">
+                <button onclick="setAppTheme('theme_cyberpunk', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="startCheckout('theme_cyberpunk')" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-cyan-500/30">$1.99</button>
+              </div>
+            </div>
+          </div>
+          <!-- Item 5: Celestial Galaxy Theme -->
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-indigo-950/80 border border-indigo-500/30 p-5 flex flex-col justify-between hover:border-indigo-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.2),transparent_60%)] pointer-events-none"></div>
+            <div class="relative z-10 flex justify-between items-start mb-4">
+              <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+              </div>
+              <span class="px-2 py-1 bg-indigo-500/20 rounded-lg text-[10px] font-extrabold text-indigo-300 border border-indigo-500/30 uppercase tracking-wide">Theme</span>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Celestial Galaxy ✨</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep space galaxy wallpaper with shimmering cosmic nebulae & astral constellation vibes.</p>
+              <div class="flex gap-2">
+                <button onclick="setAppTheme('theme_celestial', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="startCheckout('theme_celestial')" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-indigo-500/30">$1.99</button>
               </div>
             </div>
           </div>
@@ -1000,11 +1054,14 @@
     document.addEventListener('click', unlockAudio, { once: true });
   </script>
 
-  <!-- DYNAMIC ATMOSPHERIC AURA GLOWS -->
+  <!-- DYNAMIC ATMOSPHERIC AURA GLOWS (Controlled by Aura Color Wheel) -->
   <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
     <div id="aura-glow-1" class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-indigo-600/25 mix-blend-screen"></div>
     <div id="aura-glow-2" class="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-purple-600/25 mix-blend-screen"></div>
   </div>
+
+  <!-- COSMETIC BOUTIQUE BACKGROUND THEME OVERLAY (Controlled by Cosmetic Boutique Themes) -->
+  <div id="cosmetic-app-theme-layer" class="fixed inset-0 pointer-events-none z-[-1] transition-all duration-1000"></div>
 
   <!-- FLOATING XP TOAST CONTAINER -->
   <div id="xp-toast-container" class="fixed top-20 right-6 z-[200] space-y-2 pointer-events-none"></div>
@@ -9463,6 +9520,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       scheduleNext5AMRefresh();
       lucide.createIcons();
       setAtmosphere(S.companion.aura || 'twilight');
+      setAppTheme(S.activeAppTheme || 'theme_slate');
       initIntroCanvasParticles();
       
       const btnSet = document.getElementById('btn-settings');
