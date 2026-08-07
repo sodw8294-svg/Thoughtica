@@ -2868,7 +2868,42 @@
       </div>
     </nav>
 
+  <!-- URGE INTERCEPT CELEBRATION MODAL -->
+  <div id="modal-urge-celebration" class="fixed inset-0 z-[500] flex items-center justify-center p-6 hidden" style="background:rgba(5,4,12,0.85);backdrop-filter:blur(24px);">
+    <canvas id="canvas-urge-confetti" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+    <div class="relative z-10 w-full max-w-sm text-center space-y-5 animate-stagger-1">
+      <!-- Pulsing medal icon -->
+      <div class="w-28 h-28 mx-auto rounded-full flex items-center justify-center text-5xl shadow-[0_0_60px_rgba(251,191,36,0.6)] border-4 border-amber-400/40" style="background:radial-gradient(circle at 40% 30%,#78350f,#1c1005);animation:premium-pulse 2s infinite;">
+        🏅
+      </div>
+      <!-- Headline -->
+      <div class="space-y-1">
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-amber-400">Urge Intercepted</p>
+        <h2 id="urge-cel-headline" class="text-3xl font-extrabold text-white font-heading leading-tight">Mind Over Scroll 🧠</h2>
+        <p id="urge-cel-body" class="text-sm text-slate-300 leading-relaxed mt-2">You felt the pull and didn't give in. That's real strength.</p>
+      </div>
+      <!-- Streak / count badge -->
+      <div class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 mx-auto">
+        <span class="text-2xl font-extrabold text-amber-300" id="urge-cel-count">1</span>
+        <div class="text-left">
+          <p class="text-[11px] font-extrabold text-amber-200 uppercase tracking-wider">Total Urges Blocked</p>
+          <p class="text-[10px] text-slate-400">Every intercept makes you stronger</p>
+        </div>
+      </div>
+      <!-- XP reward badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30">
+        <span class="text-emerald-400 font-extrabold text-sm">+5 XP</span>
+        <span class="text-[11px] text-slate-400">Willpower Gained</span>
+      </div>
+      <!-- Dismiss button -->
+      <button onclick="closeUrgeCelebration()" class="w-full py-4 premium-button text-white font-extrabold text-sm rounded-2xl shadow-xl cursor-pointer hover:scale-[1.02] transition-all mt-2">
+        Keep Going 💪
+      </button>
+    </div>
+  </div>
+
   <!-- FUTURE-SELF LETTER MODAL -->
+
   <div id="modal-future-self" class="fixed inset-0 bg-[#090A0F]/95 backdrop-blur-2xl z-[400] flex items-center justify-center p-4 hidden">
     <div class="relative w-full max-w-md bg-gradient-to-b from-purple-950/80 via-indigo-950/70 to-slate-950/90 border border-purple-400/40 rounded-3xl shadow-[0_0_80px_rgba(168,85,247,0.4)] overflow-hidden">
       <!-- Envelope header -->
@@ -10047,7 +10082,85 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       renderDetoxUrgeLog();
       updateDetoxStats();
       checkAndUnlockAchievements();
-      showXPToast(5, `Urge logged (${platform}) — awareness is the first step! 🔍`, 0.8);
+      // 🏅 Show gratification celebration
+      showUrgeCelebration(platform);
+    }
+
+    const URGE_CELEBRATION_MSGS = [
+      { headline: 'Mind Over Scroll 🧠', body: "You felt the pull — and didn't give in. That's real discipline." },
+      { headline: "You're Stronger Than the Algorithm! 🔥", body: "The feed wanted your attention. You chose yourself instead. Legend." },
+      { headline: 'Awareness is Power ⚡', body: "Naming the urge is the first act of sovereignty. Keep going." },
+      { headline: "The Scroll Stops Here 🛡️", body: "Each intercept rewires your brain toward freedom. You're doing it." },
+      { headline: "Good Job! You're Winning 🏆", body: "Your future self is proud of the choice you just made right now." },
+      { headline: "Dopamine Redirected 🎯", body: "You refused the cheap hit. Invest that energy into something that truly matters." },
+      { headline: "Sovereignty Level Up! ✨", body: "Digital freedom isn't passive — it's built one intercept at a time. Like this one." },
+    ];
+
+    function showUrgeCelebration(platform) {
+      const modal = document.getElementById('modal-urge-celebration');
+      if (!modal) return;
+      const count = (S.detox.urgeLog || []).length;
+      const msg = URGE_CELEBRATION_MSGS[(count - 1) % URGE_CELEBRATION_MSGS.length];
+
+      const headlineEl = document.getElementById('urge-cel-headline');
+      const bodyEl = document.getElementById('urge-cel-body');
+      const countEl = document.getElementById('urge-cel-count');
+
+      if (headlineEl) headlineEl.textContent = msg.headline;
+      if (bodyEl) bodyEl.textContent = msg.body;
+      if (countEl) countEl.textContent = count;
+
+      modal.classList.remove('hidden');
+      launchUrgeConfetti();
+
+      addXP(5, 'Urge Intercepted — Willpower +5 XP');
+    }
+
+    function closeUrgeCelebration() {
+      const modal = document.getElementById('modal-urge-celebration');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function launchUrgeConfetti() {
+      const canvas = document.getElementById('canvas-urge-confetti');
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const COLORS = ['#fbbf24','#f59e0b','#34d399','#818cf8','#fb7185','#38bdf8','#a78bfa'];
+      const particles = Array.from({ length: 90 }, () => ({
+        x: Math.random() * canvas.width,
+        y: -10 - Math.random() * 200,
+        r: 4 + Math.random() * 6,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        vx: (Math.random() - 0.5) * 4,
+        vy: 2 + Math.random() * 4,
+        angle: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.18,
+        alpha: 1
+      }));
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.5);
+          ctx.restore();
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.08;
+          p.angle += p.spin;
+          if (p.y > canvas.height * 0.7) p.alpha -= 0.025;
+        });
+        frame++;
+        if (frame < 140 && particles.some(p => p.alpha > 0)) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      draw();
     }
 
     function renderDetoxUrgeLog() {
