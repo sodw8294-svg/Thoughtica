@@ -77,6 +77,8 @@ module.exports = async (req, res) => {
         }
       } catch (e) {
         console.error('Firebase Update Error:', e);
+        // Return 500 so Stripe retries — do NOT silently swallow this
+        return res.status(500).json({ error: 'Database update failed. Stripe will retry.' });
       }
     }
   }

@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
 
     // Cosmetic one-time purchases remain supported
     const COSMETICS = {
-      theme_midnight: 'Theme: Midnight Void',
+      theme_midnight: 'Theme: Cozy Campfire',
       theme_zen: 'Theme: Zen Garden',
       aura_rain: 'Aura: Mountain Rain',
     };
