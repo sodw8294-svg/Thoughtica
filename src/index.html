@@ -777,20 +777,21 @@
           <span class="px-3 py-1 bg-gradient-to-r from-purple-500 to-rose-500 rounded-full text-xs font-bold text-white shadow-[0_0_15px_rgba(244,63,94,0.5)] uppercase tracking-widest">New Arrivals</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Item 1: Midnight Void Theme -->
-          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-purple-950/80 border border-purple-500/30 p-5 flex flex-col justify-between hover:border-purple-500/60 transition-all relative overflow-hidden group shadow-lg">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.2),transparent_60%)] pointer-events-none"></div>
+          <!-- Item 1: Cozy Campfire Theme -->
+          <div class="rounded-2xl bg-gradient-to-br from-slate-800/90 to-amber-950/80 border border-amber-500/30 p-5 flex flex-col justify-between hover:border-amber-500/60 transition-all relative overflow-hidden group shadow-lg">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.2),transparent_60%)] pointer-events-none"></div>
             <div class="relative z-10 flex justify-between items-start mb-4">
-              <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                <i data-lucide="palette" class="w-5 h-5"></i>
+              <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                <i data-lucide="flame" class="w-5 h-5"></i>
               </div>
-              <span class="px-2 py-1 bg-purple-500/20 rounded-lg text-[10px] font-extrabold text-purple-300 border border-purple-500/30 uppercase tracking-wide">Theme</span>
+              <span class="px-2 py-1 bg-amber-500/20 rounded-lg text-[10px] font-extrabold text-amber-300 border border-amber-500/30 uppercase tracking-wide">Theme</span>
             </div>
             <div class="relative z-10">
-              <h4 class="text-white font-bold font-heading mb-1 text-lg">Midnight Void 🌌</h4>
-              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">Deep pitch-black OLED background with subtle glowing violet cyberpunk grid lines & starfield dust.</p>
-                        <button onclick="setAppTheme('theme_midnight', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
-                <button onclick="startCheckout('theme_midnight')" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-purple-500/30">$4.99</button>
+              <h4 class="text-white font-bold font-heading mb-1 text-lg">Cozy Campfire 🔥</h4>
+              <p class="text-xs text-slate-400 font-medium leading-relaxed mb-4">A warm, rustic cabin ambiance with crackling wood fire embers floating upwards against a deep twilight forest canopy.</p>
+              <div class="flex gap-2">
+                <button onclick="setAppTheme('theme_midnight', true)" class="flex-1 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-lg transition-all border border-white/10 cursor-pointer">Preview Theme</button>
+                <button onclick="startCheckout('theme_midnight')" class="flex-1 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-black rounded-lg transition-all cursor-pointer shadow-lg shadow-amber-500/30">$4.99</button>
               </div>
             </div>
           </div>
@@ -9354,9 +9355,9 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         icon: '🌌'
       },
       theme_midnight: {
-        name: 'Midnight Void',
-        bgStyle: 'background-color: #020108; background-image: radial-gradient(circle at 50% 30%, rgba(147, 51, 234, 0.35) 0%, rgba(15, 7, 32, 0.95) 70%, #020108 100%), linear-gradient(rgba(168, 85, 247, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.15) 1px, transparent 1px); background-size: 100% 100%, 48px 48px, 48px 48px;',
-        icon: '🌌'
+        name: 'Cozy Campfire',
+        bgStyle: 'background-color: #0c0502; background-image: radial-gradient(circle at 50% 90%, rgba(249, 115, 22, 0.35) 0%, rgba(20, 10, 5, 0.95) 70%, #0c0502 100%), linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px); background-size: 100% 100%, 50px 50px;',
+        icon: '🔥'
       },
       theme_zen: {
         name: 'Zen Garden',
@@ -9618,17 +9619,56 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         drawCelestial();
 
       } else if (themeKey === 'theme_midnight') {
-        // 🌌 MIDNIGHT VOID ARTWORK: Rotating Cyber-Ring SVG + Constellation Net
+        // 🔥 COZY CAMPFIRE ARTWORK: Glowing Fireplace SVG + Rising Canvas Embers
         if (svgContainer) {
           svgContainer.innerHTML = `
-            <svg class="absolute w-[500px] h-[500px] opacity-20 text-purple-400 pointer-events-none animate-spin-slow" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="50" cy="50" r="45" stroke-dasharray="10 5 2 5"/>
-              <circle cx="50" cy="50" r="38" stroke-dasharray="40 10"/>
-              <polygon points="50,15 85,75 15,75" stroke-width="0.5"/>
+            <svg class="absolute bottom-20 left-1/2 -translate-x-1/2 w-48 h-48 opacity-40 text-orange-500 pointer-events-none" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="20" y1="80" x2="80" y2="80" stroke="#78350f" stroke-width="5" stroke-linecap="round"/>
+              <line x1="25" y1="74" x2="75" y2="86" stroke="#451a03" stroke-width="5" stroke-linecap="round"/>
+              <path d="M50,15 C60,40 75,55 75,70 C75,85 25,85 25,70 C25,55 40,40 50,15 Z" fill="rgba(249,115,22,0.25)" stroke="#ea580c" stroke-width="1.5"/>
+              <path d="M50,30 C56,48 65,58 65,70 C65,80 35,80 35,70 C35,58 44,48 50,30 Z" fill="rgba(234,88,12,0.35)" stroke="#f97316" stroke-width="1"/>
+              <path d="M50,45 C53,55 58,62 58,70 C58,76 42,76 42,70 C42,62 47,55 50,45 Z" fill="rgba(253,224,71,0.55)" stroke="#facc15" stroke-width="0.8"/>
             </svg>
           `;
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        _themeArtParticles = Array.from({ length: 45 }, () => ({
+          x: Math.random() * canvas.width,
+          y: canvas.height + Math.random() * 100,
+          r: Math.random() * 2 + 0.8,
+          alpha: Math.random() * 0.5 + 0.5,
+          speedY: -(Math.random() * 1.5 + 0.8),
+          speedX: (Math.random() - 0.5) * 0.5,
+          color: ['#f97316', '#ea580c', '#facc15', '#ef4444'][Math.floor(Math.random() * 4)],
+          wobbleSpeed: Math.random() * 0.05 + 0.01,
+          angle: Math.random() * Math.PI * 2
+        }));
+
+        function drawCampfireEmbers() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          _themeArtParticles.forEach(p => {
+            p.y += p.speedY;
+            p.angle += p.wobbleSpeed;
+            p.x += p.speedX + Math.sin(p.angle) * 0.3;
+            
+            if (p.y < 0) {
+              p.y = canvas.height + Math.random() * 50;
+              p.x = Math.random() * canvas.width;
+              p.alpha = Math.random() * 0.5 + 0.5;
+            }
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha * (p.y / canvas.height);
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          _themeArtAnimFrame = requestAnimationFrame(drawCampfireEmbers);
+        }
+        drawCampfireEmbers();
       } else {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -10333,7 +10373,7 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
         const msg = document.getElementById('payment-toast-msg');
         if (toast && msg) {
           let displayTier = tier;
-          if (tier === 'theme_midnight') displayTier = 'Midnight Void Theme';
+          if (tier === 'theme_midnight') displayTier = 'Cozy Campfire Theme';
           if (tier === 'theme_zen') displayTier = 'Zen Garden Theme';
           if (tier === 'aura_rain') displayTier = 'Mountain Rain Aura';
           msg.textContent = `✨ ${displayTier.charAt(0).toUpperCase() + displayTier.slice(1)} unlocked! Welcome to your upgraded Sanctuary.`;
