@@ -3543,6 +3543,35 @@
       start1MinSanctuaryTheme();
     }
 
+    function startVoicedIntro() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stop2050IntroMusic();
+      const prologueModal = document.getElementById('cinematic-prologue-cutscene');
+      if (prologueModal) {
+        prologueModal.classList.add('hidden');
+      }
+      const modal = document.getElementById('voiced-intro-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        modal.classList.add('opacity-100');
+      }
+      
+      const step1 = document.getElementById('intro-step-1');
+      const step3 = document.getElementById('intro-step-3');
+      const step4 = document.getElementById('intro-step-4');
+      if (step1) step1.classList.add('active');
+      if (step3) step3.classList.remove('active');
+      if (step4) step4.classList.remove('active');
+
+      const badge = document.getElementById('intro-phase-badge');
+      if (badge) badge.textContent = "STAGE 1: LANGUAGE";
+
+      currentIntroPhase = 1;
+      initIntroCanvasParticles();
+    }
+
     // 60 FPS MULTI-PHASE EXPLORATORY CELESTIAL GLITTER SPHERE & CONSTELLATION ENGINE
     let spaceAnimId = null;
     let spaceTime = 0;
@@ -3672,6 +3701,7 @@
         bgTrack: "golden-valley"
       }
     ];
+    const TOTAL_INTRO_PHASES = INTRO_PHASES_DATA.length;
 
     function showIntroPhase(phaseNum) {
       // Unlock Web Speech API & Audio Context synchronously on user click to prevent browser blocking during timeouts
@@ -6671,33 +6701,39 @@ Directives:
 
         if (!targetEl || !box || !card) return;
 
-        const rect = targetEl.getBoundingClientRect();
-        box.style.top = `${rect.top - 8}px`;
-        box.style.left = `${rect.left - 8}px`;
-        box.style.width = `${rect.width + 16}px`;
-        box.style.height = `${rect.height + 16}px`;
-        box.classList.remove('hidden');
+        // Center scroll the target element inside its container to ensure visibility
+        targetEl.scrollIntoView({ block: 'center', inline: 'nearest' });
 
-        let cardTop = rect.bottom + 16;
-        if (cardTop + 200 > window.innerHeight) cardTop = Math.max(20, rect.top - 210);
-        card.style.top = `${cardTop}px`;
-        card.style.left = `${Math.max(16, rect.left)}px`;
+        // Let the scroll settle before measuring positions
+        setTimeout(() => {
+          const rect = targetEl.getBoundingClientRect();
+          box.style.top = `${rect.top - 8}px`;
+          box.style.left = `${rect.left - 8}px`;
+          box.style.width = `${rect.width + 16}px`;
+          box.style.height = `${rect.height + 16}px`;
+          box.classList.remove('hidden');
 
-        document.getElementById('tour-step-num').textContent = stepNum;
-        document.getElementById('tour-title').textContent = step.title;
-        document.getElementById('tour-desc').textContent = step.desc;
-        document.getElementById('tour-progress-text').textContent = `Step ${stepNum} of ${TOTAL_TOUR_STEPS}`;
+          let cardTop = rect.bottom + 16;
+          if (cardTop + 200 > window.innerHeight) cardTop = Math.max(20, rect.top - 210);
+          card.style.top = `${cardTop}px`;
+          card.style.left = `${Math.max(16, rect.left)}px`;
 
-        const nextBtn = document.getElementById('btn-tour-next');
-        if (stepNum === TOTAL_TOUR_STEPS) {
-          nextBtn.innerHTML = `<span>Claim +100 XP</span> <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>`;
-        } else {
-          nextBtn.innerHTML = `<span>Next Step</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>`;
-        }
+          document.getElementById('tour-step-num').textContent = stepNum;
+          document.getElementById('tour-title').textContent = step.title;
+          document.getElementById('tour-desc').textContent = step.desc;
+          document.getElementById('tour-progress-text').textContent = `Step ${stepNum} of ${TOTAL_TOUR_STEPS}`;
 
-        card.classList.remove('hidden');
-        lucide.createIcons();
-      }, 300);
+          const nextBtn = document.getElementById('btn-tour-next');
+          if (stepNum === TOTAL_TOUR_STEPS) {
+            nextBtn.innerHTML = `<span>Claim +100 XP</span> <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>`;
+          } else {
+            nextBtn.innerHTML = `<span>Next Step</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>`;
+          }
+
+          card.classList.remove('hidden');
+          lucide.createIcons();
+        }, 50);
+      }, 450);
     }
 
     function nextTourStep() {
