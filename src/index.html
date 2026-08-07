@@ -5700,7 +5700,10 @@ Directives:
     }
 
     function canEarnXP(actionKey, maxPerDay = 3, cooldownMs = 900000) {
-      if (!S.xpTracker) S.xpTracker = { date: new Date().toISOString().slice(0, 10), actions: {} };
+      const today = new Date().toISOString().slice(0, 10);
+      if (!S.xpTracker || S.xpTracker.date !== today) {
+        S.xpTracker = { date: today, actions: {}, dailyXPEarned: 0 };
+      }
       const tracker = S.xpTracker.actions[actionKey] || { count: 0, lastTime: 0 };
       const now = Date.now();
 
@@ -6332,9 +6335,24 @@ Directives:
     }
 
     function addXP(baseAmount, actionLabel = 'Action') {
+      const today = new Date().toISOString().slice(0, 10);
+      if (!S.xpTracker || S.xpTracker.date !== today) {
+        S.xpTracker = { date: today, actions: {}, dailyXPEarned: 0 };
+      }
+
       const mult = getStreakMultiplier();
-      const finalAmount = Math.round(baseAmount * mult);
-      S.xp += finalAmount;
+      let earned = Math.round(baseAmount * mult);
+      let isRestMode = false;
+
+      // Anti-Burnout Soft-Cap: 350 XP / day
+      const DAILY_CAP = 350;
+      if ((S.xpTracker.dailyXPEarned || 0) >= DAILY_CAP) {
+        earned = Math.max(1, Math.round(earned * 0.5));
+        isRestMode = true;
+      }
+
+      S.xpTracker.dailyXPEarned = (S.xpTracker.dailyXPEarned || 0) + earned;
+      S.xp += earned;
       const needed = getXPRequirement(S.level);
       let leveledUp = false;
       let isEvery5 = false;
@@ -6365,7 +6383,9 @@ Directives:
       updateLevelUI();
       renderRadar();
       renderSkillTree();
-      showXPToast(finalAmount, actionLabel, mult, leveledUp);
+      
+      const labelText = isRestMode ? `${actionLabel} (Mindful Rest)` : actionLabel;
+      showXPToast(earned, labelText, mult, leveledUp);
     }
 
     // XP PARTICLE MINI-BURST
