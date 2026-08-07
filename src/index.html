@@ -1054,14 +1054,14 @@
     document.addEventListener('click', unlockAudio, { once: true });
   </script>
 
-  <!-- DYNAMIC ATMOSPHERIC AURA GLOWS (Controlled by Aura Color Wheel) -->
-  <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-    <div id="aura-glow-1" class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-indigo-600/25 mix-blend-screen"></div>
-    <div id="aura-glow-2" class="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-purple-600/25 mix-blend-screen"></div>
-  </div>
-
   <!-- COSMETIC BOUTIQUE BACKGROUND THEME OVERLAY (Controlled by Cosmetic Boutique Themes) -->
-  <div id="cosmetic-app-theme-layer" class="fixed inset-0 pointer-events-none z-[-1] transition-all duration-1000"></div>
+  <div id="cosmetic-app-theme-layer" class="fixed inset-0 pointer-events-none z-0 transition-all duration-1000"></div>
+
+  <!-- DYNAMIC ATMOSPHERIC AURA GLOWS (Controlled by Aura Color Wheel) -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-[1] mix-blend-screen">
+    <div id="aura-glow-1" class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-indigo-600/25"></div>
+    <div id="aura-glow-2" class="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[120px] ambient-glow bg-purple-600/25"></div>
+  </div>
 
   <!-- FLOATING XP TOAST CONTAINER -->
   <div id="xp-toast-container" class="fixed top-20 right-6 z-[200] space-y-2 pointer-events-none"></div>
@@ -9344,6 +9344,65 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       };
     }
 
+    // ════════════════════════════════════════════
+    //   COSMETIC BOUTIQUE APP THEME ENGINE
+    //   (Distinct background wallpapers from Aura Color Wheel)
+    // ════════════════════════════════════════════
+    const COSMETIC_THEMES = {
+      theme_slate: {
+        name: 'Sanctuary Slate',
+        bgStyle: 'background: #090A0F;',
+        icon: '🌌'
+      },
+      theme_midnight: {
+        name: 'Midnight Void',
+        bgStyle: 'background: radial-gradient(circle at 50% 20%, #170d2b 0%, #05030a 70%, #000000 100%), repeating-linear-gradient(0deg, rgba(168,85,247,0.04) 0px, rgba(168,85,247,0.04) 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(168,85,247,0.04) 0px, rgba(168,85,247,0.04) 1px, transparent 1px, transparent 40px);',
+        icon: '🌌'
+      },
+      theme_zen: {
+        name: 'Zen Garden',
+        bgStyle: 'background: radial-gradient(circle at 50% 30%, #062419 0%, #03120c 70%, #010805 100%), repeating-linear-gradient(45deg, rgba(16,185,129,0.04) 0px, rgba(16,185,129,0.04) 2px, transparent 2px, transparent 30px);',
+        icon: '🌿'
+      },
+      theme_sakura: {
+        name: 'Japanese Sakura',
+        bgStyle: 'background: radial-gradient(circle at 50% 20%, #2b0b20 0%, #150410 70%, #0a0108 100%), repeating-radial-gradient(circle at 80% 20%, rgba(244,114,182,0.06) 0px, transparent 50px);',
+        icon: '🌸'
+      },
+      theme_cyberpunk: {
+        name: 'Synthwave Arcade',
+        bgStyle: 'background: linear-gradient(180deg, #090314 0%, #120326 60%, #031424 100%), repeating-linear-gradient(0deg, rgba(6,182,212,0.06) 0px, rgba(6,182,212,0.06) 1px, transparent 1px, transparent 30px);',
+        icon: '👾'
+      },
+      theme_celestial: {
+        name: 'Celestial Galaxy',
+        bgStyle: 'background: radial-gradient(circle at 20% 20%, #1a103c 0%, #0b0726 50%, #03020d 100%), radial-gradient(circle at 80% 80%, rgba(99,102,241,0.2), transparent 50%);',
+        icon: '✨'
+      }
+    };
+
+    let _previewThemeTimer = null;
+    function setAppTheme(themeKey, isPreview = false) {
+      const layer = document.getElementById('cosmetic-app-theme-layer');
+      const theme = COSMETIC_THEMES[themeKey] || COSMETIC_THEMES.theme_slate;
+      
+      if (layer) {
+        layer.style.cssText = `position:fixed;inset:0;pointer-events:none;z-index:0;transition:all 0.8s ease-in-out;${theme.bgStyle}`;
+      }
+
+      if (isPreview) {
+        showXPToast(0, `${theme.icon} ${theme.name} Preview Active (5s)`, 1.0, false);
+        if (_previewThemeTimer) clearTimeout(_previewThemeTimer);
+        _previewThemeTimer = setTimeout(() => {
+          setAppTheme(S.activeAppTheme || 'theme_slate', false);
+        }, 5000);
+      } else {
+        S.activeAppTheme = themeKey;
+        save();
+        showXPToast(0, `${theme.icon} ${theme.name} Theme Active`, 1.0, false);
+      }
+    }
+
     // DYNAMIC AURA ATMOSPHERE ENGINE — WILDERNESS EXPLORER PALETTES
     function setAtmosphere(themeKey) {
       const themes = {
@@ -9402,15 +9461,11 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       const avatarGlow = document.getElementById('companion-avatar-color');
       if (avatarGlow) avatarGlow.style.boxShadow = `0 0 20px 4px ${primaryHex}`;
       
-      // Tint the body background slightly with the aura color
-      document.body.style.backgroundColor = `color-mix(in srgb, #090A0F 90%, ${primaryHex} 10%)`;
-      
       // Setup CSS variables for deeper integration (e.g. logo tint, text highlights)
       document.documentElement.style.setProperty('--aura-primary', primaryHex);
       document.documentElement.style.setProperty('--aura-g1', g1);
       document.documentElement.style.setProperty('--aura-g2', g2);
       
-      // Optional: Add a drop-shadow filter to all lucide icons or specific logo elements
       const logos = document.querySelectorAll('.logo-highlight');
       logos.forEach(l => l.style.filter = `drop-shadow(0 0 8px ${primaryHex})`);
     }
