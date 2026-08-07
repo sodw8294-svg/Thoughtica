@@ -53,9 +53,12 @@ module.exports = async (req, res) => {
 
     // Cosmetic one-time purchases remain supported
     const COSMETICS = {
-      theme_midnight: 'Theme: Cozy Campfire',
-      theme_zen: 'Theme: Zen Garden',
-      aura_rain: 'Aura: Mountain Rain',
+      theme_midnight:  'Theme: Cozy Campfire',
+      theme_zen:       'Theme: Zen Garden',
+      theme_sakura:    'Theme: Japanese Sakura',
+      theme_cyberpunk: 'Theme: Synthwave Arcade',
+      theme_celestial: 'Theme: Celestial Galaxy',
+      aura_rain:       'Aura: Mountain Rain',
     };
 
     if (Object.prototype.hasOwnProperty.call(COSMETICS, tier)) {
