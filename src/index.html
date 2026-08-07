@@ -36,9 +36,9 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #090A0F;
+      background: #090A0F;
       color: #f8fafc;
-      transition: background-color 1s ease;
+      transition: background 0.8s ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
@@ -9380,11 +9380,16 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
 
     let _previewThemeTimer = null;
     function setAppTheme(themeKey, isPreview = false) {
-      const layer = document.getElementById('cosmetic-app-theme-layer');
       const theme = COSMETIC_THEMES[themeKey] || COSMETIC_THEMES.theme_slate;
+      const layer = document.getElementById('cosmetic-app-theme-layer');
+      
+      // Apply theme wallpaper directly to document.body for 100% guaranteed high visibility across all screens
+      if (document.body) {
+        document.body.setAttribute('style', `font-family: 'Plus Jakarta Sans', sans-serif; color: #f8fafc; transition: all 0.8s ease-in-out; ${theme.bgStyle}`);
+      }
       
       if (layer) {
-        layer.style.cssText = `position:fixed;inset:0;pointer-events:none;z-index:0;transition:all 0.8s ease-in-out;${theme.bgStyle}`;
+        layer.setAttribute('style', `position:fixed;inset:0;pointer-events:none;z-index:0;transition:all 0.8s ease-in-out;${theme.bgStyle}`);
       }
 
       if (isPreview) {
