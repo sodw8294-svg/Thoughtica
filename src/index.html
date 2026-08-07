@@ -9379,11 +9379,13 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
     };
 
     let _previewThemeTimer = null;
+    let _wasModalOpenDuringPreview = false;
+
     function setAppTheme(themeKey, isPreview = false) {
       const theme = COSMETIC_THEMES[themeKey] || COSMETIC_THEMES.theme_slate;
       const layer = document.getElementById('cosmetic-app-theme-layer');
       
-      // Apply theme wallpaper directly to document.body for 100% guaranteed high visibility across all screens
+      // Apply theme wallpaper directly to document.body for 100% guaranteed high visibility
       if (document.body) {
         document.body.setAttribute('style', `font-family: 'Plus Jakarta Sans', sans-serif; color: #f8fafc; transition: all 0.8s ease-in-out; ${theme.bgStyle}`);
       }
@@ -9393,16 +9395,63 @@ Upgrade to **Thoughtica Pro** for unlimited AI conversations, long-term memory, 
       }
 
       if (isPreview) {
-        showXPToast(0, `${theme.icon} ${theme.name} Preview Active (5s)`, 1.0, false);
+        // If storefront or settings modal is active, minimize it temporarily so user can see full-screen theme preview!
+        const modalPremium = document.getElementById('modal-premium');
+        const modalSettings = document.getElementById('settings-modal');
+        
+        if (modalPremium && !modalPremium.classList.contains('hidden')) {
+          _wasModalOpenDuringPreview = 'modal-premium';
+          modalPremium.classList.add('hidden');
+        } else if (modalSettings && !modalSettings.classList.contains('hidden')) {
+          _wasModalOpenDuringPreview = 'settings-modal';
+          modalSettings.classList.add('hidden');
+        }
+
+        // Show floating preview banner at top of screen
+        let previewBar = document.getElementById('theme-preview-floating-bar');
+        if (!previewBar) {
+          previewBar = document.createElement('div');
+          previewBar.id = 'theme-preview-floating-bar';
+          document.body.appendChild(previewBar);
+        }
+        
+        previewBar.className = "fixed top-6 left-1/2 -translate-x-1/2 z-[25000] bg-slate-900/90 border border-purple-500/50 backdrop-blur-xl px-6 py-3 rounded-full text-white font-extrabold text-xs shadow-2xl flex items-center gap-4 animate-bounce";
+        previewBar.innerHTML = `
+          <span>${theme.icon} ${theme.name} Theme Previewing Live!</span>
+          <button onclick="stopThemePreviewEarly()" class="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-full text-[11px] font-black cursor-pointer shadow">Return to Store ✖️</button>
+        `;
+
         if (_previewThemeTimer) clearTimeout(_previewThemeTimer);
         _previewThemeTimer = setTimeout(() => {
-          setAppTheme(S.activeAppTheme || 'theme_slate', false);
+          stopThemePreviewEarly();
         }, 5000);
       } else {
         S.activeAppTheme = themeKey;
         save();
         showXPToast(0, `${theme.icon} ${theme.name} Theme Active`, 1.0, false);
       }
+    }
+
+    function stopThemePreviewEarly() {
+      if (_previewThemeTimer) {
+        clearTimeout(_previewThemeTimer);
+        _previewThemeTimer = null;
+      }
+      const previewBar = document.getElementById('theme-preview-floating-bar');
+      if (previewBar) previewBar.remove();
+
+      // Restore saved active theme
+      setAppTheme(S.activeAppTheme || 'theme_slate', false);
+
+      // Re-open store modal if it was open before previewing!
+      if (_wasModalOpenDuringPreview === 'modal-premium') {
+        const modalPremium = document.getElementById('modal-premium');
+        if (modalPremium) modalPremium.classList.remove('hidden');
+      } else if (_wasModalOpenDuringPreview === 'settings-modal') {
+        const modalSettings = document.getElementById('settings-modal');
+        if (modalSettings) modalSettings.classList.remove('hidden');
+      }
+      _wasModalOpenDuringPreview = false;
     }
 
     // DYNAMIC AURA ATMOSPHERE ENGINE — WILDERNESS EXPLORER PALETTES
