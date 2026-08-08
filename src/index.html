@@ -891,9 +891,8 @@
             <p class="text-sm text-slate-300 mb-3">Sign in to purchase and preserve your upgrades across devices.</p>
             <button onclick="showAuthGate()" class="py-2 px-6 premium-button text-white text-sm font-bold rounded-xl">Sign In</button>
           </div>
-        </div> <!-- /screen-store -->
-
-      </main> <!-- /screen-container -->
+        </div>
+      </div>
 
       <!-- ==============================
            BOTTOM NAVIGATION
@@ -932,8 +931,9 @@
     </div>
   </div>
 
-  </div> <!-- /app-sanctuary-root -->
   </div> <!-- /app-sanctuary-auth-container -->
+
+
 
   <!-- =============================================
        FIREBASE CONFIGURATION
@@ -1722,6 +1722,7 @@
               <div class="p-2 bg-white/5 rounded-xl border border-white/5"><span class="text-[9px] text-slate-400 block">VIT</span><span id="stat-vit" class="font-bold text-xs text-indigo-300">12</span></div>
             </div>
           </div>
+        </div>
         <!-- INNOVATIVE PERSONALIZED GUIDANCE MATRIX -->
         <div class="bg-gradient-to-br from-indigo-950/40 via-purple-950/30 to-slate-950/60 border border-indigo-500/30 rounded-2xl p-5 backdrop-blur-xl shadow-xl space-y-4 mt-6">
           <div class="flex justify-between items-center">
@@ -2164,6 +2165,10 @@
                   </div>
                   <button onclick="toggleAudioSynth('desert-dunes')" id="btn-track-desert-dunes" class="px-3 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold cursor-pointer"><span id="btn-text-desert-dunes">Play (+5 XP)</span></button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- SCREEN 6: MIND-SANCTUARY ARENA & NEURAL MOMENTUM LAB -->
@@ -2817,10 +2822,8 @@
         </div>
 
       </section>
-
     </main>
 
-    <!-- ATMOSPHERIC NAVIGATION BAR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-[#090A0F]/95 backdrop-blur-2xl border-t border-white/10 z-[250]" style="padding: 8px 0 12px;">
       <div class="nav-scroll px-2 flex items-center justify-around overflow-x-auto scrollbar-none max-w-4xl mx-auto">
         <button onclick="switchScreen('dashboard')" class="nav-item active flex flex-col items-center gap-1 text-indigo-400 transition-all cursor-pointer shrink-0 px-2 py-1" data-screen="dashboard">
@@ -2861,7 +2864,8 @@
         </button>
       </div>
     </nav>
-
+  </div>
+</div>
   <!-- URGE INTERCEPT CELEBRATION MODAL -->
   <div id="modal-urge-celebration" class="fixed inset-0 z-[500] flex items-center justify-center p-6 hidden" style="background:rgba(5,4,12,0.85);backdrop-filter:blur(24px);">
     <canvas id="canvas-urge-confetti" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
@@ -3154,8 +3158,6 @@
         <button onclick="resetAppData()" class="w-full py-2.5 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 border border-rose-900/30 rounded-xl text-xs font-bold cursor-pointer transition-all">⚠️ Reset App Data</button>
       </div>
     </div>
-
-  </div>
 
   <!-- UPGRADE TO PREMIUM SUBSCRIPTION MODAL -->
   <div id="modal-upgrade" class="fixed inset-0 bg-[#090A0F]/90 backdrop-blur-md flex items-center justify-center z-[400] p-4 hidden">
